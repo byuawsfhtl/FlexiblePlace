@@ -1,0 +1,16 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "placecomparator"
+version = "0.1.0"
+description = "A Rust library for comparing historical places with bindings for Python and TypeScript."
+requires-python = ">=3.8"
+dependencies = [
+    "cffi",
+]
+
+[tool.maturin]
+features = ["python"]
+module-name = "placecomparator"
