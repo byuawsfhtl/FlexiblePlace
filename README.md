@@ -37,6 +37,20 @@ const resultJson = comparePlacesFromJson(data1Json, data2Json);
 console.log(resultJson);
 ```
 
+## Installation from GitHub
+
+### Python (pip)
+```bash
+pip install git+https://github.com/byuawsfhtl/PlaceComparator.git
+```
+
+### TypeScript/JavaScript (npm)
+To use the WASM package in your JS/TS project:
+```bash
+npm install https://github.com/byuawsfhtl/PlaceComparator.git
+```
+Note: You may need to run `wasm-pack build` if you are consuming the repository directly.
+
 ## Setup & Build
 - **Rust**: `cargo build`
 - **Python**: `maturin develop`
