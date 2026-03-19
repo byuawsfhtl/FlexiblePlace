@@ -8,8 +8,8 @@ use models::{PlaceData, ScoreResult};
 use fuzzy::calculate_fuzzy_score;
 use admin::calculate_admin_score;
 use distance::calculate_physical_score;
-use db::{init_db, lookup_place};
-use rusqlite::Connection;
+use db::lookup_place;
+use tokio::runtime::Runtime;
 
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
@@ -18,6 +18,10 @@ use pyo3::types::PyDict;
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
+
+lazy_static::lazy_static! {
+    static ref RT: Runtime = Runtime::new().expect("Failed to create Tokio runtime");
+}
 
 /// Main function to calculate the similarity score using provided data.
 pub fn compare_by_data(data1: &PlaceData, data2: &PlaceData) -> ScoreResult {
@@ -57,35 +61,25 @@ pub fn compare_by_data(data1: &PlaceData, data2: &PlaceData) -> ScoreResult {
     result
 }
 
-/// Helper function to perform comparison by place names using a SQLite connection.
-pub fn compare_by_name_with_conn(
-    conn: &Connection,
-    name1: &str,
-    name2: &str,
-) -> Result<ScoreResult, Box<dyn std::error::Error>> {
-    let p1 = lookup_place(conn, name1)?.unwrap_or(PlaceData {
-        place: name1.to_string(),
-        location: None,
-        placeid: None,
-    });
-    let p2 = lookup_place(conn, name2)?.unwrap_or(PlaceData {
-        place: name2.to_string(),
-        location: None,
-        placeid: None,
-    });
-
-    Ok(compare_by_data(&p1, &p2))
-}
-
 // --- Common Logic for Python and WASM ---
 
-#[allow(dead_code)]
 fn compare_places_logic(name1: String, name2: String) -> Result<ScoreResult, String> {
-    let conn = init_db("").map_err(|e| e.to_string())?;
-    compare_by_name_with_conn(&conn, &name1, &name2).map_err(|e| e.to_string())
+    RT.block_on(async {
+        let p1 = lookup_place(&name1).await?.unwrap_or(PlaceData {
+            place: name1.clone(),
+            location: None,
+            placeid: None,
+        });
+        let p2 = lookup_place(&name2).await?.unwrap_or(PlaceData {
+            place: name2.clone(),
+            location: None,
+            placeid: None,
+        });
+
+        Ok(compare_by_data(&p1, &p2))
+    })
 }
 
-#[allow(dead_code)]
 fn compare_places_from_json_logic(data1_json: &str, data2_json: &str) -> Result<ScoreResult, String> {
     let p1: PlaceData = serde_json::from_str(data1_json).map_err(|e| e.to_string())?;
     let p2: PlaceData = serde_json::from_str(data2_json).map_err(|e| e.to_string())?;
@@ -140,8 +134,22 @@ fn placecomparator(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
 #[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = comparePlaces)]
-pub fn compare_places_wasm(name1: String, name2: String) -> Result<JsValue, JsValue> {
-    let result = compare_places_logic(name1, name2).map_err(|e| JsValue::from_str(&e))?;
+pub async fn compare_places_wasm(name1: String, name2: String) -> Result<JsValue, JsValue> {
+    let result = RT.block_on(async {
+        let p1 = lookup_place(&name1).await.map_err(|e| e.to_string())?.unwrap_or(PlaceData {
+            place: name1.clone(),
+            location: None,
+            placeid: None,
+        });
+        let p2 = lookup_place(&name2).await.map_err(|e| e.to_string())?.unwrap_or(PlaceData {
+            place: name2.clone(),
+            location: None,
+            placeid: None,
+        });
+
+        Ok::<ScoreResult, String>(compare_by_data(&p1, &p2))
+    }).map_err(|e| JsValue::from_str(&e))?;
+    
     serde_wasm_bindgen::to_value(&result).map_err(|e| JsValue::from_str(&e.to_string()))
 }
 
