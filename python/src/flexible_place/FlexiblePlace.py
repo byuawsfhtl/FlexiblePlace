@@ -23,8 +23,24 @@ class FlexiblePlace:
         return bool(self.location)
     
     # @staticmethod
-    # def combine_flexible_places(places: list) -> FlexiblePlace:
-        # 
+    # def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
+        # aligned_places = align_places(places)
+        # combined_place: list[str] = generate_combined_place_format(aligned_places)
+        # while true:
+            # empty_indeces: list[int] = find_empty_indeces(combined_place)
+            # for index in empty_indeces:
+                # remove_outliers(aligned_places, index)
+                # add_place_component(aligned_places, combined_place, index)
+            # if nothing_has_changed:
+                # if isFull(combined_place):
+                    # break
+                # elif isEmpty(aligned_places):
+                    # resize_combined_place(combined_place)
+                    # break
+                # else:
+                    # eliminate_partial_rows(aligned_places)
+        # return FlexiblePlace(combined_place)
+
 
 
     

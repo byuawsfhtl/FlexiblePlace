@@ -56,10 +56,11 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
     def test_more_specific_replaces_less_specific_case_1(self):
         """Test: More specific replaces less specific if same location (Case 1)
         Input: [FlexiblePlace("Camden, New Jersey"),
-                FlexiblePlace("Camden, Camden, New Jersey, United States")]
+                FlexiblePlace("Camden, Camden, New Jersey, United States")
+                FlexiblePlace("reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname")]
         Output: FlexiblePlace("Camden, Camden, New Jersey, United States")
         """
-        places = [FlexiblePlace("Camden, New Jersey"), FlexiblePlace("Camden, Camden, New Jersey, United States")]
+        places = [FlexiblePlace("Camden, New Jersey"), FlexiblePlace("Camden, Camden, New Jersey, United States"), FlexiblePlace("reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname")]
         result = FlexiblePlace.combine_flexible_places(places)
         self.assertEqual(str(result), "Camden, Camden, New Jersey, United States")
 
@@ -67,13 +68,13 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         """Test: More specific replaces less specific if same location (Case 2)
         Input: [FlexiblePlace("New York, New York, United States"),
                 FlexiblePlace("New York, United States"),
-                FlexiblePlace("New York, reallylongstatename, UnitedStates")]
+                FlexiblePlace("reallylongcityname, reallylongstatename, UnitedStates")]
         Output: FlexiblePlace("New York, New York, United States")
         """
         places = [
             FlexiblePlace("New York, New York, United States"),
             FlexiblePlace("New York, United States"),
-            FlexiblePlace("New York, reallylongstatename, UnitedStates")
+            FlexiblePlace("reallylongcityname, reallylongstatename, UnitedStates")
         ]
         result = FlexiblePlace.combine_flexible_places(places)
         self.assertEqual(str(result), "New York, New York, United States")
