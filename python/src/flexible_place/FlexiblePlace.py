@@ -14,4 +14,18 @@ class FlexiblePlace:
     def __repr__(self):
         return f"FlexiblePlace({self.location})"
     
+    def __eq__(self, other):
+        if isinstance(other, FlexiblePlace):
+            return self.location == other.location
+        return False
+    
+    def __bool__(self):
+        return bool(self.location)
+    
+    # @staticmethod
+    # def combine_flexible_places(places: list) -> FlexiblePlace:
+        # 
+
+
+    
     
