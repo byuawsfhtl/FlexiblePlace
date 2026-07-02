@@ -1,5 +1,5 @@
 import unittest
-from src.flexible_place.FlexiblePlace import FlexiblePlace, compare_two_places
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, compare_two_places
 
 
 class TestCompareTwoPlaces(unittest.TestCase):

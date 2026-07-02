@@ -1,5 +1,5 @@
 import unittest
-from src.flexible_place.FlexiblePlace import FlexiblePlace, combine_flexible_places
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
 
 
 class TestCombineFlexiblePlaces(unittest.TestCase):
