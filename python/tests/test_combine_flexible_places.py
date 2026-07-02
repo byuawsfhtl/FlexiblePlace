@@ -1,216 +1,236 @@
 import unittest
-from src.flexible_place import FlexiblePlace
+from src.flexible_place.FlexiblePlace import FlexiblePlace, combine_flexible_places
 
 
 class TestCombineFlexiblePlaces(unittest.TestCase):
     """Test suite for FlexiblePlace.combine_flexible_places static method"""
 
     def test_null_returns_null(self):
-        """Test: Null returns null
-        Input: []
-        Output: None
-        """
+        """Null returns null"""
         places = []
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertIsNone(result)
 
     def test_single_object_returns_same_object(self):
-        """Test: Single object returns the same object
-        Input: [FlexiblePlace("Belgium")]
-        Output: FlexiblePlace("Belgium")
-        """
+        """Single object returns the same object"""
         places = [FlexiblePlace("Belgium")]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
 
     def test_duplicate_objects_return_same_object(self):
-        """Test: Duplicate objects return same object
-        Input: [FlexiblePlace("Belgium"),
-                FlexiblePlace("Belgium")]
-        Output: FlexiblePlace("Belgium")
+        """
+        Duplicate objects return same object
+        ("Belgium" and "Belgium" returns "Belgium")
         """
         places = [FlexiblePlace("Belgium"), FlexiblePlace("Belgium")]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
 
     def test_indecision_yields_longest_string(self):
-        """Test: Indecision yields longest string
-        Input: [FlexiblePlace("Paris"),
-                FlexiblePlace("Belgium")]
-        Output: FlexiblePlace("Belgium")
+        """
+        Indecision yields longest string
+        ("Paris" and "Belgium" returns "Belgium")
         """
         places = [FlexiblePlace("Paris"), FlexiblePlace("Belgium")]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
 
     def test_tie_yields_first(self):
-        """Test: Tie yields first
-        Input: [FlexiblePlace("Melgium"),
-                FlexiblePlace("Belgium")]
-        Output: FlexiblePlace("Melgium")
+        """
+        Tie in string length yields first
+        ("Melgium" and "Belgium" returns "Melgium")
         """
         places = [FlexiblePlace("Melgium"), FlexiblePlace("Belgium")]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Melgium")
 
-    def test_more_specific_replaces_less_specific_case_1(self):
-        """Test: More specific replaces less specific if same location (Case 1)
-        Input: [FlexiblePlace("Camden, New Jersey"),
-                FlexiblePlace("Camden, Camden, New Jersey, United States")
-                FlexiblePlace("reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname")]
-        Output: FlexiblePlace("Camden, Camden, New Jersey, United States")
+    def test_more_specific_replaces_less_specific_New_Jersey(self):
+        """
+        More specific replaces less specific if same location and ignores outlier
+        ("Camden, New Jersey",
+         "Camden, Camden, New Jersey, United States", and
+         "reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname"
+         returns "Camden, Camden, New Jersey, United States")
         """
         places = [FlexiblePlace("Camden, New Jersey"), FlexiblePlace("Camden, Camden, New Jersey, United States"), FlexiblePlace("reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname")]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Camden, Camden, New Jersey, United States")
 
-    def test_more_specific_replaces_less_specific_case_2(self):
-        """Test: More specific replaces less specific if same location (Case 2)
-        Input: [FlexiblePlace("New York, New York, United States"),
-                FlexiblePlace("New York, United States"),
-                FlexiblePlace("reallylongcityname, reallylongstatename, UnitedStates")]
-        Output: FlexiblePlace("New York, New York, United States")
+    def test_more_specific_replaces_less_specific_New_York(self):
+        """
+        More specific replaces less specific if same location and ignores outlier
+        ("New York, New York, United States",
+         "New York, United States", and
+         "reallylongcityname, reallylongstatename, UnitedStates"
+         returns "New York, New York, United States")
         """
         places = [
             FlexiblePlace("New York, New York, United States"),
             FlexiblePlace("New York, United States"),
             FlexiblePlace("reallylongcityname, reallylongstatename, UnitedStates")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "New York, New York, United States")
 
-    def test_combining_location_with_county_versus_not_case_1(self):
-        """Test: Combining location with county versus not with county (Case 1)
-        Input: [FlexiblePlace("Lawrence, Massachusetts, United States"),
-                FlexiblePlace("Lawrence, Essex, Massachusetts, United States")]
-        Output: FlexiblePlace("Lawrence, Essex, Massachusetts, United States")
+    def test_combining_location_with_county_versus_not(self):
+        """
+        Combining location with county versus not with county
+        ("Lawrence, Massachusetts, United States",
+         "Lawrence, Essex, Massachusetts, United States"
+        returns "Lawrence, Essex, Massachusetts, United States")
         """
         places = [
             FlexiblePlace("Lawrence, Massachusetts, United States"),
             FlexiblePlace("Lawrence, Essex, Massachusetts, United States")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Lawrence, Essex, Massachusetts, United States")
 
-    def test_combining_location_with_county_versus_not_case_2(self):
-        """Test: Combining location with county versus not with county (Case 2)
-        Input: [FlexiblePlace("Buffalo, New York, United States"),
-                FlexiblePlace("Buffalo, Erie, New York")]
-        Output: FlexiblePlace("Buffalo, Erie, New York, United States")
+    def test_combining_location_with_county_to_make_more_specific_New_York(self):
+        """
+        Combining location with county versus not with county to create more specific location
+        ("Buffalo, New York, United States",
+         "Buffalo, Erie, New York"
+        returns "Buffalo, Erie, New York, United States")
         """
         places = [
             FlexiblePlace("Buffalo, New York, United States"),
             FlexiblePlace("Buffalo, Erie, New York")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Buffalo, Erie, New York, United States")
 
-    def test_combining_location_with_county_versus_not_case_3(self):
-        """Test: Combining location with county versus not with county (Case 3)
-        Input: [FlexiblePlace("Springfield, Sangamon, Illinois"),
-                FlexiblePlace("Springfield, Illinois, United States"),
-                FlexiblePlace("reallylongcityname, Sangamon, Illinois, United States")]
-        Output: FlexiblePlace("Springfield, Sangamon, Illinois, United States")
+    def test_combining_location_with_county_to_make_more_specific_Illinois(self):
+        """
+        Combining location with county to create more specific location and ignores outlier
+        ("Springfield, Sangamon, Illinois",
+         "Springfield, Illinois, United States",
+         "reallylongcityname, Sangamon, Illinois, United States"
+        returns "Springfield, Sangamon, Illinois, United States")
         """
         places = [
             FlexiblePlace("Springfield, Sangamon, Illinois"),
             FlexiblePlace("Springfield, Illinois, United States"),
             FlexiblePlace("reallylongcityname, Sangamon, Illinois, United States")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Springfield, Sangamon, Illinois, United States")
 
-    def test_correctly_matches_abbreviations_case_1(self):
-        """Test: Correctly matches abbreviations (Case 1)
-        Input: [FlexiblePlace("Phila, Pennsylvania, United States"),
-                FlexiblePlace("Philadelphia, Pennsylvania")]
-        Output: FlexiblePlace("Philadelphia, Pennsylvania, United States")
+    def test_correctly_matches_abbreviations_Philadelphia(self):
+        """
+        Correctly matches abbreviations
+        ("Phila, Pennsylvania, United States",
+         "Philadelphia, Pennsylvania"
+        returns "Philadelphia, Pennsylvania, United States")
         """
         places = [
             FlexiblePlace("Phila, Pennsylvania, United States"),
             FlexiblePlace("Philadelphia, Pennsylvania")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Philadelphia, Pennsylvania, United States")
 
-    def test_correctly_matches_abbreviations_case_2(self):
-        """Test: Correctly matches abbreviations (Case 2)
-        Input: [FlexiblePlace("Elder Twp, Pennsylvania, United States"),
-                FlexiblePlace("Elder Township, Cambria, Pennsylvania")]
-        Output: FlexiblePlace("Elder Township, Cambria, Pennsylvania, United States")
+    def test_correctly_matches_abbreviations_Township(self):
+        """
+        Correctly matches abbreviations
+        ("Elder Twp, Pennsylvania, United States",
+         "Elder Township, Cambria, Pennsylvania"
+        returns "Elder Township, Cambria, Pennsylvania, United States")
         """
         places = [
             FlexiblePlace("Elder Twp, Pennsylvania, United States"),
             FlexiblePlace("Elder Township, Cambria, Pennsylvania")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Elder Township, Cambria, Pennsylvania, United States")
 
-    def test_correctly_matches_abbreviations_case_3(self):
-        """Test: Correctly matches abbreviations (Case 3)
-        Input: [FlexiblePlace("Elder Twp, Pennsylvania, United States"),
-                FlexiblePlace("Elder Township, Cambria, Pennsylvania"),
-                FlexiblePlace("reallylongcityname, Pennsylvania, United States")]
-        Output: FlexiblePlace("Elder Township, Cambria, Pennsylvania, United States")
+    def test_correctly_matches_abbreviations_ignores_outliers(self):
+        """
+        Correctly matches abbreviations and ignores outliers
+        ("Elder Twp, Pennsylvania, United States",
+         "Elder Township, Cambria, Pennsylvania",
+         "reallylongcityname, Pennsylvania, United States"
+         returns "Elder Township, Cambria, Pennsylvania, United States")
         """
         places = [
             FlexiblePlace("Elder Twp, Pennsylvania, United States"),
             FlexiblePlace("Elder Township, Cambria, Pennsylvania"),
             FlexiblePlace("reallylongcityname, Pennsylvania, United States")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Elder Township, Cambria, Pennsylvania, United States")
 
-    def test_correctly_matches_abbreviations_case_4(self):
-        """Test: Correctly matches abbreviations (Case 4)
-        Input: [FlexiblePlace("Phila, Pennsylvania, United States"),
-                FlexiblePlace("Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania")]
-        Output: FlexiblePlace("Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States")
+    def test_correctly_matches_abbreviations_Philadelphia_Monthly_Meeting(self):
+        """
+        Correctly matches abbreviations with more specific data
+        ("Phila, Pennsylvania, United States"),
+         "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania"
+         returns "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States")
         """
         places = [
             FlexiblePlace("Phila, Pennsylvania, United States"),
             FlexiblePlace("Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States")
 
     def test_combines_data_from_incomplete_but_matching_sources(self):
-        """Test: Combines data from incomplete, but matching, sources
-        Input: [FlexiblePlace("Sugarloaf Township, Pennsylvania, United States"),
-                FlexiblePlace("Luzerne, Pennsylvania"),
-                FlexiblePlace("Sugarloaf Township, Luzerne, Pennsylvania")]
-        Output: FlexiblePlace("Sugarloaf Township, Luzerne, Pennsylvania, United States")
+        """
+        Combines data from incomplete, but matching, sources
+        ("Sugarloaf Township, Pennsylvania, United States",
+         "Luzerne, Pennsylvania",
+         "Sugarloaf Township, Luzerne, Pennsylvania"
+        returns "Sugarloaf Township, Luzerne, Pennsylvania, United States")
         """
         places = [
             FlexiblePlace("Sugarloaf Township, Pennsylvania, United States"),
             FlexiblePlace("Luzerne, Pennsylvania"),
             FlexiblePlace("Sugarloaf Township, Luzerne, Pennsylvania")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Sugarloaf Township, Luzerne, Pennsylvania, United States")
 
-    def test_disambiguates_multiple_locations_case_1(self):
-        """Test: Disambiguates multiple locations (Case 1)
-        Input: [FlexiblePlace("Paris, France"), FlexiblePlace("Paris, Texas"),
-                FlexiblePlace("Texas, United States")]
-        Output: FlexiblePlace("Paris, Texas, United States")
+    def test_disambiguates_multiple_locations_Paris_Texas(self):
+        """
+        Matches coinsiding places and removes outlier
+        ("Paris, France",
+         "Paris, Texas",
+         "Texas, United States"
+         returns "Paris, Texas, United States")
         """
         places = [
             FlexiblePlace("Paris, France"),
             FlexiblePlace("Paris, Texas"),
             FlexiblePlace("Texas, United States")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Paris, Texas, United States")
 
-    def test_disambiguates_multiple_locations_case_2(self):
-        """Test: Disambiguates multiple locations (Case 2)
-        Input: [FlexiblePlace("United States"),
-                FlexiblePlace("Belgium"),
-                FlexiblePlace("Washington, Utah"),
-                FlexiblePlace("Walla Walla, Washington"),
-                FlexiblePlace("Washington, United States")]
-        Output: FlexiblePlace("Walla Walla, Washington, United States")
+    def test_disambiguates_multiple_locations_Walla_Walla(self):
+        """
+        Matches coinsiding places and removes outlier
+        ("Washington, Utah",
+         "Walla Walla, Washington",
+         "Washington, United States"
+         returns "Walla Walla, Washington, United States")
+        """
+        places = [
+            FlexiblePlace("Washington, Utah"),
+            FlexiblePlace("Walla Walla, Washington"),
+            FlexiblePlace("Washington, United States")
+        ]
+        result = combine_flexible_places(places)
+        self.assertEqual(str(result), "Walla Walla, Washington, United States")
+
+    def test_works_with_large_input_Washington(self):
+        """
+        Disambiguates multiple locations
+        ("United States",
+         "Belgium",
+         "Washington, Utah",
+         "Walla Walla, Washington",
+         "Washington, United States"
+         returns "Walla Walla, Washington, United States")
         """
         places = [
             FlexiblePlace("United States"),
@@ -219,21 +239,20 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
             FlexiblePlace("Walla Walla, Washington"),
             FlexiblePlace("Washington, United States")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Walla Walla, Washington, United States")
 
-    def test_works_with_a_ton_of_inputs_at_once(self):
-        """Test: Works with a ton of inputs at once
-        Input: [
-            FlexiblePlace("Massachusetts Bay Colony, British Colonial America"),
-            FlexiblePlace("British Colonial America"),
-            FlexiblePlace("Lincoln, Massachusetts Bay Colony"),
-            FlexiblePlace("Bucksport, Lincoln, Massachusetts Bay Colony"),
-            FlexiblePlace("Lincoln, Massachusetts Bay Colony, British Colonial America"),
-            FlexiblePlace("reallysuperlongcityname, reallysuperlongcountyname, reallysuperlongstatename, reallysuperlongcountryname"),
-            FlexiblePlace("Belgium")
-        ]
-        Output: FlexiblePlace("Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America")
+    def test_works_with_a_large_input_Massachusetts(self):
+        """
+        Works with a ton of inputs at once
+        ("Massachusetts Bay Colony, British Colonial America",
+         "British Colonial America",
+         "Lincoln, Massachusetts Bay Colony",
+         "Bucksport, Lincoln, Massachusetts Bay Colony",
+         "Lincoln, Massachusetts Bay Colony, British Colonial America",
+         "reallysuperlongcityname, reallysuperlongcountyname, reallysuperlongstatename, reallysuperlongcountryname",
+         "Belgium"
+        returns "Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America")
         """
         places = [
             FlexiblePlace("Massachusetts Bay Colony, British Colonial America"),
@@ -244,7 +263,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
             FlexiblePlace("reallysuperlongcityname, reallysuperlongcountyname, reallysuperlongstatename, reallysuperlongcountryname"),
             FlexiblePlace("Belgium")
         ]
-        result = FlexiblePlace.combine_flexible_places(places)
+        result = combine_flexible_places(places)
         self.assertEqual(str(result), "Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America")
 
 
