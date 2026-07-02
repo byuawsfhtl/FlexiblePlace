@@ -206,6 +206,23 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Paris, Texas, United States")
 
+    def test_disambiguates_multiple_locations_New_York(self):
+        """
+        Matches coinsiding places and removes outlier
+        ("New York, Iowa, United States",
+         "New York, United States",
+         "New York, New York, United States"
+         returns "New York, New York, United States")
+        """
+        places = [
+            FlexiblePlace("New York, Iowa, United States"),
+            FlexiblePlace("New York, United States"),
+            FlexiblePlace("New York, New York, United States")
+        ]
+        result = combine_flexible_places(places)
+        self.assertEqual(str(result), "New York, New York, United States")
+
+
     def test_disambiguates_multiple_locations_Walla_Walla(self):
         """
         Matches coinsiding places and removes outlier

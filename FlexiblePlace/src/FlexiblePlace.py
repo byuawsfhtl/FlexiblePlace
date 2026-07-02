@@ -25,7 +25,7 @@ class FlexiblePlace:
     
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
-    # aligned_places = align_places(places)
+    # aligned_places: LocationMatrix = align_places(places)
     # combined_place: list[str] = generate_combined_place_format(aligned_places)
     # while true:
         # empty_indeces: list[int] = find_empty_indeces(combined_place)
@@ -43,9 +43,20 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     # return FlexiblePlace(combined_place)
     return FlexiblePlace("place holder")
 
+# def align_places(places: list[FlexiblePlace]) -> LocationMatrix:
+    # aligned_places: LocationMatrix = LocationMatrix()
+    # aligned_places.load_places(places)
+    # aligned_places.align()
+    # return aligned_places
+
+# def align():
+    ## This should actually be inside of the LocationMatrix class, but I don't want to make that class yet.
+    # for row: int, location: list[str]  in enumerate(self.locations):
+        # for column: int, component: str in enumerate(location):
+            # match: tuple[int, int] = compare_with_previous(row, component) #this is where the customization will go down
+            # link(row, column, match) #this is where moving then linking will happen
+
+
 @staticmethod
 def compare_two_places(place1: FlexiblePlace, place2: FlexiblePlace) -> int:
     return 100
-
-    
-    
