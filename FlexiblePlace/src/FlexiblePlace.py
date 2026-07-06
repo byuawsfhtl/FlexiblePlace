@@ -9,8 +9,8 @@ class FlexiblePlace:
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
 
 
-    #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
     def __str__(self):
+        #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
         return ", ".join(map(str.title, self.location))
     
     def __repr__(self):
@@ -24,42 +24,12 @@ class FlexiblePlace:
     def __bool__(self):
         return bool(self.location)
     
+    def get_location_components(self) -> list[str]:
+        return self.location
+    
     def compare(self, other: object) -> float | int:
         return compare_places(self, other)
     
-    
-@staticmethod
-def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
-    # aligned_places: LocationMatrix = align_places(places)
-    # combined_place: list[str] = generate_combined_place_format(aligned_places)
-    # while true:
-        # empty_indeces: list[int] = find_empty_indeces(combined_place)
-        # for index in empty_indeces:
-            # remove_outliers(aligned_places, index)
-            # add_place_component(aligned_places, combined_place, index)
-        # if nothing_has_changed:
-            # if isFull(combined_place):
-                # break
-            # elif isEmpty(aligned_places):
-                # resize_combined_place(combined_place)
-                # break
-            # else:
-                # eliminate_partial_rows(aligned_places)
-    # return FlexiblePlace(combined_place)
-    return FlexiblePlace("place holder")
-
-# def align_places(places: list[FlexiblePlace]) -> LocationMatrix:
-    # aligned_places: LocationMatrix = LocationMatrix()
-    # aligned_places.load_places(places)
-    # aligned_places.align()
-    # return aligned_places
-
-# def align():
-    ## This should actually be inside of the LocationMatrix class, but I don't want to make that class yet.
-    # for row: int, location: list[str]  in enumerate(self.locations):
-        # for column: int, component: str in enumerate(location):
-            # match: tuple[int, int] = compare_with_previous(row, component) #this is where the customization will go down
-            # link(row, column, match) #this is where moving then linking will happen
 
 @staticmethod
 def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
@@ -104,11 +74,44 @@ def forgive_small_differences(fuzzy_score: float, index: int) -> float:
         fuzzy_score (float): The fuzzy score to forgive.
         index (int): The index of the component being compared.
     Returns:
-        float: The forgiven score.
+        float: The new score.
     """
     component_penalty: float = 0.5 # How harshly to penalize differences in components (With 0.5, about 65% of a 
     # difference in street address will be forgiven as opposed to 30% with the state)
     forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As index increases, more forgiveness is granted.
     redeemed_points: float = (100 - fuzzy_score) * forgiveness_factor # Redeems a certain percentage of lost points
     return fuzzy_score + redeemed_points
+    
+# def align_places(places: list[FlexiblePlace]) -> LocationMatrix:
+    # aligned_places: LocationMatrix = LocationMatrix()
+    # aligned_places.load_places(places)
+    # aligned_places.align()
+    # return aligned_places
 
+# def align():
+    ## This should actually be inside of the LocationMatrix class, but I don't want to make that class yet.
+    # for row: int, location: list[str]  in enumerate(self.locations):
+        # for column: int, component: str in enumerate(location):
+            # match: tuple[int, int] = compare_with_previous(row, component) #this is where the customization will go down
+            # link(row, column, match) #this is where moving then linking will happen
+
+
+@staticmethod
+def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
+    # aligned_places: LocationMatrix = align_places(places)
+    # combined_place: list[str] = generate_combined_place_format(aligned_places)
+    # while true:
+        # empty_indeces: list[int] = find_empty_indeces(combined_place)
+        # for index in empty_indeces:
+            # remove_outliers(aligned_places, index)
+            # add_place_component(aligned_places, combined_place, index)
+        # if nothing_has_changed:
+            # if isFull(combined_place):
+                # break
+            # elif isEmpty(aligned_places):
+                # resize_combined_place(combined_place)
+                # break
+            # else:
+                # eliminate_partial_rows(aligned_places)
+    # return FlexiblePlace(combined_place)
+    return FlexiblePlace("place holder")
