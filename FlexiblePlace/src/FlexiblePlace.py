@@ -22,6 +22,9 @@ class FlexiblePlace:
     def __bool__(self):
         return bool(self.location)
     
+    def compare(self, other: object) -> float | int:
+        return compare_places(self, other)
+    
     
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
@@ -56,7 +59,20 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             # match: tuple[int, int] = compare_with_previous(row, component) #this is where the customization will go down
             # link(row, column, match) #this is where moving then linking will happen
 
-
 @staticmethod
-def compare_two_places(place1: FlexiblePlace, place2: FlexiblePlace) -> int:
+def compare_places(place1: FlexiblePlace, place2: FlexiblePlace) -> int:
+    """Compares two FlexiblePlace objects and returns a similarity score out of 100. Assumes that places
+    are given in a standardized order, with no missing components (Street address, City, State/Province, Country).
+    Note: 
+     - All address components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
+     - More specific address components will be weighted lower than less specific ones (countries are weighted heavier than cities)
+    
+    Args:
+        place1 (FlexiblePlace): The first FlexiblePlace object to compare.
+        place2 (FlexiblePlace): The second FlexiblePlace object to compare.
+    Returns:
+        float | int: The similarity score out of 100.
+    """
+
+
     return 100
