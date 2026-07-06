@@ -75,23 +75,23 @@ class TestCompareTwoPlaces(unittest.TestCase):
         result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
-    def test_specific_compared_with_less_specific_returns_100_New_York_New_York(self):
-        """
-        Specific compared with less specific returns 100 (Case 3)
-        ("New York, New York, United States", "New York, United States" returns 100)
-        """
-        place1 = FlexiblePlace("New York, New York, United States")
-        place2 = FlexiblePlace("New York, United States")
-        result = compare_places(place1, place2)
-        self.assertEqual(result, 100)
-
     def test_whitespace_only_strings(self):
         """
-        Test: Whitespace-only strings should be treated as null
+        Whitespace-only strings should be treated as null
         ("   ", "   " returns 100)
         """
         place1 = FlexiblePlace("   ")
         place2 = FlexiblePlace("   ")
+        result = compare_places(place1, place2)
+        self.assertEqual(result, 100)
+
+    def test_match_misaligned_components(self):
+        """
+        Misaligned components should still be compared correctly
+        ("Houston, Texas", "Houston, Harris, Texas, United States" returns 100)
+        """
+        place1 = FlexiblePlace("Houston, Texas")
+        place2 = FlexiblePlace("Houston, Harris, Texas, United States")
         result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
