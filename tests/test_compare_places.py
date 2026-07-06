@@ -1,9 +1,9 @@
 import unittest
-from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, compare_two_places
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, compare_places
 
 
 class TestCompareTwoPlaces(unittest.TestCase):
-    """Test suite for FlexiblePlace.compare_two_places static method"""
+    """Test suite for FlexiblePlace.compare_places static method"""
 
     def test_null_returns_100(self):
         """
@@ -12,7 +12,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("")
         place2 = FlexiblePlace("")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_object_compared_with_null_returns_100(self):
@@ -22,7 +22,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("Paterson, Passaic, New Jersey, United States")
         place2 = FlexiblePlace("")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_object_compared_with_null_returns_100_reverse_order(self):
@@ -32,7 +32,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("")
         place2 = FlexiblePlace("Paterson, Passaic, New Jersey, United States")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_same_place_returns_100(self):
@@ -42,7 +42,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("Belgium")
         place2 = FlexiblePlace("Belgium")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_same_place_case_insensitive_returns_100(self):
@@ -52,7 +52,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("belgium")
         place2 = FlexiblePlace("Belgium")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_specific_compared_with_less_specific_returns_100_New_Jersey(self):
@@ -62,7 +62,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("Camden, New Jersey, United States")
         place2 = FlexiblePlace("Camden, Camden, New Jersey, United States")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_specific_compared_with_less_specific_returns_100_New_York(self):
@@ -72,7 +72,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("No Croghan J*, New York, United States")
         place2 = FlexiblePlace("New York, United States")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_specific_compared_with_less_specific_returns_100_New_York_New_York(self):
@@ -82,7 +82,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("New York, New York, United States")
         place2 = FlexiblePlace("New York, United States")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
     def test_whitespace_only_strings(self):
@@ -92,7 +92,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         """
         place1 = FlexiblePlace("   ")
         place2 = FlexiblePlace("   ")
-        result = compare_two_places(place1, place2)
+        result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
 
