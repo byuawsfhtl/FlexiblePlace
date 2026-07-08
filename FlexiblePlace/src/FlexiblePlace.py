@@ -88,14 +88,6 @@ def forgive_small_differences(fuzzy_score: float, index: int) -> float:
     # aligned_places.align()
     # return aligned_places
 
-# def align():
-    ## This should actually be inside of the LocationMatrix class, but I don't want to make that class yet.
-    # for row: int, location: list[str]  in enumerate(self.locations):
-        # for column: int, component: str in enumerate(location):
-            # match: tuple[int, int] = compare_with_previous(row, component) #this is where the customization will go down
-            # link(row, column, match) #this is where moving then linking will happen
-
-
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     # aligned_places: LocationMatrix = align_places(places)
