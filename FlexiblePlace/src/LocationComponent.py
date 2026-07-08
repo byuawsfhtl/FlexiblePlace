@@ -1,4 +1,6 @@
 class LocationComponent:
+    """Represents a single location component within a LocationMatrix object.
+    Stores the location (row and column) and string value of the component"""
     def __init__(self, pair: tuple[int,int], value: str = ""):
         self.row: int = pair[0]
         self.column: int = pair[1]
