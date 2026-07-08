@@ -1,3 +1,5 @@
+from FlexiblePlace.src import CompareLocations
+from FlexiblePlace.src.LocationComponent import LocationComponent
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 class LocationMatrix:
@@ -20,13 +22,13 @@ class LocationMatrix:
     def __init__(self, locations: list[FlexiblePlace]=[]):
         self.row_count: int = 0
         self.column_count: int = 0
-        self.matrix: list[list[str]] = []
+        self.matrix: list[list[LocationComponent]] = []
         
         self.load_places(locations)
     
     def load_places(self, places: list[FlexiblePlace]):
-        for flexible_place in places:
-            current_location_components: list[str] = flexible_place.get_location_components()
+        for row, flexible_place in enumerate(places):
+            current_location_components: list[LocationComponent] = [LocationComponent((row,column), component) for column, component in enumerate(flexible_place.get_location_components())]
             self.matrix.append(current_location_components)
             location_size: int = len(current_location_components)
             if location_size > self.column_count:
@@ -35,26 +37,35 @@ class LocationMatrix:
             self.row_count: int = len(self.matrix)
 
     def _resize(self, new_size: int):
-        for row in self.matrix:
+        for i, row in enumerate(self.matrix):
             while len(row) < new_size:
-                row.append("")
+                row.append(LocationComponent((i,len(row))))
 
-# def align(location_matrix: LocationMatrix):
-    # for row: int, location: list[str] in enumerate(location_matrix.locations):
-        # while (true):
-            # match: tuple[int, int] = _find_best_match(location_matrix, row)
-            # if not match:
-                # break
-            # link(row, column, match)
+    # def _link(location_matrix: LocationMatrix, row_a: int, column_a: int, component_b: tuple[int,int]):
+        # component_a: tuple[int, int] = (row_a, column_b)
+        # 
 
-# def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[int, int]:
-    # best_score: float = 80.0 # This (80) is the threshold for a match
-    # best_match: tuple[int, int] = ()
-    # for column: int in range(len(location_matrix.matrix[row])):
-        # for i in range(row):
-            # for j in range(location_matrix.column_count):
-                # score: float = CompareLocations.basic_comparison_algorithm(location_matrix, row, column, i, j)
-                # if score > best_score:
-                    # best_score = score
-                    # best_match = (i, j)
+def align(location_matrix: LocationMatrix):
+    for row in range(len(location_matrix.matrix)):
+        while (True):
+            match: tuple[int, int] = _find_best_match(location_matrix, row)
+            if not match:
+                break
+            matched_component: LocationComponent = location_matrix.matrix[match[0]][match[1]]
+            # _link(location_matrix, row, column, matched_component)
 
+def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[int, int]:
+    best_score: float = 80.0 # This (80) is the threshold for a match
+    best_match: tuple[int, int] | tuple = ()
+    for column in range(len(location_matrix.matrix[row])):
+        for i in range(row):
+            for j in range(location_matrix.column_count):
+                component_a: LocationComponent = location_matrix.matrix[row][column]
+                component_b: LocationComponent = location_matrix.matrix[i][j]
+                score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
+                if score > best_score:
+                    best_score = score
+                    best_match = (i, j)
+    return best_match
+
+    
