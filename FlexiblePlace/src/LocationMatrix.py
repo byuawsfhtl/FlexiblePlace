@@ -60,7 +60,9 @@ class LocationMatrix:
             if location_size > self.column_count:
                 self._resize(location_size)
                 self.column_count = location_size
-            self.row_count: int = len(self.matrix)
+            elif location_size < self.column_count:
+                self._resize(self.column_count)
+        self.row_count: int = len(self.matrix)
 
     def _resize(self, new_size: int):
         for i, row in enumerate(self.matrix):
@@ -103,11 +105,11 @@ class LocationMatrix:
     
     def _shift_right(self, component: LocationComponent):
         current_column: int = component.column
-        if current_column == (self.column_count - 1):
+        if not component:
+            return
+        elif current_column == (self.column_count - 1):
             self._resize(self.column_count + 1)
             self._shift_right(component)
-        elif not component:
-            return
         else:
             row: int = component.row
             column: int = component.column
@@ -134,9 +136,9 @@ def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[tuple[i
     best_score: float = 80.0    # This (80) is the threshold for a match
     best_match: tuple[tuple[int, int], tuple[int, int]] | tuple = ()
     for column in range(len(location_matrix.matrix[row])):
+        component_a: LocationComponent = location_matrix.matrix[row][column]
         for i in range(row):
             for j in range(location_matrix.column_count):
-                component_a: LocationComponent = location_matrix.matrix[row][column]
                 component_b: LocationComponent = location_matrix.matrix[i][j]
                 score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
                 if score > best_score:

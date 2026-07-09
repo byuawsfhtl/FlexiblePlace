@@ -13,5 +13,5 @@ class LocationComponent:
     def link(self, other):
         if type(other) == LocationComponent:
             self.links.add(other)
-            other.link(self)
+            other.links.add(self)
         
