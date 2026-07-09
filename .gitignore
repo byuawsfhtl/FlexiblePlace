@@ -19,6 +19,7 @@ __pycache__/
 *.pyo
 *.pyd
 results.json
+.vscode
 
 # RustRover
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
