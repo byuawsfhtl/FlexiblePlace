@@ -1,17 +1,16 @@
 from FlexiblePlace.src import CompareLocations
 from FlexiblePlace.src.LocationComponent import LocationComponent
-from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 class LocationMatrix:
-    """A class that represents a matrix of locations, where each row corresponds to a FlexiblePlace object
-    and each column corresponds to a location component (e.g. street address, city, state/province, country).
-    This class is used to align locations for comparison, ensuring that each component is compared with the 
-    correct component in other locations.
+    """A class that represents a matrix of locations, where each row corresponds to the string array of a 
+    FlexiblePlace object and each column corresponds to a location component (e.g. street address, city,
+    state/province, country). This class is used to align locations for comparison, ensuring that each component
+    is compared with the correct component in other locations.
     
     Example:
-    locations = [FlexiblePlace("Washington, United States"),
-                 FlexiblePlace("Walla Walla, Washingon"),
-                 FlexiblePlace("Walla Walla, Washingon, United States")]
+    locations = [FlexiblePlace("Washington, United States").get_location_components,
+                 FlexiblePlace("Walla Walla, Washingon").get_location_components,
+                 FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
         location_matrix = LocationMatrix(locations)
         print(location_matrix)
         # | united states | washington |             |
@@ -19,16 +18,43 @@ class LocationMatrix:
         # | united states | washington | walla walla |
     """
 
-    def __init__(self, locations: list[FlexiblePlace]=[]):
+    def __init__(self, locations: list[list[str]]=[]):
         self.row_count: int = 0
         self.column_count: int = 0
         self.matrix: list[list[LocationComponent]] = []        
         self.load_places(locations)
         align(self)
+
+    def __str__(self) -> str:
+        # If no rows, return an empty string
+        if not self.matrix:
+            return ""
+        # Determine the width for each column based on the longest string in that column
+        widths: list[int] = []
+        for col in range(self.column_count):
+            max_len = 0
+            for row in range(len(self.matrix)):
+                # Guard against rows shorter than column_count (shouldn't happen after resizing)
+                if col < len(self.matrix[row]):
+                    val = self.matrix[row][col].value or ""
+                    max_len = max(max_len, len(val))
+            widths.append(max_len)
+        # Build each row as a pipe-separated string with left-aligned padding
+        lines: list[str] = []
+        for row in range(len(self.matrix)):
+            cells: list[str] = []
+            for col in range(self.column_count):
+                val = ""
+                if col < len(self.matrix[row]):
+                    val = self.matrix[row][col].value or ""
+                cells.append(val.ljust(widths[col]))
+            line = "| " + " | ".join(cells) + " |"
+            lines.append(line)
+        return "\n".join(lines)
     
-    def load_places(self, places: list[FlexiblePlace]):
-        for row, flexible_place in enumerate(places):
-            current_location_components: list[LocationComponent] = [LocationComponent((row,column), component) for column, component in enumerate(flexible_place.get_location_components())]
+    def load_places(self, places: list[list[str]]):
+        for row, place in enumerate(places):
+            current_location_components: list[LocationComponent] = [LocationComponent((row,column), component) for column, component in enumerate(place)]
             self.matrix.append(current_location_components)
             location_size: int = len(current_location_components)
             if location_size > self.column_count:

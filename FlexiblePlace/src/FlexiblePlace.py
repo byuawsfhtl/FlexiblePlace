@@ -51,7 +51,7 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     if not place_a or not place_b:
         return score
     scores_list: list[float] = []
-    location_matrix: LocationMatrix = LocationMatrix([place_a, place_b])
+    location_matrix: LocationMatrix = LocationMatrix([place_a.get_location_components(), place_b.get_location_components()])
     for i in range(location_matrix.column_count):
         component_a: str = location_matrix.matrix[0][i].value
         component_b: str = location_matrix.matrix[1][i].value
