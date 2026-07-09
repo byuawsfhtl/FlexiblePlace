@@ -137,6 +137,8 @@ def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[tuple[i
     best_match: tuple[tuple[int, int], tuple[int, int]] | tuple = ()
     for column in range(len(location_matrix.matrix[row])):
         component_a: LocationComponent = location_matrix.matrix[row][column]
+        if component_a.links:
+            continue
         for i in range(row):
             for j in range(location_matrix.column_count):
                 component_b: LocationComponent = location_matrix.matrix[i][j]

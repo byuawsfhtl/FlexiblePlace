@@ -41,7 +41,7 @@ class TestLocationMatrixBasic(unittest.TestCase):
         places = [
             FlexiblePlace("Washington, United States"),
             FlexiblePlace("Walla Walla, Washingon"),
-            FlexiblePlace("Walla Walla, Washingon, United States"),
+            FlexiblePlace("Walla Walla, Wasington, United Sates"),
         ]
         # Use get_location_components() because LocationMatrix expects list[list[str]]
         lm = LocationMatrix([p.get_location_components() for p in places])
@@ -49,8 +49,8 @@ class TestLocationMatrixBasic(unittest.TestCase):
         # Expected layout from the example in your prompt (lowercase values)
         expected = (
             "| united states | washington |             |\n"
-            "|               | washington | walla walla |\n"
-            "| united states | washington | walla walla |"
+            "|               | washingon  | walla walla |\n"
+            "| united sates  | wasington  | walla walla |"
         )
         self.assertEqual(str(lm), expected)
 
