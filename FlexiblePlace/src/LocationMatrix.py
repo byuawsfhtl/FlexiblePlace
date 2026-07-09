@@ -22,9 +22,9 @@ class LocationMatrix:
     def __init__(self, locations: list[FlexiblePlace]=[]):
         self.row_count: int = 0
         self.column_count: int = 0
-        self.matrix: list[list[LocationComponent]] = []
-        
+        self.matrix: list[list[LocationComponent]] = []        
         self.load_places(locations)
+        align(self)
     
     def load_places(self, places: list[FlexiblePlace]):
         for row, flexible_place in enumerate(places):
@@ -41,47 +41,58 @@ class LocationMatrix:
             while len(row) < new_size:
                 row.append(LocationComponent((i,len(row))))
 
-    # def _link(self, component_a: LocationComponent, component_b: LocationComponent):
-        # if _illegal_move(component_a, component_b): # Not finished
-            # return
-        # closest_component: LocationComponent = _get_closest(component_a, component_b)
-        # distance: int = abs(component_a.column - component_b.column)
-        # move(closest_component, distance)
-        # component_a.link(component_b)
+    def link(self, component_a: LocationComponent, component_b: LocationComponent):
+        closest_component, farthest_component = self._order_components(component_a, component_b)
+        if self._illegal_move(closest_component, farthest_component):
+            return
+        distance: int = farthest_component.column - closest_component.column
+        self._move(closest_component, distance)
+        component_a.link(component_b)
     
-    # def _illegal_move(self, component_a: LocationComponent, component_b: LocationComponent) -> bool:
-        # if not component_a or not component_b:
-            # return True
-        ## if there is a link in the way return True else return False
-
-    # def _get_closest(self, component_a: LocationComponent, component_b: LocationComponent):
-        # if component_a.column < component_b.column:
-            # return component_a
-        # else:
-            # return component_b
-        
-    # def _move(self, component: LocationComponent, distance: int):
-        # for i in range(distance):
-            # shift_right(component)
+    def _order_components(self, component_a: LocationComponent, component_b: LocationComponent) -> tuple[LocationComponent, LocationComponent]:
+        if component_a.column < component_b.column:
+            return component_a, component_b
+        else:
+            return component_b, component_a
     
-    # def _shift_right(self, component: LocationComponent)
-        # current_column: int = component.column
-        # if current_column == (self.column_count - 1):
-            # self._resize(column_count + 1)
-            # self._shift_right(component)
-        # elif not component:
-            # return
-        # else:
-            # row: int = component.row
-            # column: int = component.column
-            # self.matrix[row][column] = LocationComponent(([row][column]))
-            # component.column += 1
-            # column += 1
-            # _shift_right(self.matrix[row][column])
-            # self.matrix[row][column] = component
-            # for linked_component in components.links:
-                # distance: int = abs(component.column - linked_component.column)
-                # self._move(linked_component, distance)
+    def _illegal_move(self, component_a: LocationComponent, component_b: LocationComponent) -> bool:
+        """Checks for an illegal move. A move is illegal if the components being linked together are empty, or if
+        other links in between the components that are being aligned make it impossible to align them.
+        Args:
+            component_a (LocationComponent): component closest to the beginning of the row and will be moved
+            component_b (LocationComponent): component farthest from the beginning of the row and will not move
+        Returns:
+            True if the move is illegal, otherwise False"""
+        if not component_a or not component_b:
+            return True
+        for i in range(component_a.column + 1, component_b.column):
+            component_to_check: LocationComponent = self.matrix[component_a.row][i]
+            if component_to_check.links and any(component.row == component_a.row for component in component_to_check.links):
+                return True
+        return False
+    
+    def _move(self, component: LocationComponent, distance: int):
+        for i in range(distance):
+            self._shift_right(component)
+    
+    def _shift_right(self, component: LocationComponent):
+        current_column: int = component.column
+        if current_column == (self.column_count - 1):
+            self._resize(self.column_count + 1)
+            self._shift_right(component)
+        elif not component:
+            return
+        else:
+            row: int = component.row
+            column: int = component.column
+            self.matrix[row][column] = LocationComponent((row,column))
+            component.column += 1
+            column += 1
+            self._shift_right(self.matrix[row][column])
+            self.matrix[row][column] = component
+            for linked_component in component.links:
+                distance: int = abs(component.column - linked_component.column)
+                self._move(linked_component, distance)
 
 def align(location_matrix: LocationMatrix):
     for row in range(len(location_matrix.matrix)):
@@ -91,7 +102,7 @@ def align(location_matrix: LocationMatrix):
                 break
             component_a: LocationComponent = location_matrix.matrix[match[0][0]][match[0][1]]
             component_b: LocationComponent = location_matrix.matrix[match[1][0]][match[1][1]]
-            # _link(location_matrix, row, column, matched_component)
+            location_matrix.link(component_a, component_b)
 
 def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[tuple[int, int], tuple[int, int]]:
     best_score: float = 80.0    # This (80) is the threshold for a match
