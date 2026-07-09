@@ -1,4 +1,5 @@
 from rapidfuzz import fuzz
+from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class FlexiblePlace:
     def __init__(self, location: str | list[str]):
@@ -50,12 +51,10 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     if not place_a or not place_b:
         return score
     scores_list: list[float] = []
-    place_a_components: list[str] = place_a.location
-    place_b_components: list[str] = place_b.location
-    minLen: int = min(len(place_a_components), len(place_b_components))
-    for i in range(minLen):
-        component_a: str = place_a_components[i]
-        component_b: str = place_b_components[i]
+    location_matrix: LocationMatrix = LocationMatrix([place_a, place_b])
+    for i in range(location_matrix.column_count):
+        component_a: str = location_matrix.matrix[0][i].value
+        component_b: str = location_matrix.matrix[1][i].value
         if not component_a or not component_b:
             scores_list.append(100)
             continue
