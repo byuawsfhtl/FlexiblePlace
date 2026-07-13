@@ -23,7 +23,7 @@ class LocationMatrix:
         self.column_count: int = 0
         self.matrix: list[list[LocationComponent]] = []        
         self.load_places(locations)
-        align(self)
+        self.align()
 
     def __str__(self) -> str:
         # If no rows, return an empty string
@@ -86,6 +86,52 @@ class LocationMatrix:
             while len(row) < new_size:
                 row.append(LocationComponent((i,len(row))))
         self.column_count: int = new_size
+
+    def align(self):
+        """Aligns all rows in a LocationMatrix by finding best matches between components across rows and linking
+        them together. Processes each row sequentially, comparing each unlinked component with components in previous
+        rows to find optimal alignments based on similarity scores.
+        
+        Args:
+            location_matrix (LocationMatrix): The LocationMatrix to align.
+        Returns:
+            None
+        """
+        for row in range(1, len(self.matrix)):
+            while (True):
+                match: tuple[tuple[int, int], tuple[int, int]] = self._find_best_match(row)
+                if not match:
+                    break
+                component_a: LocationComponent = self.matrix[match[0][0]][match[0][1]]
+                component_b: LocationComponent = self.matrix[match[1][0]][match[1][1]]
+                self.link(component_a, component_b)
+
+    def _find_best_match(self, row: int) -> tuple[tuple[int, int], tuple[int, int]]:
+        """Finds the best matching pair of LocationComponents between the specified row and all previous rows in
+        the matrix. Compares each unlinked component in the row with all components in previous rows, returning the
+        pair with the highest similarity score above a threshold of 80.0. Returns an empty tuple if no match is found.
+        
+        Args:
+            location_matrix (LocationMatrix): The LocationMatrix to search.
+            row (int): The row index to find matches for.
+        Returns:
+            tuple[tuple[int, int], tuple[int, int]]: A tuple of two coordinate tuples ((row, col), (row, col)) 
+                representing the best matching components, or an empty tuple if no match above threshold is found.
+        """
+        best_score: float = 80.0    # This (80) is the threshold for a match
+        best_match: tuple[tuple[int, int], tuple[int, int]] | tuple = ()
+        for column in range(len(self.matrix[row])):
+            component_a: LocationComponent = self.matrix[row][column]
+            if component_a.links:
+                continue
+            for i in range(row):
+                for j in range(self.column_count):
+                    component_b: LocationComponent = self.matrix[i][j]
+                    score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
+                    if score > best_score:
+                        best_score = score
+                        best_match = ((row,column), (i, j))
+        return best_match
 
     def link(self, component_a: LocationComponent, component_b: LocationComponent):
         """Links two LocationComponents together by aligning them in the matrix. Moves the closer component
@@ -189,50 +235,5 @@ class LocationMatrix:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
 
-def align(location_matrix: LocationMatrix):
-    """Aligns all rows in a LocationMatrix by finding best matches between components across rows and linking
-    them together. Processes each row sequentially, comparing each unlinked component with components in previous
-    rows to find optimal alignments based on similarity scores.
-    
-    Args:
-        location_matrix (LocationMatrix): The LocationMatrix to align.
-    Returns:
-        None
-    """
-    for row in range(1, len(location_matrix.matrix)):
-        while (True):
-            match: tuple[tuple[int, int], tuple[int, int]] = _find_best_match(location_matrix, row)
-            if not match:
-                break
-            component_a: LocationComponent = location_matrix.matrix[match[0][0]][match[0][1]]
-            component_b: LocationComponent = location_matrix.matrix[match[1][0]][match[1][1]]
-            location_matrix.link(component_a, component_b)
-
-def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[tuple[int, int], tuple[int, int]]:
-    """Finds the best matching pair of LocationComponents between the specified row and all previous rows in
-    the matrix. Compares each unlinked component in the row with all components in previous rows, returning the
-    pair with the highest similarity score above a threshold of 80.0. Returns an empty tuple if no match is found.
-    
-    Args:
-        location_matrix (LocationMatrix): The LocationMatrix to search.
-        row (int): The row index to find matches for.
-    Returns:
-        tuple[tuple[int, int], tuple[int, int]]: A tuple of two coordinate tuples ((row, col), (row, col)) 
-            representing the best matching components, or an empty tuple if no match above threshold is found.
-    """
-    best_score: float = 80.0    # This (80) is the threshold for a match
-    best_match: tuple[tuple[int, int], tuple[int, int]] | tuple = ()
-    for column in range(len(location_matrix.matrix[row])):
-        component_a: LocationComponent = location_matrix.matrix[row][column]
-        if component_a.links:
-            continue
-        for i in range(row):
-            for j in range(location_matrix.column_count):
-                component_b: LocationComponent = location_matrix.matrix[i][j]
-                score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
-                if score > best_score:
-                    best_score = score
-                    best_match = ((row,column), (i, j))
-    return best_match
 
     
