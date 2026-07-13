@@ -53,6 +53,16 @@ class LocationMatrix:
         return "\n".join(lines)
     
     def load_places(self, places: list[list[str]]):
+        """Populates the LocationMatrix with location components from a list of place component lists.
+        Converts each string component into a LocationComponent object and adds it to the matrix. Automatically
+        resizes the matrix to accommodate all components, ensuring all rows have the same number of columns.
+        
+        Args:
+            places (list[list[str]]): A list of place component lists, where each inner list represents
+                the components of a single location (e.g., [["123 Main St", "Springfield", "IL", "USA"]]).
+        Returns:
+            None
+        """
         for row, place in enumerate(places):
             current_location_components: list[LocationComponent] = [LocationComponent((row,column), component) for column, component in enumerate(place)]
             self.matrix.append(current_location_components)
@@ -64,12 +74,42 @@ class LocationMatrix:
         self.row_count: int = len(self.matrix)
 
     def _resize(self, new_size: int):
+        """Resizes the LocationMatrix to have the specified number of columns by padding rows with empty
+        LocationComponent objects as needed. Updates the column_count to reflect the new size.
+        
+        Args:
+            new_size (int): The new number of columns for the matrix.
+        Returns:
+            None
+        """
         for i, row in enumerate(self.matrix):
             while len(row) < new_size:
                 row.append(LocationComponent((i,len(row))))
         self.column_count: int = new_size
 
     def link(self, component_a: LocationComponent, component_b: LocationComponent):
+        """Links two LocationComponents together by aligning them in the matrix. Moves the closer component
+        to match the column of the farther component, and creates a link between them if the move is legal.
+        Once the components are linked, an attempt to move one of them will the other to move with it.
+        Example:
+            print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
+            # |% washington  %|             |             |
+            # |% washington  %| walla walla |             |
+            # | united states | washington  | walla walla |
+            component_a: LocationComponent = location_matrix.matrix[2][1] # 'washington' in last row
+            component_b: LocationComponent = location_matrix.matrix[1][0] # 'washington' in 2nd row
+            location_matrix.link(component_a, component_b)
+            print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
+            # |               |% washington %|             |
+            # |               |% washington %| walla walla |
+            # | united states |% washington %| walla walla |
+
+        Args:
+            component_a (LocationComponent): The first component to link.
+            component_b (LocationComponent): The second component to link.
+        Returns:
+            None
+        """
         closest_component, farthest_component = self._order_components(component_a, component_b)
         if self._illegal_move(closest_component, farthest_component):
             component_a.link(component_a)
@@ -79,6 +119,15 @@ class LocationMatrix:
         component_a.link(component_b)
     
     def _order_components(self, component_a: LocationComponent, component_b: LocationComponent) -> tuple[LocationComponent, LocationComponent]:
+        """Orders two LocationComponents by their column position, returning the component with the lower column
+        first and the component with the higher column second.
+        
+        Args:
+            component_a (LocationComponent): The first component.
+            component_b (LocationComponent): The second component.
+        Returns:
+            tuple[LocationComponent, LocationComponent]: A tuple of (closest_to_start, farthest_from_start).
+        """
         if component_a.column < component_b.column:
             return component_a, component_b
         else:
@@ -101,10 +150,27 @@ class LocationMatrix:
         return False
     
     def _move(self, component: LocationComponent, distance: int):
+        """Moves a LocationComponent to the right by the specified distance by repeatedly shifting it one column
+        at a time, resizing the matrix if necessary.
+        
+        Args:
+            component (LocationComponent): The component to move.
+            distance (int): The number of columns to move the component to the right.
+        Returns:
+            None
+        """
         for i in range(distance):
             self._shift_right(component)
     
     def _shift_right(self, component: LocationComponent):
+        """Shifts a LocationComponent one column to the right in the matrix, resizing the matrix if the component
+        is at the end. Also recursively shifts all subsequent components in the row and updates linked components.
+        
+        Args:
+            component (LocationComponent): The component to shift right.
+        Returns:
+            None
+        """
         current_column: int = component.column
         if not component:
             return
@@ -124,6 +190,15 @@ class LocationMatrix:
                 self._move(linked_component, distance)
 
 def align(location_matrix: LocationMatrix):
+    """Aligns all rows in a LocationMatrix by finding best matches between components across rows and linking
+    them together. Processes each row sequentially, comparing each unlinked component with components in previous
+    rows to find optimal alignments based on similarity scores.
+    
+    Args:
+        location_matrix (LocationMatrix): The LocationMatrix to align.
+    Returns:
+        None
+    """
     for row in range(1, len(location_matrix.matrix)):
         while (True):
             match: tuple[tuple[int, int], tuple[int, int]] = _find_best_match(location_matrix, row)
@@ -134,6 +209,17 @@ def align(location_matrix: LocationMatrix):
             location_matrix.link(component_a, component_b)
 
 def _find_best_match(location_matrix: LocationMatrix, row: int) -> tuple[tuple[int, int], tuple[int, int]]:
+    """Finds the best matching pair of LocationComponents between the specified row and all previous rows in
+    the matrix. Compares each unlinked component in the row with all components in previous rows, returning the
+    pair with the highest similarity score above a threshold of 80.0. Returns an empty tuple if no match is found.
+    
+    Args:
+        location_matrix (LocationMatrix): The LocationMatrix to search.
+        row (int): The row index to find matches for.
+    Returns:
+        tuple[tuple[int, int], tuple[int, int]]: A tuple of two coordinate tuples ((row, col), (row, col)) 
+            representing the best matching components, or an empty tuple if no match above threshold is found.
+    """
     best_score: float = 80.0    # This (80) is the threshold for a match
     best_match: tuple[tuple[int, int], tuple[int, int]] | tuple = ()
     for column in range(len(location_matrix.matrix[row])):

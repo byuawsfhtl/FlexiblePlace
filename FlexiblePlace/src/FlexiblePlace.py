@@ -80,15 +80,20 @@ def forgive_small_differences(fuzzy_score: float, index: int) -> float:
     forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As index increases, more forgiveness is granted.
     redeemed_points: float = (100 - fuzzy_score) * forgiveness_factor # Redeems a certain percentage of lost points
     return fuzzy_score + redeemed_points
-    
-# def align_places(places: list[FlexiblePlace]) -> LocationMatrix:
-    # aligned_places: LocationMatrix = LocationMatrix()
-    # aligned_places.load_places(places)
-    # aligned_places.align()
-    # return aligned_places
 
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
+    """UPDATE THIS DOCSTRING
+    Combines multiple FlexiblePlace objects into a single FlexiblePlace object by aligning and merging
+    their location components. This function attempts to intelligently resolve conflicts and fill gaps
+    across multiple place definitions to create a comprehensive location representation.
+    
+    Args:
+        places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
+    Returns:
+        FlexiblePlace: A new FlexiblePlace object representing the combined locations.
+    """
+    # THE PSEUDOCODE BELOW IS ALSO OUTDATED
     # aligned_places: LocationMatrix = align_places(places)
     # combined_place: list[str] = generate_combined_place_format(aligned_places)
     # while true:

@@ -14,6 +14,13 @@ class LocationComponent:
         return f"{self.value} ({self.row}, {self.column})"
 
     def link(self, other):
+        """Creates a bidirectional link between this LocationComponent and another LocationComponent.
+    
+        Args:
+            other: The object to link with (typically a LocationComponent).
+        Returns:
+            None
+    """
         if type(other) == LocationComponent:
             self.links.add(other)
             other.links.add(self)
