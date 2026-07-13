@@ -59,7 +59,6 @@ class LocationMatrix:
             location_size: int = len(current_location_components)
             if location_size > self.column_count:
                 self._resize(location_size)
-                self.column_count = location_size
             elif location_size < self.column_count:
                 self._resize(self.column_count)
         self.row_count: int = len(self.matrix)
@@ -68,6 +67,7 @@ class LocationMatrix:
         for i, row in enumerate(self.matrix):
             while len(row) < new_size:
                 row.append(LocationComponent((i,len(row))))
+        self.column_count: int = new_size
 
     def link(self, component_a: LocationComponent, component_b: LocationComponent):
         closest_component, farthest_component = self._order_components(component_a, component_b)

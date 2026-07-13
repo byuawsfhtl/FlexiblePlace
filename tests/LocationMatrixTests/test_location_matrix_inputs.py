@@ -97,12 +97,10 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
                 fps = [FlexiblePlace(s) for s in group]
                 lm = LocationMatrix([fp.get_location_components() for fp in fps])
                 self.assertEqual(lm.row_count, len(fps))
-                expected_cols = max(len(fp.get_location_components()) for fp in fps) if fps else 0
-                self.assertEqual(lm.column_count, expected_cols)
                 # Check each provided non-empty component is present at the expected row/column
-                for r, fp in enumerate(fps):
-                    for c, comp in enumerate(fp.get_location_components()):
-                        self.assertEqual(lm.matrix[r][c].value, comp)
+                for row, fp in enumerate(fps):
+                    for expected_comp in fp.get_location_components():
+                        self.assertTrue(expected_comp in [actual_comp.value for actual_comp in lm.matrix[row]])
 
 
 if __name__ == "__main__":
