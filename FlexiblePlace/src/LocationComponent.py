@@ -10,6 +10,9 @@ class LocationComponent:
     def __bool__(self):
         return bool(self.value)
 
+    def __str__(self):
+        return f"{self.value} ({self.row}, {self.column})"
+
     def link(self, other):
         if type(other) == LocationComponent:
             self.links.add(other)

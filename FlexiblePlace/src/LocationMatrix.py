@@ -72,6 +72,7 @@ class LocationMatrix:
     def link(self, component_a: LocationComponent, component_b: LocationComponent):
         closest_component, farthest_component = self._order_components(component_a, component_b)
         if self._illegal_move(closest_component, farthest_component):
+            component_a.link(component_a)
             return
         distance: int = farthest_component.column - closest_component.column
         self._move(closest_component, distance)
@@ -93,9 +94,9 @@ class LocationMatrix:
             True if the move is illegal, otherwise False"""
         if not component_a or not component_b:
             return True
-        for i in range(component_a.column + 1, component_b.column):
+        for i in range(component_a.column, component_b.column):
             component_to_check: LocationComponent = self.matrix[component_a.row][i]
-            if component_to_check.links and any(component.row == component_a.row for component in component_to_check.links):
+            if component_to_check.links and any(component.row == component_b.row for component in component_to_check.links):
                 return True
         return False
     
@@ -123,7 +124,7 @@ class LocationMatrix:
                 self._move(linked_component, distance)
 
 def align(location_matrix: LocationMatrix):
-    for row in range(len(location_matrix.matrix)):
+    for row in range(1, len(location_matrix.matrix)):
         while (True):
             match: tuple[tuple[int, int], tuple[int, int]] = _find_best_match(location_matrix, row)
             if not match:

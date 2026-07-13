@@ -85,13 +85,13 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
                 expected_cols = max(len(p1.get_location_components()), len(p2.get_location_components()))
                 self.assertEqual(lm.column_count, expected_cols)
                 # verify that each original non-empty component ended up somewhere in its row
-                for idx, comp in enumerate(p1.get_location_components()):
-                    self.assertEqual(lm.matrix[0][idx].value, comp)
-                for idx, comp in enumerate(p2.get_location_components()):
-                    self.assertEqual(lm.matrix[1][idx].value, comp)
+                for expected_comp in p1.get_location_components():
+                    self.assertTrue(expected_comp in [actual_comp.value for actual_comp in lm.matrix[0]])
+                for expected_comp in p2.get_location_components():
+                    self.assertTrue(expected_comp in [actual_comp.value for actual_comp in lm.matrix[1]])
 
     def test_groups_construct_ok(self):
-        """Construct matrices for each group from combine tests and assert dimensions and presence of components"""
+        """Construct matrices for each group from the combine_flexible_places tests and assert dimensions and presence of components"""
         for group in self.groups:
             with self.subTest(group=group):
                 fps = [FlexiblePlace(s) for s in group]
