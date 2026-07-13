@@ -95,6 +95,16 @@ class TestCompareTwoPlaces(unittest.TestCase):
         result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
+    def test_dont_match_different_components(self):
+        """
+        Different components should not return 100
+        ("Paris, Texas", "Paris, France" does not return 100)
+        """
+        place1 = FlexiblePlace("Paris, Texas")
+        place2 = FlexiblePlace("Paris, France")
+        result = compare_places(place1, place2)
+        self.assertNotEqual(result, 100)
+
 
 if __name__ == "__main__":
     unittest.main()
