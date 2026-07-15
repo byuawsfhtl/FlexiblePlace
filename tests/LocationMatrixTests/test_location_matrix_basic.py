@@ -4,14 +4,14 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 
 class TestLocationMatrixBasic(unittest.TestCase):
-    def test_empty_initialization(self):
+    def test_empty_initialization(self) -> None:
         """An empty list of places should produce an empty matrix."""
         lm = LocationMatrix([])
         self.assertEqual(lm.row_count, 0)
         self.assertEqual(lm.column_count, 0)
         self.assertEqual(str(lm), "")
 
-    def test_single_row_initialization(self):
+    def test_single_row_initialization(self) -> None:
         """A single place should create one row with correct column count."""
         fp = FlexiblePlace("Belgium")
         lm = LocationMatrix([fp.get_location_components()])
@@ -21,7 +21,7 @@ class TestLocationMatrixBasic(unittest.TestCase):
         for col, comp in enumerate(fp.get_location_components()):
             self.assertEqual(lm.matrix[0][col].value, comp)
 
-    def test_resize_and_padding(self):
+    def test_resize_and_padding(self) -> None:
         """Rows shorter than the longest place should be padded to column_count."""
         # first row has 3 components, second row only 1
         places = [
@@ -36,7 +36,7 @@ class TestLocationMatrixBasic(unittest.TestCase):
         self.assertEqual(lm.matrix[1][1].value, "")
         self.assertEqual(lm.matrix[1][2].value, "")
 
-    def test_example_str_output(self):
+    def test_example_str_output(self) -> None:
         """Verify the example output formatting from the prompt matches expected spacing."""
         places = [
             FlexiblePlace("Washington, United States"),

@@ -18,7 +18,7 @@ class LocationMatrix:
         # | united states | washington | walla walla |
     """
 
-    def __init__(self, locations: list[list[str]]=[]):
+    def __init__(self, locations: list[list[str]]=[]) -> None:
         """Initializes a LocationMatrix from a list of location component lists.
         
         Creates a matrix structure where each row represents a location and automatically aligns
@@ -73,7 +73,7 @@ class LocationMatrix:
             lines.append(line)
         return "\n".join(lines)
     
-    def load_places(self, places: list[list[str]]):
+    def load_places(self, places: list[list[str]]) -> None:
         """Populates the LocationMatrix with location components from a list of place component lists.
         Converts each string component into a LocationComponent object and adds it to the matrix. Automatically
         resizes the matrix to accommodate all components, ensuring all rows have the same number of columns.
@@ -94,7 +94,7 @@ class LocationMatrix:
                 self._resize(self.column_count)
         self.row_count: int = len(self.matrix)
 
-    def _resize(self, new_size: int):
+    def _resize(self, new_size: int) -> None:
         """Resizes the LocationMatrix to have the specified number of columns by padding rows with empty
         LocationComponent objects as needed. Updates the column_count to reflect the new size.
         
@@ -108,7 +108,7 @@ class LocationMatrix:
                 row.append(LocationComponent((i,len(row))))
         self.column_count: int = new_size
 
-    def align(self):
+    def align(self) -> None:
         """Aligns all rows in a LocationMatrix by finding best matches between components across rows and linking
         them together. Processes each row sequentially, comparing each unlinked component with components in previous
         rows to find optimal alignments based on similarity scores.
@@ -154,7 +154,7 @@ class LocationMatrix:
                         best_match = ((row,column), (i, j))
         return best_match
 
-    def link(self, component_a: LocationComponent, component_b: LocationComponent):
+    def link(self, component_a: LocationComponent, component_b: LocationComponent) -> None:
         """Links two LocationComponents together by aligning them in the matrix. Moves the closer component
         to match the column of the farther component, and creates a link between them if the move is legal.
         Once the components are linked, an attempt to move one of them will the other to move with it.
@@ -216,7 +216,7 @@ class LocationMatrix:
                 return True
         return False
     
-    def _move(self, component: LocationComponent, distance: int):
+    def _move(self, component: LocationComponent, distance: int) -> None:
         """Moves a LocationComponent to the right by the specified distance by repeatedly shifting it one column
         at a time, resizing the matrix if necessary.
         
@@ -229,7 +229,7 @@ class LocationMatrix:
         for i in range(distance):
             self._shift_right(component)
     
-    def _shift_right(self, component: LocationComponent):
+    def _shift_right(self, component: LocationComponent) -> None:
         """Shifts a LocationComponent one column to the right in the matrix, resizing the matrix if the component
         is at the end. Also recursively shifts all subsequent components in the row and updates linked components.
         

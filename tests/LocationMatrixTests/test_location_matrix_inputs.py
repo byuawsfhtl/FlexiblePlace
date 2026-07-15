@@ -6,7 +6,7 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
     """Test LocationMatrix construction and alignment with various inputs from compare/combine tests."""
 
-    def test_empty_pair_constructs_with_correct_dimensions_and_format(self):
+    def test_empty_pair_constructs_with_correct_dimensions_and_format(self) -> None:
         """Verify that two empty location strings create a 2x0 matrix with proper string representation."""
         a, b = "", ""
         p1 = FlexiblePlace(a)
@@ -16,7 +16,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         expected = "|  |\n|  |"
         self.assertEqual(str(lm), expected)
 
-    def test_single_location_group_constructs_and_formats_correctly(self):
+    def test_single_location_group_constructs_and_formats_correctly(self) -> None:
         """Verify that a group with a single location constructs with correct dimensions and formats properly."""
         group = ["Belgium"]
         fps = [FlexiblePlace(s) for s in group]
@@ -26,7 +26,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         self.assertEqual(str(lm), expected)
 
 
-    def test_first_empty_second_populated_pair_constructs_and_formats_correctly(self):
+    def test_first_empty_second_populated_pair_constructs_and_formats_correctly(self) -> None:
         """Verify that a pair with the first location empty and second populated aligns and formats correctly."""
         a, b = "", "Paterson, Passaic, New Jersey, United States"
         p1 = FlexiblePlace(a)
@@ -39,7 +39,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         )
         self.assertEqual(str(lm), expected)
 
-    def test_similar_nested_locations_pair_aligns_and_formats_correctly(self):
+    def test_similar_nested_locations_pair_aligns_and_formats_correctly(self) -> None:
         """Verify that similar locations with different levels of detail align correctly and format properly."""
         a, b = "Camden, New Jersey, United States", "Camden, Camden, New Jersey, United States"
         p1 = FlexiblePlace(a)
@@ -52,7 +52,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         )
         self.assertEqual(str(lm), expected)
 
-    def test_different_detail_levels_pair_aligns_and_formats_correctly(self):
+    def test_different_detail_levels_pair_aligns_and_formats_correctly(self) -> None:
         """Verify that locations with different detail levels align properly and format with correct structure."""
         a, b = "Houston, Texas", "Houston, Harris, Texas, United States"
         p1 = FlexiblePlace(a)
@@ -65,7 +65,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         )
         self.assertEqual(str(lm), expected)
 
-    def test_multi_level_camden_group_aligns_and_formats_correctly(self):
+    def test_multi_level_camden_group_aligns_and_formats_correctly(self) -> None:
         """Verify that a group with Camden at different detail levels aligns correctly and formats properly."""
         group = [
             "Camden, New Jersey",
@@ -82,7 +82,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         )
         self.assertEqual(str(lm), expected)
 
-    def test_springfield_illinois_group_aligns_and_formats_correctly(self):
+    def test_springfield_illinois_group_aligns_and_formats_correctly(self) -> None:
         """Verify that Springfield, Illinois with various detail levels aligns correctly and formats properly."""
         group = [
             "Springfield, Sangamon, Illinois",
@@ -99,7 +99,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         )
         self.assertEqual(str(lm), expected)
 
-    def test_paris_disambiguation_group_aligns_and_formats_correctly(self):
+    def test_paris_disambiguation_group_aligns_and_formats_correctly(self) -> None:
         """Verify that Paris in different countries disambiguates and aligns correctly and formats properly."""
         group = [
             "Paris, France",
@@ -116,7 +116,7 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         )
         self.assertEqual(str(lm), expected)
 
-    def test_massachusetts_bay_colony_group_aligns_and_formats_correctly(self):
+    def test_massachusetts_bay_colony_group_aligns_and_formats_correctly(self) -> None:
         """Verify that a larger set of inputs can still be aligned properly."""
         group = [
             "Massachusetts Bay Colony, British Colonial America",

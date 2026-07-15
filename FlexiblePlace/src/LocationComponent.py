@@ -1,7 +1,7 @@
 class LocationComponent:
     """Represents a single location component within a LocationMatrix object.
     Stores the location (row and column) and string value of the component"""
-    def __init__(self, pair: tuple[int,int], value: str = ""):
+    def __init__(self, pair: tuple[int,int], value: str = "") -> None:
         """Initializes a LocationComponent with position and optional value.
         
         Args:
@@ -15,7 +15,7 @@ class LocationComponent:
         self.value: str = value
         self.links: set[LocationComponent] | set = set()
     
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Checks if the LocationComponent has a non-empty value.
         
         Args:
@@ -25,7 +25,7 @@ class LocationComponent:
         """
         return bool(self.value)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a string representation of the LocationComponent with its value and coordinates.
         
         Args:
@@ -35,7 +35,7 @@ class LocationComponent:
         """
         return f"{self.value} ({self.row}, {self.column})"
 
-    def link(self, other):
+    def link(self, other) -> None:
         """Creates a bidirectional link between this LocationComponent and another LocationComponent.
     
         Args:

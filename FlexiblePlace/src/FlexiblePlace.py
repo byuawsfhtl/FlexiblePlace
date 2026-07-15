@@ -2,7 +2,7 @@ from rapidfuzz import fuzz
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class FlexiblePlace:
-    def __init__(self, location: str | list[str]):
+    def __init__(self, location: str | list[str]) -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
         Parses the input location and stores its components in reverse order (from most specific to least specific)
@@ -21,7 +21,7 @@ class FlexiblePlace:
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
 
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a human-readable string representation of the FlexiblePlace object.
         
         Converts the location components back to title case and joins them with commas.
@@ -35,7 +35,7 @@ class FlexiblePlace:
         #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
         return ", ".join(map(str.title, self.location))
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns a developer-friendly string representation of the FlexiblePlace object.
         
         Args:
@@ -45,7 +45,7 @@ class FlexiblePlace:
         """
         return f"FlexiblePlace({self.location})"
     
-    def __eq__(self, other: object):
+    def __eq__(self, other: object) -> bool:
         """Checks if two FlexiblePlace objects are equal by comparing their location components.
         
         Args:
@@ -57,7 +57,7 @@ class FlexiblePlace:
             return self.location == other.location
         return False
     
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Checks if the FlexiblePlace object contains any location components.
         
         Args:

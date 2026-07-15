@@ -5,19 +5,19 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_plac
 class TestCombineFlexiblePlaces(unittest.TestCase):
     """Test suite for FlexiblePlace.combine_flexible_places static method"""
 
-    def test_null_returns_null(self):
+    def test_null_returns_null(self) -> None:
         """Null returns null"""
         places = []
         result = combine_flexible_places(places)
         self.assertIsNone(result)
 
-    def test_single_object_returns_same_object(self):
+    def test_single_object_returns_same_object(self) -> None:
         """Single object returns the same object"""
         places = [FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
 
-    def test_duplicate_objects_return_same_object(self):
+    def test_duplicate_objects_return_same_object(self) -> None:
         """
         Duplicate objects return same object
         ("Belgium" and "Belgium" returns "Belgium")
@@ -26,7 +26,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
 
-    def test_indecision_yields_longest_string(self):
+    def test_indecision_yields_longest_string(self) -> None:
         """
         Indecision yields longest string
         ("Paris" and "Belgium" returns "Belgium")
@@ -35,7 +35,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
 
-    def test_tie_yields_first(self):
+    def test_tie_yields_first(self) -> None:
         """
         Tie in string length yields first
         ("Melgium" and "Belgium" returns "Melgium")
@@ -44,7 +44,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Melgium")
 
-    def test_more_specific_replaces_less_specific_New_Jersey(self):
+    def test_more_specific_replaces_less_specific_New_Jersey(self) -> None:
         """
         More specific replaces less specific if same location and ignores outlier
         ("Camden, New Jersey",
@@ -56,7 +56,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Camden, Camden, New Jersey, United States")
 
-    def test_more_specific_replaces_less_specific_New_York(self):
+    def test_more_specific_replaces_less_specific_New_York(self) -> None:
         """
         More specific replaces less specific if same location and ignores outlier
         ("New York, New York, United States",
@@ -72,7 +72,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "New York, New York, United States")
 
-    def test_combining_location_with_county_versus_not(self):
+    def test_combining_location_with_county_versus_not(self) -> None:
         """
         Combining location with county versus not with county
         ("Lawrence, Massachusetts, United States",
@@ -86,7 +86,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Lawrence, Essex, Massachusetts, United States")
 
-    def test_combining_location_with_county_to_make_more_specific_New_York(self):
+    def test_combining_location_with_county_to_make_more_specific_New_York(self) -> None:
         """
         Combining location with county versus not with county to create more specific location
         ("Buffalo, New York, United States",
@@ -100,7 +100,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Buffalo, Erie, New York, United States")
 
-    def test_combining_location_with_county_to_make_more_specific_Illinois(self):
+    def test_combining_location_with_county_to_make_more_specific_Illinois(self) -> None:
         """
         Combining location with county to create more specific location and ignores outlier
         ("Springfield, Sangamon, Illinois",
@@ -116,7 +116,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Springfield, Sangamon, Illinois, United States")
 
-    def test_correctly_matches_abbreviations_Philadelphia(self):
+    def test_correctly_matches_abbreviations_Philadelphia(self) -> None:
         """
         Correctly matches abbreviations
         ("Phila, Pennsylvania, United States",
@@ -130,7 +130,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Philadelphia, Pennsylvania, United States")
 
-    def test_correctly_matches_abbreviations_Township(self):
+    def test_correctly_matches_abbreviations_Township(self) -> None:
         """
         Correctly matches abbreviations
         ("Elder Twp, Pennsylvania, United States",
@@ -144,7 +144,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Elder Township, Cambria, Pennsylvania, United States")
 
-    def test_correctly_matches_abbreviations_ignores_outliers(self):
+    def test_correctly_matches_abbreviations_ignores_outliers(self) -> None:
         """
         Correctly matches abbreviations and ignores outliers
         ("Elder Twp, Pennsylvania, United States",
@@ -160,7 +160,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Elder Township, Cambria, Pennsylvania, United States")
 
-    def test_correctly_matches_abbreviations_Philadelphia_Monthly_Meeting(self):
+    def test_correctly_matches_abbreviations_Philadelphia_Monthly_Meeting(self) -> None:
         """
         Correctly matches abbreviations with more specific data
         ("Phila, Pennsylvania, United States"),
@@ -174,7 +174,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States")
 
-    def test_combines_data_from_incomplete_but_matching_sources(self):
+    def test_combines_data_from_incomplete_but_matching_sources(self) -> None:
         """
         Combines data from incomplete, but matching, sources
         ("Sugarloaf Township, Pennsylvania, United States",
@@ -190,7 +190,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Sugarloaf Township, Luzerne, Pennsylvania, United States")
 
-    def test_disambiguates_multiple_locations_Paris_Texas(self):
+    def test_disambiguates_multiple_locations_Paris_Texas(self) -> None:
         """
         Matches coinsiding places and removes outlier
         ("Paris, France",
@@ -206,7 +206,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Paris, Texas, United States")
 
-    def test_disambiguates_multiple_locations_New_York(self):
+    def test_disambiguates_multiple_locations_New_York(self) -> None:
         """
         Matches coinsiding places and removes outlier
         ("New York, Iowa, United States",
@@ -223,7 +223,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         self.assertEqual(str(result), "New York, New York, United States")
 
 
-    def test_disambiguates_multiple_locations_Walla_Walla(self):
+    def test_disambiguates_multiple_locations_Walla_Walla(self) -> None:
         """
         Matches coinsiding places and removes outlier
         ("Washington, Utah",
@@ -239,7 +239,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Walla Walla, Washington, United States")
 
-    def test_works_with_large_input_Washington(self):
+    def test_works_with_large_input_Washington(self) -> None:
         """
         Disambiguates multiple locations
         ("United States",
@@ -259,7 +259,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Walla Walla, Washington, United States")
 
-    def test_works_with_a_large_input_Massachusetts(self):
+    def test_works_with_a_large_input_Massachusetts(self) -> None:
         """
         Works with a ton of inputs at once
         ("Massachusetts Bay Colony, British Colonial America",
