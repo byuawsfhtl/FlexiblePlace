@@ -101,8 +101,7 @@ class LocationMatrix:
         Args:
             new_size (int): The new number of columns for the matrix.
         Returns:
-            None
-        """
+            None."""
         for i, row in enumerate(self.matrix):
             while len(row) < new_size:
                 row.append(LocationComponent((i,len(row))))
@@ -145,7 +144,7 @@ class LocationMatrix:
             best_score, best_match = self._compare_with_previous(component_a, best_score, best_match)
         return best_match
     
-    def _compare_with_previous(self, component_a, best_score, best_match) -> tuple[float, tuple[tuple[int, int], tuple[int, int]]]:
+    def _compare_with_previous(self, component_a: LocationComponent, best_score: float, best_match: tuple[tuple[int, int], tuple[int, int]]) -> tuple[float, tuple[tuple[int, int], tuple[int, int]]]:
         """Compares the current component with all components in previous rows. If it is a better match then 
         the previous best, best_match and best_score are updated.
         

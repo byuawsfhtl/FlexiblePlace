@@ -4,12 +4,12 @@ from rapidfuzz import fuzz
 def basic_comparison_algorithm(location_a: LocationComponent, location_b: LocationComponent) -> float:
     """Calculates a score out of 100 of the likelihood that 2 location components refer to the same location.
     This is done by taking the fuzzy string score of the two components and then deducting points for these reasons:
-        1. The strings are short
-        2. The strings are misaligned (the algorithm will favor location components that are already aligned)
+        1. The strings are short.
+        2. The strings are misaligned (the algorithm will favor location components that are already aligned).
 
     Args:
-        location_a (LocationComponent): first component
-        location_b (LocationComponent): second component
+        location_a (LocationComponent): first component.
+        location_b (LocationComponent): second component.
     Returns:
         Score (float) out of 100."""
     
