@@ -110,8 +110,7 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
         place_a (FlexiblePlace): The first FlexiblePlace object to compare.
         place_b (FlexiblePlace): The second FlexiblePlace object to compare.
     Returns:
-        float: The similarity score out of 100.
-    """
+        float: The similarity score out of 100."""
     score: float = 100
     if not place_a or not place_b:
         return score

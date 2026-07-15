@@ -18,7 +18,7 @@ class LocationMatrix:
         # | united states | washington | walla walla |
     """
 
-    def __init__(self, locations: list[list[str]]=[[""]]) -> None:
+    def __init__(self, locations: list[list[str]]) -> None:
         """Initializes a LocationMatrix from a list of location component lists.
         
         Creates a matrix structure where each row represents a location and automatically aligns
@@ -113,8 +113,6 @@ class LocationMatrix:
         them together. Processes each row sequentially, comparing each unlinked component with components in previous
         rows to find optimal alignments based on similarity scores.
         
-        Args:
-            location_matrix (LocationMatrix): The LocationMatrix to align.
         Returns:
             None
         """
@@ -131,9 +129,8 @@ class LocationMatrix:
         """Finds the best matching pair of LocationComponents between the specified row and all previous rows in
         the matrix. Compares each unlinked component in the row with all components in previous rows, returning the
         pair with the highest similarity score above a threshold of 80.0. Returns an empty tuple if no match is found.
-        
+    
         Args:
-            location_matrix (LocationMatrix): The LocationMatrix to search.
             row (int): The row index to find matches for.
         Returns:
             tuple[tuple[int, int], tuple[int, int]]: A tuple of two coordinate tuples ((row, col), (row, col)) 
@@ -145,14 +142,33 @@ class LocationMatrix:
             component_a: LocationComponent = self.matrix[row][column]
             if component_a.links:
                 continue
-            for i in range(row):
-                for j in range(self.column_count):
-                    component_b: LocationComponent = self.matrix[i][j]
-                    score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
-                    if score > best_score:
-                        best_score = score
-                        best_match = ((row,column), (i, j))
+            best_score, best_match = self._compare_with_previous(component_a, best_score, best_match)
         return best_match
+    
+    def _compare_with_previous(self, component_a, best_score, best_match) -> tuple[float, tuple[tuple[int, int], tuple[int, int]]]:
+        """Compares the current component with all components in previous rows. If it is a better match then 
+        the previous best, best_match and best_score are updated.
+        
+        Args:
+            component_a (LocationComponent): Current component being compared
+            best_score (float): Current best score
+            best_match (tuple[tuple[int, int], tuple[int, int]] | tuple): Current best match
+
+        Returns:
+            best_score (float): Current best score found 
+            best_match (tuple[tuple[int, int], tuple[int, int]]): A tuple of two coordinate tuples ((row, col), (row, col)) 
+                representing the best matching components, or an empty tuple if no match above threshold is found.
+        """
+        row: int = component_a.row
+        column: int = component_a.column
+        for i in range(row):
+            for j in range(self.column_count):
+                component_b: LocationComponent = self.matrix[i][j]
+                score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
+                if score > best_score:
+                    best_score = score
+                    best_match = ((row,column), (i, j))
+        return best_score, best_match
 
     def link(self, component_a: LocationComponent, component_b: LocationComponent) -> None:
         """Links two LocationComponents together by aligning them in the matrix. Moves the closer component
@@ -175,8 +191,7 @@ class LocationMatrix:
             component_a (LocationComponent): The first component to link.
             component_b (LocationComponent): The second component to link.
         Returns:
-            None
-        """
+            None."""
         closest_component, farthest_component = self._order_components(component_a, component_b)
         if self._illegal_move(closest_component, farthest_component):
             component_a.link(component_a)
@@ -193,8 +208,7 @@ class LocationMatrix:
             component_a (LocationComponent): The first component.
             component_b (LocationComponent): The second component.
         Returns:
-            tuple[LocationComponent, LocationComponent]: A tuple of (closest_to_start, farthest_from_start).
-        """
+            tuple[LocationComponent, LocationComponent]: A tuple of (closest_to_start, farthest_from_start)."""
         if component_a.column < component_b.column:
             return component_a, component_b
         else:
@@ -207,7 +221,7 @@ class LocationMatrix:
             component_a (LocationComponent): component closest to the beginning of the row and will be moved
             component_b (LocationComponent): component farthest from the beginning of the row and will not move
         Returns:
-            True if the move is illegal, otherwise False"""
+            True if the move is illegal, otherwise False."""
         if not component_a or not component_b:
             return True
         for i in range(component_a.column, component_b.column + 1):
@@ -224,8 +238,7 @@ class LocationMatrix:
             component (LocationComponent): The component to move.
             distance (int): The number of columns to move the component to the right.
         Returns:
-            None
-        """
+            None."""
         for i in range(distance):
             self._shift_right(component)
     
@@ -236,8 +249,7 @@ class LocationMatrix:
         Args:
             component (LocationComponent): The component to shift right.
         Returns:
-            None
-        """
+            None."""
         current_column: int = component.column
         if not component:
             return

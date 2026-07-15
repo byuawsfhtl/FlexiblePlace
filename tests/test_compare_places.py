@@ -55,7 +55,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
-    def test_specific_compared_with_less_specific_returns_100_New_Jersey(self) -> None:
+    def test_specific_compared_with_less_specific_returns_100_new_jersey(self) -> None:
         """
         Specific compared with less specific returns 100
         ("Camden, New Jersey, United States", "Camden, Camden, New Jersey, United States" returns 100).
@@ -65,7 +65,7 @@ class TestCompareTwoPlaces(unittest.TestCase):
         result = compare_places(place1, place2)
         self.assertEqual(result, 100)
 
-    def test_specific_compared_with_less_specific_returns_100_New_York(self) -> None:
+    def test_specific_compared_with_less_specific_returns_100_new_york(self) -> None:
         """
         Specific compared with less specific returns 100
         ("No Croghan J*, New York, United States", "New York, United States" returns 100).

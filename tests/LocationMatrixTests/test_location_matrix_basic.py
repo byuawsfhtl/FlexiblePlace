@@ -4,6 +4,7 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 
 class TestLocationMatrixBasic(unittest.TestCase):
+    """Tests that LocationMatrix objects are initialized with the correct size."""
     def test_empty_initialization(self) -> None:
         """An empty list of places should produce an empty matrix."""
         lm = LocationMatrix([])
@@ -23,7 +24,6 @@ class TestLocationMatrixBasic(unittest.TestCase):
 
     def test_resize_and_padding(self) -> None:
         """Rows shorter than the longest place should be padded to column_count."""
-        # first row has 3 components, second row only 1
         places = [
             ["c_country", "c_state", "c_city"],
             ["single_country"]
@@ -31,7 +31,6 @@ class TestLocationMatrixBasic(unittest.TestCase):
         lm = LocationMatrix(places)
         self.assertEqual(lm.row_count, 2)
         self.assertEqual(lm.column_count, 3)
-        # shorter row should have placeholder components in remaining columns (value == "")
         self.assertEqual(lm.matrix[1][0].value, "single_country")
         self.assertEqual(lm.matrix[1][1].value, "")
         self.assertEqual(lm.matrix[1][2].value, "")
@@ -43,10 +42,7 @@ class TestLocationMatrixBasic(unittest.TestCase):
             FlexiblePlace("Walla Walla, Washingon"),
             FlexiblePlace("Walla Walla, Wasington, United Sates"),
         ]
-        # Use get_location_components() because LocationMatrix expects list[list[str]]
         lm = LocationMatrix([p.get_location_components() for p in places])
-
-        # Expected layout from the example in your prompt (lowercase values)
         expected = (
             "| united states | washington |             |\n"
             "|               | washingon  | walla walla |\n"

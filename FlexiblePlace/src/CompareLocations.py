@@ -11,8 +11,7 @@ def basic_comparison_algorithm(location_a: LocationComponent, location_b: Locati
         location_a (LocationComponent): first component
         location_b (LocationComponent): second component
     Returns:
-        Score (float) out of 100.
-    """
+        Score (float) out of 100."""
     
     component_a: str = location_a.value
     component_b: str = location_b.value
