@@ -3,9 +3,9 @@ from FlexiblePlace.src.LocationComponent import LocationComponent
 
 class LocationMatrix:
     """A class that represents a matrix of locations, where each row corresponds to the string array of a 
-    FlexiblePlace object and each column corresponds to a location component (e.g. street address, city,
-    state/province, country). This class is used to align locations for comparison, ensuring that each component
-    is compared with the correct component in other locations.
+    FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
+    country). This class is used to align locations for comparison, ensuring that each component is compared
+    with the correct component in other locations.
     
     Example:
     locations = [FlexiblePlace("Washington, United States").get_location_components,

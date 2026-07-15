@@ -35,11 +35,11 @@ class FlexiblePlace:
 @staticmethod
 def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     """Compares two FlexiblePlace objects and returns a similarity score out of 100. Assumes that places
-    are given in a standardized order (e.g. Street address, City, County, State/Province, Country).
+    are given in a standardized order (e.g. City, County, State/Province, Country).
     It is effectively a glorified string comparator (Texas, USA and Texas, United States will score very low).
     Note: 
-     - All address components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
-     - More specific address components will be weighted lower than less specific ones (countries are weighted heavier than cities)
+     - All location components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
+     - More specific location components will be weighted lower than less specific ones (countries are weighted heavier than cities)
 
     Args:
         place_a (FlexiblePlace): The first FlexiblePlace object to compare.
@@ -66,8 +66,8 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
 def forgive_small_differences(fuzzy_score: float, index: int) -> float:
     """Forgives small differences in the fuzzy score based on the index of the component being compared.
     The higher the index, the less important the component is, and thus the more forgiving the score should be.
-    For example, a difference in the country component (index 0) should be less forgiving than a difference
-    in the city component (index 1).
+    For example, a difference in the country component should be less forgiving than a difference in the city 
+    component.
     
     Args:
         fuzzy_score (float): The fuzzy score to forgive.
