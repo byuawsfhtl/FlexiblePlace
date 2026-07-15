@@ -3,16 +3,16 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_plac
 
 
 class TestCombineFlexiblePlaces(unittest.TestCase):
-    """Test suite for FlexiblePlace.combine_flexible_places static method"""
+    """Test suite for FlexiblePlace.combine_flexible_places static method."""
 
     def test_null_returns_null(self) -> None:
-        """Null returns null"""
+        """Null returns null."""
         places = []
         result = combine_flexible_places(places)
         self.assertIsNone(result)
 
     def test_single_object_returns_same_object(self) -> None:
-        """Single object returns the same object"""
+        """Single object returns the same object."""
         places = [FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Belgium")
@@ -20,7 +20,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
     def test_duplicate_objects_return_same_object(self) -> None:
         """
         Duplicate objects return same object
-        ("Belgium" and "Belgium" returns "Belgium")
+        ("Belgium" and "Belgium" returns "Belgium").
         """
         places = [FlexiblePlace("Belgium"), FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
@@ -29,7 +29,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
     def test_indecision_yields_longest_string(self) -> None:
         """
         Indecision yields longest string
-        ("Paris" and "Belgium" returns "Belgium")
+        ("Paris" and "Belgium" returns "Belgium").
         """
         places = [FlexiblePlace("Paris"), FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
@@ -38,7 +38,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
     def test_tie_yields_first(self) -> None:
         """
         Tie in string length yields first
-        ("Melgium" and "Belgium" returns "Melgium")
+        ("Melgium" and "Belgium" returns "Melgium").
         """
         places = [FlexiblePlace("Melgium"), FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
@@ -50,7 +50,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("Camden, New Jersey",
          "Camden, Camden, New Jersey, United States", and
          "reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname"
-         returns "Camden, Camden, New Jersey, United States")
+         returns "Camden, Camden, New Jersey, United States").
         """
         places = [FlexiblePlace("Camden, New Jersey"), FlexiblePlace("Camden, Camden, New Jersey, United States"), FlexiblePlace("reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname")]
         result = combine_flexible_places(places)
@@ -62,7 +62,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("New York, New York, United States",
          "New York, United States", and
          "reallylongcityname, reallylongstatename, UnitedStates"
-         returns "New York, New York, United States")
+         returns "New York, New York, United States").
         """
         places = [
             FlexiblePlace("New York, New York, United States"),
@@ -77,7 +77,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         Combining location with county versus not with county
         ("Lawrence, Massachusetts, United States",
          "Lawrence, Essex, Massachusetts, United States"
-        returns "Lawrence, Essex, Massachusetts, United States")
+        returns "Lawrence, Essex, Massachusetts, United States").
         """
         places = [
             FlexiblePlace("Lawrence, Massachusetts, United States"),
@@ -91,7 +91,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         Combining location with county versus not with county to create more specific location
         ("Buffalo, New York, United States",
          "Buffalo, Erie, New York"
-        returns "Buffalo, Erie, New York, United States")
+        returns "Buffalo, Erie, New York, United States").
         """
         places = [
             FlexiblePlace("Buffalo, New York, United States"),
@@ -106,7 +106,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("Springfield, Sangamon, Illinois",
          "Springfield, Illinois, United States",
          "reallylongcityname, Sangamon, Illinois, United States"
-        returns "Springfield, Sangamon, Illinois, United States")
+        returns "Springfield, Sangamon, Illinois, United States").
         """
         places = [
             FlexiblePlace("Springfield, Sangamon, Illinois"),
@@ -121,7 +121,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         Correctly matches abbreviations
         ("Phila, Pennsylvania, United States",
          "Philadelphia, Pennsylvania"
-        returns "Philadelphia, Pennsylvania, United States")
+        returns "Philadelphia, Pennsylvania, United States").
         """
         places = [
             FlexiblePlace("Phila, Pennsylvania, United States"),
@@ -135,7 +135,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         Correctly matches abbreviations
         ("Elder Twp, Pennsylvania, United States",
          "Elder Township, Cambria, Pennsylvania"
-        returns "Elder Township, Cambria, Pennsylvania, United States")
+        returns "Elder Township, Cambria, Pennsylvania, United States").
         """
         places = [
             FlexiblePlace("Elder Twp, Pennsylvania, United States"),
@@ -150,7 +150,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("Elder Twp, Pennsylvania, United States",
          "Elder Township, Cambria, Pennsylvania",
          "reallylongcityname, Pennsylvania, United States"
-         returns "Elder Township, Cambria, Pennsylvania, United States")
+         returns "Elder Township, Cambria, Pennsylvania, United States").
         """
         places = [
             FlexiblePlace("Elder Twp, Pennsylvania, United States"),
@@ -165,7 +165,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         Correctly matches abbreviations with more specific data
         ("Phila, Pennsylvania, United States"),
          "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania"
-         returns "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States")
+         returns "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States").
         """
         places = [
             FlexiblePlace("Phila, Pennsylvania, United States"),
@@ -180,7 +180,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("Sugarloaf Township, Pennsylvania, United States",
          "Luzerne, Pennsylvania",
          "Sugarloaf Township, Luzerne, Pennsylvania"
-        returns "Sugarloaf Township, Luzerne, Pennsylvania, United States")
+        returns "Sugarloaf Township, Luzerne, Pennsylvania, United States").
         """
         places = [
             FlexiblePlace("Sugarloaf Township, Pennsylvania, United States"),
@@ -196,7 +196,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("Paris, France",
          "Paris, Texas",
          "Texas, United States"
-         returns "Paris, Texas, United States")
+         returns "Paris, Texas, United States").
         """
         places = [
             FlexiblePlace("Paris, France"),
@@ -212,7 +212,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("New York, Iowa, United States",
          "New York, United States",
          "New York, New York, United States"
-         returns "New York, New York, United States")
+         returns "New York, New York, United States").
         """
         places = [
             FlexiblePlace("New York, Iowa, United States"),
@@ -229,7 +229,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         ("Washington, Utah",
          "Walla Walla, Washington",
          "Washington, United States"
-         returns "Walla Walla, Washington, United States")
+         returns "Walla Walla, Washington, United States").
         """
         places = [
             FlexiblePlace("Washington, Utah"),
@@ -247,7 +247,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
          "Washington, Utah",
          "Walla Walla, Washington",
          "Washington, United States"
-         returns "Walla Walla, Washington, United States")
+         returns "Walla Walla, Washington, United States").
         """
         places = [
             FlexiblePlace("United States"),
@@ -269,7 +269,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
          "Lincoln, Massachusetts Bay Colony, British Colonial America",
          "reallysuperlongcityname, reallysuperlongcountyname, reallysuperlongstatename, reallysuperlongcountryname",
          "Belgium"
-        returns "Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America")
+        returns "Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America").
         """
         places = [
             FlexiblePlace("Massachusetts Bay Colony, British Colonial America"),

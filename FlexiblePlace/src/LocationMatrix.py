@@ -18,7 +18,7 @@ class LocationMatrix:
         # | united states | washington | walla walla |
     """
 
-    def __init__(self, locations: list[list[str]]=[]) -> None:
+    def __init__(self, locations: list[list[str]]=[[""]]) -> None:
         """Initializes a LocationMatrix from a list of location component lists.
         
         Creates a matrix structure where each row represents a location and automatically aligns

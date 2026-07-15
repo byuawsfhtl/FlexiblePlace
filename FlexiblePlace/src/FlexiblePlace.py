@@ -2,6 +2,15 @@ from rapidfuzz import fuzz
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class FlexiblePlace:
+    """Represents a geographic location with multiple hierarchical components stored in reverse order.
+    
+    Normalizes location input (string or list) to lowercase and reverses component order for standardized
+    comparison. Provides methods to compare locations by similarity, retrieve components, and combine
+    multiple locations into a comprehensive representation.
+    
+    Attributes:
+        location (list[str]): Location components in reverse order (least to most specific), all lowercase.
+    """
     def __init__(self, location: str | list[str]) -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
@@ -12,7 +21,7 @@ class FlexiblePlace:
             location (str | list[str]): Either a comma-separated string of location components 
                 (e.g., "Paris, France") or a list of location component strings.
         Returns:
-            None
+            None.
         """
         if isinstance(location, str):
             location_components = location.split(",")
