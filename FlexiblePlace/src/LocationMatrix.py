@@ -19,6 +19,17 @@ class LocationMatrix:
     """
 
     def __init__(self, locations: list[list[str]]=[]):
+        """Initializes a LocationMatrix from a list of location component lists.
+        
+        Creates a matrix structure where each row represents a location and automatically aligns
+        components across rows based on similarity matching.
+        
+        Args:
+            locations (list[list[str]]): A list of location component lists, where each inner list represents 
+                the components of a single location. Defaults to an empty list.
+        Returns:
+            None.
+        """
         self.row_count: int = 0
         self.column_count: int = 0
         self.matrix: list[list[LocationComponent]] = []        
@@ -26,6 +37,16 @@ class LocationMatrix:
         self.align()
 
     def __str__(self) -> str:
+        """Returns a formatted string representation of the LocationMatrix.
+        
+        Renders the matrix as a pipe-separated table with columns aligned based on the longest
+        value in each column. Empty rows result in an empty string.
+        
+        Args:
+            None
+        Returns:
+            str: A formatted string representing the matrix as a table, or an empty string if the matrix is empty.
+        """
         # If no rows, return an empty string
         if not self.matrix:
             return ""

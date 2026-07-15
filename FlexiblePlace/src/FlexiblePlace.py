@@ -3,6 +3,17 @@ from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class FlexiblePlace:
     def __init__(self, location: str | list[str]):
+        """Initializes a FlexiblePlace object from a location string or list of location components.
+        
+        Parses the input location and stores its components in reverse order (from most specific to least specific)
+        and converts all components to lowercase for standardized comparison.
+        
+        Args:
+            location (str | list[str]): Either a comma-separated string of location components 
+                (e.g., "Paris, France") or a list of location component strings.
+        Returns:
+            None
+        """
         if isinstance(location, str):
             location_components = location.split(",")
         else:
@@ -11,24 +22,69 @@ class FlexiblePlace:
 
 
     def __str__(self):
+        """Returns a human-readable string representation of the FlexiblePlace object.
+        
+        Converts the location components back to title case and joins them with commas.
+        Note: This currently has limitations with abbreviations (e.g., "United States" vs "Usa", "D.C." vs "D.c").
+        
+        Args:
+            None
+        Returns:
+            str: A formatted location string with title-cased components.
+        """
         #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
         return ", ".join(map(str.title, self.location))
     
     def __repr__(self):
+        """Returns a developer-friendly string representation of the FlexiblePlace object.
+        
+        Args:
+            None
+        Returns:
+            str: A string representing the FlexiblePlace object and its internal location list.
+        """
         return f"FlexiblePlace({self.location})"
     
     def __eq__(self, other: object):
+        """Checks if two FlexiblePlace objects are equal by comparing their location components.
+        
+        Args:
+            other (object): The object to compare with.
+        Returns:
+            bool: True if both objects are FlexiblePlace instances with identical location components, False otherwise.
+        """
         if isinstance(other, FlexiblePlace):
             return self.location == other.location
         return False
     
     def __bool__(self):
+        """Checks if the FlexiblePlace object contains any location components.
+        
+        Args:
+            None
+        Returns:
+            bool: True if the location list is non-empty, False otherwise.
+        """
         return bool(self.location)
     
     def get_location_components(self) -> list[str]:
+        """Returns the list of location components for this FlexiblePlace object.
+        
+        Args:
+            None
+        Returns:
+            list[str]: The internal location components list in reverse order (most specific to least specific).
+        """
         return self.location
     
     def compare(self, other: object) -> float | int:
+        """Compares this FlexiblePlace with another object and returns a similarity score.
+        
+        Args:
+            other (object): The object to compare with.
+        Returns:
+            float | int: A similarity score out of 100, as returned by compare_places().
+        """
         return compare_places(self, other)
     
 
