@@ -189,7 +189,7 @@ class LocationMatrix:
             True if the move is illegal, otherwise False"""
         if not component_a or not component_b:
             return True
-        for i in range(component_a.column, component_b.column):
+        for i in range(component_a.column, component_b.column + 1):
             component_to_check: LocationComponent = self.matrix[component_a.row][i]
             if component_to_check.links and any(component.row == component_b.row for component in component_to_check.links):
                 return True
