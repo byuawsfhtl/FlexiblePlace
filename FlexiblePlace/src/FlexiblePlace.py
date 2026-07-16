@@ -11,7 +11,7 @@ class FlexiblePlace:
     Attributes:
         location (list[str]): Location components in reverse order (least to most specific), all lowercase.
     """
-    def __init__(self, location: str | list[str]) -> None:
+    def __init__(self, location: str | list[str], description: str = "") -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
         Parses the input location and stores its components in reverse order (from most specific to least specific)
@@ -28,6 +28,7 @@ class FlexiblePlace:
         else:
             location_components = location
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
+        self.description = description
 
 
     def __str__(self) -> str:
@@ -42,17 +43,17 @@ class FlexiblePlace:
             str: A formatted location string with title-cased components.
         """
         #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
-        return ", ".join(map(str.title, self.location))
+        return ", ".join(map(str.title, self.location[::-1]))
     
     def __repr__(self) -> str:
-        """Returns a developer-friendly string representation of the FlexiblePlace object.
+        """FamilySearch-standardized string representation of the FlexiblePlace object.
         
         Args:
             None
         Returns:
             str: A string representing the FlexiblePlace object and its internal location list.
         """
-        return f"FlexiblePlace({self.location})"
+        return f"{self.description}"
     
     def __eq__(self, other: object) -> bool:
         """Checks if two FlexiblePlace objects are equal by comparing their location components.
