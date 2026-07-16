@@ -52,7 +52,7 @@ class FlexiblePlace:
         Args:
             None
         Returns:
-            str: A string representing the FlexiblePlace object and its internal location list.
+            str: The FamilySearch PlaceDescription number
         """
         return f"{self.place_description}"
     
@@ -125,11 +125,11 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
             scores_list.append(100)
             continue
         component_score: float = fuzz.ratio(component_a, component_b)
-        scores_list.append(forgive_small_differences(component_score, i))
+        scores_list.append(_forgive_small_differences(component_score, i))
     score = sum(scores_list) / len(scores_list)
     return score
 
-def forgive_small_differences(fuzzy_score: float, index: int) -> float:
+def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
     """Forgives small differences in the fuzzy score based on the index of the component being compared.
     The higher the index, the less important the component is, and thus the more forgiving the score should be.
     For example, a difference in the country component should be less forgiving than a difference in the city 
@@ -149,6 +149,7 @@ def forgive_small_differences(fuzzy_score: float, index: int) -> float:
 
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
+    # MAKE SURE TO KEEP THE place_description CONSISTANT WHEN COMBINING
     """UPDATE THIS DOCSTRING
     Combines multiple FlexiblePlace objects into a single FlexiblePlace object by aligning and merging
     their location components. This function attempts to intelligently resolve conflicts and fill gaps
@@ -159,21 +160,33 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     Returns:
         FlexiblePlace: A new FlexiblePlace object representing the combined locations.
     """
-    # THE PSEUDOCODE BELOW IS ALSO OUTDATED
-    # aligned_places: LocationMatrix = align_places(places)
-    # combined_place: list[str] = generate_combined_place_format(aligned_places)
+    # location_matrix: LocationMatrix = LocationMatrix(places)
+    # combined_place: list[str] = [""] * location_matrix.column_count
     # while true:
-        # empty_indeces: list[int] = find_empty_indeces(combined_place)
-        # for index in empty_indeces:
-            # remove_outliers(aligned_places, index)
-            # add_place_component(aligned_places, combined_place, index)
-        # if nothing_has_changed:
-            # if isFull(combined_place):
+        # has_changed: bool = False
+        # for index in (i for i, comp in enumerate(combined_place) if not comp):
+            # location_matrix.remove_outliers(i)
+            # has_changed = add_place_component(location_matrix, combined_place, index)
+        # if not has_changed:
+            # if _isFull(combined_place):
                 # break
-            # elif isEmpty(aligned_places):
-                # resize_combined_place(combined_place)
+            # elif not location_matrix:
+                # combined_place = [component for component in combined_place if component]
                 # break
             # else:
-                # eliminate_partial_rows(aligned_places)
+                # eliminate_partial_rows(location_matrix)
     # return FlexiblePlace(combined_place)
     return FlexiblePlace("place holder")
+
+# def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
+    # component_to_keep = location_matrix.column_consensus(index)
+    # if component_to_keep:
+        # combined_place[index] = component_to_keep
+        # return True
+    # else:
+        # return False
+
+# def _isFull(combined_place: list[str]) -> bool:
+    # return not "" in combined_place
+
+
