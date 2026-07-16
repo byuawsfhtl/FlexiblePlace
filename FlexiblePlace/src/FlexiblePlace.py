@@ -11,7 +11,7 @@ class FlexiblePlace:
     Attributes:
         location (list[str]): Location components in reverse order (least to most specific), all lowercase.
     """
-    def __init__(self, location: str | list[str], description: str = "") -> None:
+    def __init__(self, location: str | list[str], place_description: str = "") -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
         Parses the input location and stores its components in reverse order (from most specific to least specific)
@@ -20,6 +20,7 @@ class FlexiblePlace:
         Args:
             location (str | list[str]): Either a comma-separated string of location components 
                 (e.g., "Paris, France") or a list of location component strings.
+            place_description (str): FamilySearch uses PlaceDescriptions to standardize places to geo-coordinates.
         Returns:
             None.
         """
@@ -28,7 +29,7 @@ class FlexiblePlace:
         else:
             location_components = location
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
-        self.description = description
+        self.place_description = place_description
 
 
     def __str__(self) -> str:
@@ -53,7 +54,7 @@ class FlexiblePlace:
         Returns:
             str: A string representing the FlexiblePlace object and its internal location list.
         """
-        return f"{self.description}"
+        return f"{self.place_description}"
     
     def __eq__(self, other: object) -> bool:
         """Checks if two FlexiblePlace objects are equal by comparing their location components.
