@@ -5,7 +5,7 @@ class LocationMatrix:
     """A class that represents a matrix of locations, where each row corresponds to the string array of a 
     FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
-    with the correct component in other locations.
+    with the correct component in other locations. Rows are ordered by length
     
     Example:
     locations = [FlexiblePlace("Washington, United States").get_location_components,
@@ -13,9 +13,9 @@ class LocationMatrix:
                  FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
         location_matrix = LocationMatrix(locations)
         print(location_matrix)
+        # | united states | washington | walla walla |
         # | united states | washington |             |
         # |               | washington | walla walla |
-        # | united states | washington | walla walla |
     """
 
     def __init__(self, locations: list[list[str]]) -> None:
@@ -33,7 +33,7 @@ class LocationMatrix:
         self.row_count: int = 0
         self.column_count: int = 0
         self.matrix: list[list[LocationComponent]] = []        
-        self.load_places(locations)
+        self.load_places(sorted(locations, key=len, reverse=True))
         self.align()
 
     def __str__(self) -> str:

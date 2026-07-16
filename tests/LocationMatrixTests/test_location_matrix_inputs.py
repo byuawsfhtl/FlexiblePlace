@@ -34,8 +34,8 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = (
-            "|               |            |         |          |\n"
-            "| united states | new jersey | passaic | paterson |"
+            "| united states | new jersey | passaic | paterson |\n"
+            "|               |            |         |          |"
         )
         self.assertEqual(str(lm), expected)
 
@@ -47,8 +47,8 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = (
-            "| united states | new jersey | camden |        |\n"
-            "| united states | new jersey | camden | camden |"
+            "| united states | new jersey | camden | camden |\n"
+            "| united states | new jersey | camden |        |"
         )
         self.assertEqual(str(lm), expected)
 
@@ -60,8 +60,8 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = (
-            "|               | texas |        | houston |\n"
-            "| united states | texas | harris | houston |"
+            "| united states | texas | harris | houston |\n"
+            "|               | texas |        | houston |"
         )
         self.assertEqual(str(lm), expected)
 
@@ -76,9 +76,9 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (
-            "|                       | new jersey          | camden               |                    |\n"
             "| united states         | new jersey          | camden               | camden             |\n"
-            "| reallylongcountryname | reallylongstatename | reallylongcountyname | reallylongcityname |"
+            "| reallylongcountryname | reallylongstatename | reallylongcountyname | reallylongcityname |\n"
+            "|                       | new jersey          | camden               |                    |"
         )
         self.assertEqual(str(lm), expected)
 
@@ -93,9 +93,9 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (
+            "| united states | illinois | sangamon | reallylongcityname |\n"
             "|               | illinois | sangamon | springfield        |\n"
-            "| united states | illinois |          | springfield        |\n"
-            "| united states | illinois | sangamon | reallylongcityname |"
+            "| united states | illinois |          | springfield        |"
         )
         self.assertEqual(str(lm), expected)
 
@@ -131,12 +131,12 @@ class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (
-            "| british colonial america   | massachusetts bay colony |                           |                         |\n"
-            "| british colonial america   |                          |                           |                         |\n"
-            "|                            | massachusetts bay colony | lincoln                   |                         |\n"
+            "| reallysuperlongcountryname | reallysuperlongstatename | reallysuperlongcountyname | reallysuperlongcityname |\n"
             "|                            | massachusetts bay colony | lincoln                   | bucksport               |\n"
             "| british colonial america   | massachusetts bay colony | lincoln                   |                         |\n"
-            "| reallysuperlongcountryname | reallysuperlongstatename | reallysuperlongcountyname | reallysuperlongcityname |\n"
+            "| british colonial america   | massachusetts bay colony |                           |                         |\n"
+            "|                            | massachusetts bay colony | lincoln                   |                         |\n"
+            "| british colonial america   |                          |                           |                         |\n"
             "| belgium                    |                          |                           |                         |"
         )
         self.assertEqual(str(lm), expected)

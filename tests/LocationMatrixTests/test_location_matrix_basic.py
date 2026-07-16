@@ -44,9 +44,9 @@ class TestLocationMatrixBasic(unittest.TestCase):
         ]
         lm = LocationMatrix([p.get_location_components() for p in places])
         expected = (
+            "| united sates  | wasington  | walla walla |\n"
             "| united states | washington |             |\n"
-            "|               | washingon  | walla walla |\n"
-            "| united sates  | wasington  | walla walla |"
+            "|               | washingon  | walla walla |"
         )
         self.assertEqual(str(lm), expected)
 
