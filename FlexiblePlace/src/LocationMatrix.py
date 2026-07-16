@@ -184,7 +184,7 @@ class LocationMatrix:
             print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
             # |               |% washington %|             |
             # |               |% washington %| walla walla |
-            # | united states |% washington %| walla walla |
+            # | united states |% washington %| walla walla |.
 
         Args:
             component_a (LocationComponent): The first component to link.

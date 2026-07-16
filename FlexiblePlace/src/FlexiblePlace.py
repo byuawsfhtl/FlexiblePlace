@@ -104,7 +104,7 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     It is effectively a glorified string comparator (Texas, USA and Texas, United States will score very low).
     Note: 
      - All location components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
-     - More specific location components will be weighted lower than less specific ones (countries are weighted heavier than cities)
+     - More specific location components will be weighted lower than less specific ones (countries are weighted heavier than cities).
 
     Args:
         place_a (FlexiblePlace): The first FlexiblePlace object to compare.
