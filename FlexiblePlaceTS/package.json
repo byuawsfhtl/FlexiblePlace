@@ -1,0 +1,6 @@
+{
+  "name": "flexible-place-ts",
+  "version": "1.0.0",
+  "description": "TypeScript implementation for FlexiblePlace",
+  "main": "index.js"
+}
