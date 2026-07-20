@@ -239,6 +239,22 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Walla Walla, Washington, United States")
 
+    def test_disambiguates_multiple_locations_florida(self) -> None:
+        """
+        Matches coinsiding places and removes outlier
+        ("Orange, California",
+         "Orange, Florida, United States",
+         "Orlando, Orange, Florida"
+         returns "Orlando, Orange, Florida, United States").
+        """
+        places = [
+            FlexiblePlace("Orange, California"),
+            FlexiblePlace("Orange, Florida, United States"),
+            FlexiblePlace("Orlando, Orange, Florida")
+        ]
+        result = combine_flexible_places(places)
+        self.assertEqual(str(result), "Orlando, Orange, Florida, United States")
+
     def test_works_with_large_input_washington(self) -> None:
         """
         Disambiguates multiple locations
