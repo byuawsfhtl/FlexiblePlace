@@ -267,5 +267,35 @@ class LocationMatrix:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
 
+    def remove_outliers(self, column) -> None:
+        pluralities: dict[int, list[int]] = {}
+        checked_rows: set[int] = set()
+        for row in range(self.row_count):
+            if row in checked_rows:
+                continue
+            component: LocationComponent = self.matrix[row][column]
+            
+            def add_linked_components(key, current_component) -> None:
+                if current_component.row in checked_rows:
+                    return
+                checked_rows.add(current_component.row)
+                pluralities[key][0] += 1;
+                pluralities[current_component.row] = pluralities[key]
+                for linked_component in current_component.links:
+                    add_linked_components(key, linked_component)
 
-    
+            pluralities[row] = [0]
+            add_linked_components(row, component)
+        max_count: int = max(val[0] for val in pluralities.values())
+        rows_to_remove: list[int] = []
+        for current_row, count in pluralities.items():
+            if count[0] < max_count:
+                rows_to_remove.append(current_row)
+        self._remove_rows(rows_to_remove)
+
+    def _remove_rows(self, rows: list[int]) -> None:
+        for row in sorted(rows, reverse=True):
+            self._remove_row(row)
+
+    def _remove_row(self, row: int) -> None:
+        self.matrix.pop(row)

@@ -119,6 +119,7 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     scores_list: list[float] = []
     location_matrix: LocationMatrix = LocationMatrix([place_a.get_location_components(), place_b.get_location_components()])
     for i in range(location_matrix.column_count):
+        # TODO: Create a get_row/get_col method
         component_a: str = location_matrix.matrix[0][i].value
         component_b: str = location_matrix.matrix[1][i].value
         if not component_a or not component_b:
@@ -149,7 +150,7 @@ def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
 
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
-    # MAKE SURE TO KEEP THE place_description CONSISTANT WHEN COMBINING
+    # TODO: MAKE SURE TO KEEP THE place_description CONSISTANT WHEN COMBINING
     """Combines multiple FlexiblePlace objects into a single FlexiblePlace object by aligning and merging
     their location components. This function attempts to intelligently resolve conflicts and fill gaps
     across multiple place definitions to create a comprehensive location representation.
