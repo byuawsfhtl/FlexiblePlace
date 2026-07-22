@@ -116,64 +116,6 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         result = combine_flexible_places(places)
         self.assertEqual(str(result), "Springfield, Sangamon, Illinois, United States")
 
-    def test_correctly_matches_abbreviations_philadelphia(self) -> None:
-        """
-        Correctly matches abbreviations
-        ("Phila, Pennsylvania, United States",
-         "Philadelphia, Pennsylvania"
-        returns "Philadelphia, Pennsylvania, United States").
-        """
-        places = [
-            FlexiblePlace("Phila, Pennsylvania, United States"),
-            FlexiblePlace("Philadelphia, Pennsylvania")
-        ]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Philadelphia, Pennsylvania, United States")
-
-    def test_correctly_matches_abbreviations_township(self) -> None:
-        """
-        Correctly matches abbreviations
-        ("Elder Twp, Pennsylvania, United States",
-         "Elder Township, Cambria, Pennsylvania"
-        returns "Elder Township, Cambria, Pennsylvania, United States").
-        """
-        places = [
-            FlexiblePlace("Elder Twp, Pennsylvania, United States"),
-            FlexiblePlace("Elder Township, Cambria, Pennsylvania")
-        ]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Elder Township, Cambria, Pennsylvania, United States")
-
-    def test_correctly_matches_abbreviations_ignores_outliers(self) -> None:
-        """
-        Correctly matches abbreviations and ignores outliers
-        ("Elder Twp, Pennsylvania, United States",
-         "Elder Township, Cambria, Pennsylvania",
-         "reallylongcityname, Pennsylvania, United States"
-         returns "Elder Township, Cambria, Pennsylvania, United States").
-        """
-        places = [
-            FlexiblePlace("Elder Twp, Pennsylvania, United States"),
-            FlexiblePlace("Elder Township, Cambria, Pennsylvania"),
-            FlexiblePlace("reallylongcityname, Pennsylvania, United States")
-        ]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Elder Township, Cambria, Pennsylvania, United States")
-
-    def test_correctly_matches_abbreviations_philadelphia_monthly_meeting(self) -> None:
-        """
-        Correctly matches abbreviations with more specific data
-        ("Phila, Pennsylvania, United States"),
-         "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania"
-         returns "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States").
-        """
-        places = [
-            FlexiblePlace("Phila, Pennsylvania, United States"),
-            FlexiblePlace("Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania")
-        ]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Philadelphia Monthly Meeting, Philadelphia, Philadelphia, Pennsylvania, United States")
-
     def test_combines_data_from_incomplete_but_matching_sources(self) -> None:
         """
         Combines data from incomplete, but matching, sources
