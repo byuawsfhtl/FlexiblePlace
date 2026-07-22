@@ -44,7 +44,7 @@ class FlexiblePlace:
             str: A formatted location string with title-cased components.
         """
         #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
-        return ", ".join(map(str.title, self.location[::-1]))
+        return ", ".join(map(str.title, self.location))
     
     def __repr__(self) -> str:
         """FamilySearch-standardized string representation of the FlexiblePlace object.

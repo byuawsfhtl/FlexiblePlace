@@ -302,9 +302,8 @@ class LocationMatrix:
         self.row_count -= 1
 
     def column_consensus(self, column: int) -> str:
-        components_in_column: list[LocationComponent] = self.get_column(column)
-        max_count: int = max(len(component.links) for component in components_in_column)
-        if not all(not component or len(component.links) == max_count
+        components_in_column: list[LocationComponent] = [component for component in self.get_column(column) if component]
+        if not all(component is components_in_column[0] or component in components_in_column[0].links
                    for component in components_in_column):
             return ""
         return max((component.value for component in components_in_column), key=len, default="")
