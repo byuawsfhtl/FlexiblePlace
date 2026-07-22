@@ -194,14 +194,15 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     Returns:
         FlexiblePlace: A new FlexiblePlace object representing the combined locations.
     """
-    # location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
-    # combined_place: list[str] = [""] * location_matrix.column_count
-    # while true:
-        # has_changed: bool = False
-        # for index in (i for i, comp in enumerate(combined_place) if not comp):
-            # location_matrix.remove_outliers(index)
-            # has_changed = add_place_component(location_matrix, combined_place, index)
-        # if not has_changed:
+    location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
+    combined_place: list[str] = [""] * location_matrix.column_count
+    while True:
+        has_changed: bool = False
+        for index in (i for i, comp in enumerate(combined_place) if not comp):
+            location_matrix.remove_outliers(index)
+            has_changed = _add_place_component(location_matrix, combined_place, index)
+        if not has_changed:
+            break
             # if _isFull(combined_place):
                 # break
             # elif not location_matrix:
@@ -209,16 +210,15 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
                 # break
             # else:
                 # eliminate_partial_rows(location_matrix)
-    # return FlexiblePlace(combined_place)
-    return FlexiblePlace("place holder")
+    return FlexiblePlace(combined_place)
 
-# def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
-    # component_to_keep = location_matrix.column_consensus(index)
-    # if component_to_keep:
-        # combined_place[index] = component_to_keep
-        # return True
-    # else:
-        # return False
+def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
+    component_to_keep = location_matrix.column_consensus(index)
+    if component_to_keep:
+        combined_place[index] = component_to_keep
+        return True
+    else:
+        return False
 
 # def _isFull(combined_place: list[str]) -> bool:
     # return not "" in combined_place

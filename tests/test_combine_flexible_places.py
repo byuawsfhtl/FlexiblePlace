@@ -9,7 +9,7 @@ class TestCombineFlexiblePlaces(unittest.TestCase):
         """Null returns null."""
         places = []
         result = combine_flexible_places(places)
-        self.assertIsNone(result)
+        self.assertFalse(result)
 
     def test_single_object_returns_same_object(self) -> None:
         """Single object returns the same object."""

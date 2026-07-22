@@ -46,6 +46,7 @@ class LocationComponent:
     """
         if type(other) == LocationComponent:
             self.links.add(other)
+            other.links.add(self)
             merged_set = self.links | other.links
             for component in merged_set:
                 component.links = merged_set

@@ -299,6 +299,7 @@ class LocationMatrix:
 
     def _remove_row(self, row: int) -> None:
         self.matrix.pop(row)
+        self.row_count -= 1
 
     def column_consensus(self, column: int) -> str:
         components_in_column: list[LocationComponent] = self.get_column(column)
