@@ -36,7 +36,8 @@ class LocationComponent:
         return f"{self.value} ({self.row}, {self.column})"
 
     def link(self, other: object) -> None:
-        """Creates a bidirectional link between this LocationComponent and another LocationComponent.
+        """Creates a bidirectional link between this LocationComponent and another LocationComponent
+        All linked components share the same set of links
     
         Args:
             other: The object to link with (typically a LocationComponent).
@@ -45,5 +46,7 @@ class LocationComponent:
     """
         if type(other) == LocationComponent:
             self.links.add(other)
-            other.links.add(self)
+            merged_set = self.links | other.links
+            for component in merged_set:
+                component.links = merged_set
         
