@@ -290,7 +290,7 @@ class LocationMatrix:
         components_in_column: list[LocationComponent] = self.get_column(column)
         max_count: int = max(len(component.links) for component in components_in_column)
         rows_to_remove: list[int] = [component.row for component in components_in_column 
-                                     if component and component.row < max_count]
+                                     if component and len(component.links) < max_count]
         self._remove_rows(rows_to_remove)
 
     def _remove_rows(self, rows: list[int]) -> None:

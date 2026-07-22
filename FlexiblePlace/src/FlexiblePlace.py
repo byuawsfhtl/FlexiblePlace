@@ -213,6 +213,8 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     return FlexiblePlace(combined_place)
 
 def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
+    if not location_matrix:
+        return False
     component_to_keep = location_matrix.column_consensus(index)
     if component_to_keep:
         combined_place[index] = component_to_keep
