@@ -300,9 +300,10 @@ class LocationMatrix:
     def _remove_row(self, row: int) -> None:
         self.matrix.pop(row)
 
-    # def column_consensus(self, column: int) -> str:
-        
-        # if len(linked_rows) > 1:
-            # return ""
-        # else:
-            # return max((self.get(row, column) for row in linked_rows[0]), key=len, default="")
+    def column_consensus(self, column: int) -> str:
+        components_in_column: list[LocationComponent] = self.get_column(column)
+        max_count: int = max(len(component.links) for component in components_in_column)
+        if not all(not component or len(component.links) == max_count
+                   for component in components_in_column):
+            return ""
+        return max((component.value for component in components_in_column), key=len, default="")
