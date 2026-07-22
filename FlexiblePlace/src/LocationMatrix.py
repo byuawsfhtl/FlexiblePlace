@@ -317,3 +317,6 @@ class LocationMatrix:
                     self._remove_row(row)
                     return True
         return False
+    
+    def remove_last_row(self) -> None:
+        self._remove_row(self.row_count - 1)
