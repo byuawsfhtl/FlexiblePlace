@@ -119,9 +119,8 @@ def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     scores_list: list[float] = []
     location_matrix: LocationMatrix = LocationMatrix([place_a.get_location_components(), place_b.get_location_components()])
     for i in range(location_matrix.column_count):
-        # TODO: Create a get_row/get_col method
-        component_a: str = location_matrix.matrix[0][i].value
-        component_b: str = location_matrix.matrix[1][i].value
+        component_a: str = location_matrix.get(0,i).value
+        component_b: str = location_matrix.get(1,i).value
         if not component_a or not component_b:
             scores_list.append(100)
             continue
@@ -195,12 +194,12 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     Returns:
         FlexiblePlace: A new FlexiblePlace object representing the combined locations.
     """
-    # location_matrix: LocationMatrix = LocationMatrix(places)
+    # location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
     # combined_place: list[str] = [""] * location_matrix.column_count
     # while true:
         # has_changed: bool = False
         # for index in (i for i, comp in enumerate(combined_place) if not comp):
-            # location_matrix.remove_outliers(i)
+            # location_matrix.remove_outliers(index)
             # has_changed = add_place_component(location_matrix, combined_place, index)
         # if not has_changed:
             # if _isFull(combined_place):
