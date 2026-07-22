@@ -226,5 +226,5 @@ def _isFull(combined_place: list[str]) -> bool:
 
 def _eliminate_partial_rows(lm: LocationMatrix):
     """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells"""
-    if not lm.remove_least_accurate_row(): #and not lm.remove_row_with_smallest_component():
+    if not lm.remove_least_accurate_row() and not lm.remove_row_with_smallest_component():
         lm.remove_last_row()

@@ -318,5 +318,15 @@ class LocationMatrix:
                     return True
         return False
     
+    def remove_row_with_smallest_component(self) -> bool:
+        for column in range(self.column_count):
+            column_components = self.get_column(column)
+            min_len = len(min(column_components, key=lambda component: len(component.value)).value)
+            min_indeces = [comp.row for comp in column_components if len(comp.value) == min_len]
+            if len(min_indeces) == 1:
+                self._remove_row(min_indeces[0])
+                return True
+        return False
+    
     def remove_last_row(self) -> None:
         self._remove_row(self.row_count - 1)
