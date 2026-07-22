@@ -202,14 +202,13 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             location_matrix.remove_outliers(index)
             has_changed = _add_place_component(location_matrix, combined_place, index)
         if not has_changed:
-            break
-            # if _isFull(combined_place):
-                # break
-            # elif not location_matrix:
-                # combined_place = [component for component in combined_place if component]
-                # break
-            # else:
-                # eliminate_partial_rows(location_matrix)
+            if _isFull(combined_place):
+                break
+            elif not location_matrix:
+                combined_place = [component for component in combined_place if component]
+                break
+            else:
+                eliminate_partial_rows(location_matrix)
     return FlexiblePlace(combined_place)
 
 def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
@@ -222,10 +221,10 @@ def _add_place_component(location_matrix: LocationMatrix, combined_place: list[s
     else:
         return False
 
-# def _isFull(combined_place: list[str]) -> bool:
-    # return not "" in combined_place
+def _isFull(combined_place: list[str]) -> bool:
+    return not "" in combined_place
 
-# def _eliminate_partial_rows(lm):
-    # """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells"""
-    # if not lm.remove_least_precise_row() or not lm.remove_row_with_smallest_component():
-        # lm.remove_last_row()
+def _eliminate_partial_rows(lm: LocationMatrix):
+    """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells"""
+    if not lm.remove_least_accurate_row() and not lm.remove_row_with_smallest_component():
+        lm.remove_last_row()

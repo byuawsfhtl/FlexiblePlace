@@ -307,3 +307,13 @@ class LocationMatrix:
                    for component in components_in_column):
             return ""
         return max((component.value for component in components_in_column), key=len, default="")
+    
+    def remove_least_accurate_row(self) -> bool:
+        for column in range(self.column_count):
+            if not any(component for component in self.get_column(column)):
+                continue
+            for row in range(self.row_count):
+                if not self.get(row, column):
+                    self._remove_row(row)
+                    return True
+        return False
