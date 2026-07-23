@@ -209,7 +209,8 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
                 break
             else:
                 _eliminate_partial_rows(location_matrix)
-    return FlexiblePlace(combined_place)
+    place_description: str = _find_closest_description(combined_place, places)
+    return FlexiblePlace(combined_place, place_description)
 
 def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
     """Attempt to determine and add a component for a given column index into the combined_place.
@@ -241,3 +242,13 @@ def _eliminate_partial_rows(lm: LocationMatrix):
     """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells"""
     if not lm.remove_least_accurate_row() and not lm.remove_row_with_smallest_component():
         lm.remove_last_row()
+
+def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace]) -> str:
+    target: FlexiblePlace = FlexiblePlace(combined_place)
+    scores: list[float] = [target.compare(place) for place in places]
+    max_score: float = max(scores, default=0)
+    if max_score < 80:
+        max_score = 80
+    best_matches: list[FlexiblePlace] = [places[i] for i in range(len(scores)) if scores[i] == max_score]
+    best_match: FlexiblePlace = max(best_matches, key=lambda place: len(place.location), default=target)
+    return best_match.place_description
