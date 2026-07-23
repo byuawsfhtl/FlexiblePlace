@@ -212,6 +212,14 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     return FlexiblePlace(combined_place)
 
 def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
+    """Attempt to determine and add a component for a given column index into the combined_place.
+    Args:
+        location_matrix (LocationMatrix): The matrix containing aligned LocationComponent objects.
+        combined_place (list[str]): The target merged-place list to be filled in-place. Empty slots are represented by "".
+        index (int): The column index (component position) to attempt to resolve and add.
+    Returns:
+        bool: True if a component was added to combined_place at index (i.e., consensus existed),
+              False if no consensus could be determined and combined_place was not changed."""
     if not location_matrix:
         return False
     component_to_keep = location_matrix.column_consensus(index)
@@ -222,6 +230,11 @@ def _add_place_component(location_matrix: LocationMatrix, combined_place: list[s
         return False
 
 def _isFull(combined_place: list[str]) -> bool:
+    """Return whether the merged place has no empty components.
+    Args:
+        combined_place (list[str]): The merged-place list to check.
+    Returns:
+        bool: True if combined_place contains no empty strings (all components filled), False otherwise."""
     return not "" in combined_place
 
 def _eliminate_partial_rows(lm: LocationMatrix):

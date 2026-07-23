@@ -74,15 +74,37 @@ class LocationMatrix:
         return "\n".join(lines)
     
     def get(self, row: int, col: int) -> LocationComponent:
+        """Return the LocationComponent at the specified row and column.
+        Args:
+            row (int): Zero-based row index.
+            col (int): Zero-based column index.
+        Returns:
+            LocationComponent: The LocationComponent instance at the specified location."""
         return self.matrix[row][col]
     
     def get_row(self, row: int) -> list[LocationComponent]:
+        """Return an entire row of LocationComponent objects.
+        Args:
+           row (int): Zero-based row index.
+        Returns:
+            list[LocationComponent]: The list of LocationComponent objects representing the row."""
         return self.matrix[row]
 
     def get_column(self, column: int) -> list[LocationComponent]:
+        """Return a column from the matrix as a list of LocationComponent objects.
+        Args:
+            column (int): Zero-based column index.
+        Returns:
+            list[LocationComponent]: The column components in row order."""
         return [row[column] for row in self.matrix]
     
     def insert(self, component: LocationComponent) -> None:
+        """Insert or replace a LocationComponent into the internal matrix at its (row, column).
+        Args:
+            component (LocationComponent): The LocationComponent to insert.
+        Returns:
+            None
+        """
         row: int = component.row
         col: int = component.column
         self.matrix[row][col] = component
@@ -287,6 +309,16 @@ class LocationMatrix:
                 self._move(linked_component, distance)
 
     def remove_outliers(self, column) -> None:
+        """Remove rows that are outliers for the specified column.
+
+        Determines the maximum number of links for any component in the specified column,
+        treats components with fewer links as outliers, and removes their rows from the matrix.
+        This helps to prune rows that do not share consensus with the plurality in that column.
+
+        Args:
+            column (int): Zero-based column index to inspect for outliers.
+        Returns:
+            None"""
         components_in_column: list[LocationComponent] = self.get_column(column)
         max_count: int = max(len(component.links) for component in components_in_column)
         rows_to_remove: list[int] = [component.row for component in components_in_column 
@@ -294,14 +326,30 @@ class LocationMatrix:
         self._remove_rows(rows_to_remove)
 
     def _remove_rows(self, rows: list[int]) -> None:
+        """Remove multiple rows by index from the matrix.
+        Args:
+            rows (list[int]): A list of zero-based row indices to remove.
+        Returns:
+            None"""
         for row in sorted(rows, reverse=True):
             self._remove_row(row)
 
     def _remove_row(self, row: int) -> None:
+        """Remove a single row from the matrix.
+        Args:
+            row (int): Zero-based index of the row to remove.
+        Returns:
+            None"""
         self.matrix.pop(row)
         self.row_count -= 1
 
     def column_consensus(self, column: int) -> str:
+        """Return a consensus string for a given column if all non-empty components agree (or are linked).
+        Args:
+            column (int): Zero-based column index to compute consensus for.
+        Returns:
+            str: The consensus component string (the longest matching component's value) if consensus is found,
+                otherwise an empty string."""
         components_in_column: list[LocationComponent] = [component for component in self.get_column(column) if component]
         if not all(component is components_in_column[0] or component in components_in_column[0].links
                    for component in components_in_column):
@@ -309,6 +357,11 @@ class LocationMatrix:
         return max((component.value for component in components_in_column), key=len, default="")
     
     def remove_least_accurate_row(self) -> bool:
+        """Remove the first row that lacks a component where other rows have one (i.e., the least accurate row).
+        Args:
+            None
+        Returns:
+            bool: True if a row was removed, False if no candidate row was found."""
         for column in range(self.column_count):
             if not any(component for component in self.get_column(column)):
                 continue
@@ -319,6 +372,11 @@ class LocationMatrix:
         return False
     
     def remove_row_with_smallest_component(self) -> bool:
+        """Remove a row that contains the uniquely smallest component (by string length) in any column.
+        Args:
+            None
+        Returns:
+            bool: True if a row was removed, False otherwise."""
         for column in range(self.column_count):
             column_components = self.get_column(column)
             min_len = len(min(column_components, key=lambda component: len(component.value)).value)
@@ -329,4 +387,9 @@ class LocationMatrix:
         return False
     
     def remove_last_row(self) -> None:
+        """Remove the last row in the matrix.
+        Args:
+            None
+        Returns:
+            None"""
         self._remove_row(self.row_count - 1)
