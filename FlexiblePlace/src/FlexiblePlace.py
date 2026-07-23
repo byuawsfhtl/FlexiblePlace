@@ -149,7 +149,6 @@ def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
 
 @staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
-    # TODO: MAKE SURE TO KEEP THE place_description CONSISTANT WHEN COMBINING
     """Combines multiple FlexiblePlace objects into a single FlexiblePlace object by aligning and merging
     their location components. This function attempts to intelligently resolve conflicts and fill gaps
     across multiple place definitions to create a comprehensive location representation.
@@ -244,6 +243,13 @@ def _eliminate_partial_rows(lm: LocationMatrix):
         lm.remove_last_row()
 
 def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace]) -> str:
+    """The place_description of the most similar FlexiblePlace to the target is returned.
+    Args:
+        combined_place (list[str]): The target location to be compared with
+        places (list[FlexiblePlace]): FlexiblePlace objects to compare
+    Returns:
+        str: The place_description of the closest match. (Ties are broken by number of components)"""
+        
     target: FlexiblePlace = FlexiblePlace(combined_place)
     scores: list[float] = [target.compare(place) for place in places]
     max_score: float = max(scores, default=0)
