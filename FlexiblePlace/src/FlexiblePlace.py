@@ -149,11 +149,12 @@ def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
     return fuzzy_score + redeemed_points
 
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
-    """Combines multiple FlexiblePlace objects into a single FlexiblePlace object by aligning and merging
-    their location components. This function attempts to intelligently resolve conflicts and fill gaps
-    across multiple place definitions to create a comprehensive location representation. See merging
-    algorithm below. (Note: The algorithm does not move unto the next step until the current step fails
-    to change merged_location).
+    """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
+    
+    This function attempts to intelligently resolve conflicts and fill gaps across multiple place
+    definitions to create a comprehensive location representation. See merging algorithm below.
+    (Note: The algorithm does not move unto the next step until the current step fails to change
+    merged_location).
         
         1. Align components of the locations provided.
             ```
