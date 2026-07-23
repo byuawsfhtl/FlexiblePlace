@@ -155,7 +155,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     algorithm below. (Note: The algorithm does not move unto the next step until the current step fails
     to change merged_location).
         
-        1. Align components of the locations provided:
+        1. Align components of the locations provided.
             ```
             "Washington, Utah"             ->  |             | Washington | Utah          |
             "Walla Walla, Washington"      ->  | Walla Walla | Washington |               |
@@ -165,7 +165,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             merged_location -> | ___ | ___ | ___ |
             ```
         
-        2. Remove clear outliers:
+        2. Remove clear outliers.
             ```
             |             | Washington | Utah          |  ->  |             | Washington | Utah          |
             | Walla Walla | Washington |               |  ->  | Walla Walla | Washington |               |
@@ -175,7 +175,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             merged_location -> | Walla Walla | Washington | ___ |
             ```
         
-        3. Remove least precise inputs:
+        3. Remove least precise inputs.
             ```
             |             | Washington | Utah          |  ->  |             | Washington | Utah          |
             | Walla Walla | Washington |               |  ->  
@@ -184,7 +184,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             merged_location -> | Walla Walla | Washington | ___ |
             ```
         
-        4. Remove inputs with the smallest components:
+        4. Remove inputs with the smallest components.
             ```
             |             | Washington | Utah          |  ->  
             |             | Washington | United States |  ->  |             | Washington | United States |
@@ -192,13 +192,13 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             merged_location -> | Walla Walla | Washington | United States |
             ```
 
-        5. Remove the last input:
+        5. Remove the last input.
             *At this point in the example, the algorithm would have terminated after step 4 because the merged_location
             was completely filled. If the merged_location had been filled earlier in the algorithm, it would have stopped
             earlier as well. In the case that this step is reached, the last row in the location matrix is removed, then
             gets inspected to see if a new component can be determined from the remaining information.
         
-        6. Return merged_location:
+        6. Return merged_location.
             *In the event that merged_location is still unable to fill all necessary components, it is resized and returned as 
             the result.
 
@@ -253,9 +253,9 @@ def _isFull(combined_place: list[str]) -> bool:
 def _eliminate_partial_rows(lm: LocationMatrix) -> None:
     """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells.
     Args: 
-        lm (LocationMatrix): LocationMatrix object to be pruned
+        lm (LocationMatrix): LocationMatrix object to be pruned.
     Returns:
-        None"""
+        None."""
     if not lm.remove_least_accurate_row() and not lm.remove_row_with_smallest_component():
         lm.remove_last_row()
 
