@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rapidfuzz import fuzz
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
@@ -88,7 +90,7 @@ class FlexiblePlace:
         """
         return self.location
     
-    def compare(self, other: object) -> float | int:
+    def compare(self, other: FlexiblePlace) -> float | int:
         """Compares this FlexiblePlace with another object and returns a similarity score.
         
         Args:
@@ -99,7 +101,6 @@ class FlexiblePlace:
         return compare_places(self, other)
     
 
-@staticmethod
 def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     """Compares two FlexiblePlace objects and returns a similarity score out of 100. Assumes that places
     are given in a standardized order (e.g. City, County, State/Province, Country).
@@ -147,7 +148,6 @@ def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
     redeemed_points: float = (100 - fuzzy_score) * forgiveness_factor # Redeems a certain percentage of lost points
     return fuzzy_score + redeemed_points
 
-@staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     """Combines multiple FlexiblePlace objects into a single FlexiblePlace object by aligning and merging
     their location components. This function attempts to intelligently resolve conflicts and fill gaps
@@ -163,7 +163,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             "bad data, bad data, bad data" ->  | bad data    | bad data   | bad data      |
 
             merged_location -> | ___ | ___ | ___ |
-            ```
+            ```.
         
         2. Remove clear outliers.
             ```
@@ -173,7 +173,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             | bad data    | bad data   | bad data      |  ->  
 
             merged_location -> | Walla Walla | Washington | ___ |
-            ```
+            ```.
         
         3. Remove least precise inputs.
             ```
@@ -182,7 +182,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             |             | Washington | United States |  ->  |             | Washington | United States |
 
             merged_location -> | Walla Walla | Washington | ___ |
-            ```
+            ```.
         
         4. Remove inputs with the smallest components.
             ```
@@ -190,7 +190,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             |             | Washington | United States |  ->  |             | Washington | United States |
 
             merged_location -> | Walla Walla | Washington | United States |
-            ```
+            ```.
 
         5. Remove the last input.
             *At this point in the example, the algorithm would have terminated after step 4 because the merged_location
