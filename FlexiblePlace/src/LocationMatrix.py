@@ -5,7 +5,7 @@ class LocationMatrix:
     """A class that represents a matrix of locations, where each row corresponds to the string array of a 
     FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
-    with the correct component in other locations. Rows are ordered by length
+    with the correct component in other locations. Rows are ordered by length.
     
     Example:
     locations = [FlexiblePlace("Washington, United States").get_location_components,
@@ -103,8 +103,7 @@ class LocationMatrix:
         Args:
             component (LocationComponent): The LocationComponent to insert.
         Returns:
-            None
-        """
+            None."""
         row: int = component.row
         col: int = component.column
         self.matrix[row][col] = component
@@ -308,7 +307,7 @@ class LocationMatrix:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
 
-    def remove_outliers(self, column) -> None:
+    def remove_outliers(self, column: int) -> None:
         """Remove rows that are outliers for the specified column.
 
         Determines the maximum number of links for any component in the specified column,
@@ -321,8 +320,7 @@ class LocationMatrix:
             None"""
         components_in_column: list[LocationComponent] = self.get_column(column)
         max_count: int = max(len(component.links) for component in components_in_column)
-        rows_to_remove: list[int] = [component.row for component in components_in_column 
-                                     if component and len(component.links) < max_count]
+        rows_to_remove: list[int] = [component.row for component in components_in_column if component and len(component.links) < max_count]
         self._remove_rows(rows_to_remove)
 
     def _remove_rows(self, rows: list[int]) -> None:
@@ -330,7 +328,7 @@ class LocationMatrix:
         Args:
             rows (list[int]): A list of zero-based row indices to remove.
         Returns:
-            None"""
+            None."""
         for row in sorted(rows, reverse=True):
             self._remove_row(row)
 
@@ -339,7 +337,7 @@ class LocationMatrix:
         Args:
             row (int): Zero-based index of the row to remove.
         Returns:
-            None"""
+            None."""
         self.matrix.pop(row)
         self.row_count -= 1
 
@@ -389,7 +387,7 @@ class LocationMatrix:
     def remove_last_row(self) -> None:
         """Remove the last row in the matrix.
         Args:
-            None
+            None.
         Returns:
-            None"""
+            None."""
         self._remove_row(self.row_count - 1)

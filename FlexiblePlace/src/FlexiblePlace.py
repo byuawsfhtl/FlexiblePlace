@@ -153,7 +153,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     their location components. This function attempts to intelligently resolve conflicts and fill gaps
     across multiple place definitions to create a comprehensive location representation.
     Merging algorithm:
-    *The algorithm does not move unto the next step until the current step fails to change merged_location
+    *The algorithm does not move unto the next step until the current step fails to change merged_location.
         1) Align components of the locations provided:
             "Washington, Utah"             ->  |             | Washington | Utah          |
             "Walla Walla, Washington"      ->  | Walla Walla | Washington |               |
@@ -185,7 +185,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             earlier as well. In the case that this step is reached, the last row in the location matrix is removed, then
             gets inspected to see if a new component can be determined from the remaining information.
         6) Return merged_location:
-            *In the event that merged_location is unable to fill all necessary components, it is resized and returned as 
+            *In the event that merged_location is still unable to fill all necessary components, it is resized and returned as 
             the result.
         
     Args:
@@ -237,18 +237,22 @@ def _isFull(combined_place: list[str]) -> bool:
         bool: True if combined_place contains no empty strings (all components filled), False otherwise."""
     return not "" in combined_place
 
-def _eliminate_partial_rows(lm: LocationMatrix):
-    """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells"""
+def _eliminate_partial_rows(lm: LocationMatrix) -> None:
+    """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells.
+    Args: 
+        lm (LocationMatrix): LocationMatrix object to be pruned
+    Returns:
+        None"""
     if not lm.remove_least_accurate_row() and not lm.remove_row_with_smallest_component():
         lm.remove_last_row()
 
 def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace]) -> str:
     """The place_description of the most similar FlexiblePlace to the target is returned.
     Args:
-        combined_place (list[str]): The target location to be compared with
-        places (list[FlexiblePlace]): FlexiblePlace objects to compare
+        combined_place (list[str]): The target location to be compared with.
+        places (list[FlexiblePlace]): FlexiblePlace objects to compare.
     Returns:
-        str: The place_description of the closest match. (Ties are broken by number of components)"""
+        str: The place_description of the closest match. (Ties are broken by number of components)."""
         
     target: FlexiblePlace = FlexiblePlace(combined_place)
     scores: list[float] = [target.compare(place) for place in places]
