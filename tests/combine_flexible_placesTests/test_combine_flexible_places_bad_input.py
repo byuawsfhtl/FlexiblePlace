@@ -66,11 +66,35 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
                 places = [
                     FlexiblePlace([]),
                     FlexiblePlace(["",""]),
-                    FlexiblePlace("")
+                    FlexiblePlace(""),
+                    FlexiblePlace(" , ")
                 ]
                 result = combine_flexible_places(places)
                 self.assertFalse(result)
 
+    def test_bad_align(self) -> None:
+            """Badly aligned data will create stange combination
+            ("Orlando, Florida",
+             "Florida, Utah, United States",
+             returns "Orlando, Florida, Utah, United States")"""
+            places = [
+                FlexiblePlace("Orlando, Florida"),
+                FlexiblePlace("Florida, Utah, United States")
+            ]
+            result = combine_flexible_places(places)
+            self.assertEqual(str(result), "Orlando, Florida, Utah, United States")
+
+    def test_bad_order(self) -> None:
+            """Badly ordered data still works
+            ("A, B",
+             "B, A",
+             returns "B, A, B")"""
+            places = [
+                FlexiblePlace("A, B"),
+                FlexiblePlace("B, A")
+            ]
+            result = combine_flexible_places(places)
+            self.assertEqual(str(result), "B, A, B")
 
 
 if __name__ == "__main__":
