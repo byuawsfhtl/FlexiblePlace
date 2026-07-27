@@ -36,6 +36,9 @@ class LocationMatrix:
         self.load_places(sorted(locations, key=len, reverse=True))
         self.align()
 
+    def __bool__(self) -> bool:
+        return bool(self.matrix)
+    
     def __str__(self) -> str:
         """Returns a formatted string representation of the LocationMatrix.
         
