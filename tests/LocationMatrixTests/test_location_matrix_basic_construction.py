@@ -3,7 +3,7 @@ from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 
-class TestLocationMatrixBasic(unittest.TestCase):
+class TestLocationMatrixBasicContstruction(unittest.TestCase):
     """Tests that LocationMatrix objects are initialized with the correct size."""
     def test_empty_initialization(self) -> None:
         """An empty list of places should produce an empty matrix."""

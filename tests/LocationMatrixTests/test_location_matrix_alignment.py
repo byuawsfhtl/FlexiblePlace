@@ -3,8 +3,8 @@ from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 
-class TestLocationMatrixInputsFromOtherTests(unittest.TestCase):
-    """Test LocationMatrix construction and alignment with various inputs from compare/combine tests."""
+class TestLocationMatrixAlignment(unittest.TestCase):
+    """Test LocationMatrix construction and alignment."""
 
     def test_empty_pair_constructs_with_correct_dimensions_and_format(self) -> None:
         """Verify that two empty location strings create a 2x0 matrix with proper string representation."""

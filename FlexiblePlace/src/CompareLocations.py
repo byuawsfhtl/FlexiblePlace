@@ -20,7 +20,7 @@ def basic_comparison_algorithm(location_a: LocationComponent, location_b: Locati
     
     fuzzy_score: float = fuzz.ratio(component_a, component_b)
     
-    component_b_length: int = len(component_a)
+    component_b_length: int = len(component_b)
     deduction_for_small_component_length: float = 2 ** -(component_b_length-1) # More letters = smaller score deduction
 
     column_a = location_a.column
