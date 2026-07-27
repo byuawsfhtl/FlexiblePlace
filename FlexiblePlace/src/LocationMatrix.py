@@ -318,6 +318,8 @@ class LocationMatrix:
             column (int): Zero-based column index to inspect for outliers.
         Returns:
             None"""
+        if not self:
+            return
         components_in_column: list[LocationComponent] = self.get_column(column)
         max_count: int = max(len(component.links) for component in components_in_column)
         rows_to_remove: list[int] = [component.row for component in components_in_column if component and len(component.links) < max_count]

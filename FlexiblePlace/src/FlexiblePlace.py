@@ -100,7 +100,7 @@ class FlexiblePlace:
         """
         return compare_places(self, other)
     
-
+@staticmethod
 def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     """Compares two FlexiblePlace objects and returns a similarity score out of 100. Assumes that places
     are given in a standardized order (e.g. City, County, State/Province, Country).
@@ -148,6 +148,7 @@ def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
     redeemed_points: float = (100 - fuzzy_score) * forgiveness_factor # Redeems a certain percentage of lost points
     return fuzzy_score + redeemed_points
 
+@staticmethod
 def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
     """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
     

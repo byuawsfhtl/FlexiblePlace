@@ -2,59 +2,8 @@ import unittest
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
 
 
-class TestCombineFlexiblePlaces(unittest.TestCase):
-    """Test suite for FlexiblePlace.combine_flexible_places static method."""
-
-    def test_null_returns_null(self) -> None:
-        """Null returns null."""
-        places = []
-        result = combine_flexible_places(places)
-        self.assertFalse(result)
-
-    def test_single_object_returns_same_object(self) -> None:
-        """Single object returns the same object."""
-        places = [FlexiblePlace("Belgium")]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Belgium")
-
-    def test_duplicate_objects_return_same_object(self) -> None:
-        """
-        Duplicate objects return same object
-        ("Belgium" and "Belgium" returns "Belgium").
-        """
-        places = [FlexiblePlace("Belgium"), FlexiblePlace("Belgium")]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Belgium")
-
-    def test_indecision_yields_longest_string(self) -> None:
-        """
-        Indecision yields longest string
-        ("Paris" and "Belgium" returns "Belgium").
-        """
-        places = [FlexiblePlace("Paris"), FlexiblePlace("Belgium")]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Belgium")
-
-    def test_tie_yields_first(self) -> None:
-        """
-        Tie in string length yields first
-        ("Melgium" and "Belgium" returns "Melgium").
-        """
-        places = [FlexiblePlace("Melgium"), FlexiblePlace("Belgium")]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Melgium")
-
-    def test_more_specific_replaces_less_specific_new_jersey(self) -> None:
-        """
-        More specific replaces less specific if same location and ignores outlier
-        ("Camden, New Jersey",
-         "Camden, Camden, New Jersey, United States", and
-         "reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname"
-         returns "Camden, Camden, New Jersey, United States").
-        """
-        places = [FlexiblePlace("Camden, New Jersey"), FlexiblePlace("Camden, Camden, New Jersey, United States"), FlexiblePlace("reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname")]
-        result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Camden, Camden, New Jersey, United States")
+class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
+    """Specificity tests for FlexiblePlace.combine_flexible_places static method"""
 
     def test_more_specific_replaces_less_specific_new_york(self) -> None:
         """
