@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from rapidfuzz import fuzz
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
+from functools import cache
 
 class FlexiblePlace:
     """Represents a geographic location with multiple hierarchical components stored in reverse order.
@@ -32,7 +33,6 @@ class FlexiblePlace:
             location_components = location
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
         self.place_description = place_description
-
 
     def __str__(self) -> str:
         """Returns a human-readable string representation of the FlexiblePlace object.
@@ -69,6 +69,10 @@ class FlexiblePlace:
         if isinstance(other, FlexiblePlace):
             return self.location == other.location
         return False
+
+    def __hash__(self) -> int:
+        location_tuple: tuple[str, ...] = tuple(self.location)
+        return hash((location_tuple, self.place_description))
     
     def __bool__(self) -> bool:
         """Checks if the FlexiblePlace object contains any location components.
@@ -99,7 +103,8 @@ class FlexiblePlace:
             float | int: A similarity score out of 100, as returned by compare_places().
         """
         return compare_places(self, other)
-    
+
+@cache
 @staticmethod
 def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
     """Compares two FlexiblePlace objects and returns a similarity score out of 100. Assumes that places

@@ -1,6 +1,8 @@
 from FlexiblePlace.src.LocationComponent import LocationComponent
 from rapidfuzz import fuzz
+from functools import cache
 
+@cache
 def basic_comparison_algorithm(location_a: LocationComponent, location_b: LocationComponent) -> float:
     """Calculates a score out of 100 of the likelihood that 2 location components refer to the same location.
     This is done by taking the fuzzy string score of the two components and then deducting points for these reasons:
