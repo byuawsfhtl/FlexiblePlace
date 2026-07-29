@@ -9,8 +9,8 @@ class TestLocationMatrixAlignment(unittest.TestCase):
     def test_empty_pair_constructs_with_correct_dimensions_and_format(self) -> None:
         """Verify that two empty location strings create a 2x0 matrix with proper string representation."""
         a, b = "", ""
-        p1 = FlexiblePlace(a)
-        p2 = FlexiblePlace(b)
+        p1 = FlexiblePlace(a, auto_fill=False)
+        p2 = FlexiblePlace(b, auto_fill=False)
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = "|  |\n|  |"
@@ -19,7 +19,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
     def test_single_location_group_constructs_and_formats_correctly(self) -> None:
         """Verify that a group with a single location constructs with correct dimensions and formats properly."""
         group = ["Belgium"]
-        fps = [FlexiblePlace(s) for s in group]
+        fps = [FlexiblePlace(s, auto_fill=False) for s in group]
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = "| belgium |"
@@ -29,8 +29,8 @@ class TestLocationMatrixAlignment(unittest.TestCase):
     def test_first_empty_second_populated_pair_constructs_and_formats_correctly(self) -> None:
         """Verify that a pair with the first location empty and second populated aligns and formats correctly."""
         a, b = "", "Paterson, Passaic, New Jersey, United States"
-        p1 = FlexiblePlace(a)
-        p2 = FlexiblePlace(b)
+        p1 = FlexiblePlace(a, auto_fill=False)
+        p2 = FlexiblePlace(b, auto_fill=False)
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = (
@@ -42,8 +42,8 @@ class TestLocationMatrixAlignment(unittest.TestCase):
     def test_similar_nested_locations_pair_aligns_and_formats_correctly(self) -> None:
         """Verify that similar locations with different levels of detail align correctly and format properly."""
         a, b = "Camden, New Jersey, United States", "Camden, Camden, New Jersey, United States"
-        p1 = FlexiblePlace(a)
-        p2 = FlexiblePlace(b)
+        p1 = FlexiblePlace(a, auto_fill=False)
+        p2 = FlexiblePlace(b, auto_fill=False)
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = (
@@ -55,8 +55,8 @@ class TestLocationMatrixAlignment(unittest.TestCase):
     def test_different_detail_levels_pair_aligns_and_formats_correctly(self) -> None:
         """Verify that locations with different detail levels align properly and format with correct structure."""
         a, b = "Houston, Texas", "Houston, Harris, Texas, United States"
-        p1 = FlexiblePlace(a)
-        p2 = FlexiblePlace(b)
+        p1 = FlexiblePlace(a, auto_fill=False)
+        p2 = FlexiblePlace(b, auto_fill=False)
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = (
@@ -72,7 +72,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "Camden, Camden, New Jersey, United States",
             "reallylongcityname, reallylongcountyname, reallylongstatename, reallylongcountryname"
         ]
-        fps = [FlexiblePlace(s) for s in group]
+        fps = [FlexiblePlace(s, auto_fill=False) for s in group]
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (
@@ -89,7 +89,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "Springfield, Illinois, United States",
             "reallylongcityname, Sangamon, Illinois, United States"
         ]
-        fps = [FlexiblePlace(s) for s in group]
+        fps = [FlexiblePlace(s, auto_fill=False) for s in group]
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (
@@ -106,7 +106,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "Paris, Texas",
             "Texas, United States"
         ]
-        fps = [FlexiblePlace(s) for s in group]
+        fps = [FlexiblePlace(s, auto_fill=False) for s in group]
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (
@@ -127,7 +127,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "reallysuperlongcityname, reallysuperlongcountyname, reallysuperlongstatename, reallysuperlongcountryname",
             "Belgium"
         ]
-        fps = [FlexiblePlace(s) for s in group]
+        fps = [FlexiblePlace(s, auto_fill=False) for s in group]
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = (

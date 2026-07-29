@@ -38,9 +38,9 @@ class TestLocationMatrixBasicContstruction(unittest.TestCase):
     def test_example_str_output(self) -> None:
         """Verify the example output formatting from the prompt matches expected spacing."""
         places = [
-            FlexiblePlace("Washington, United States"),
-            FlexiblePlace("Walla Walla, Washingon"),
-            FlexiblePlace("Walla Walla, Wasington, United Sates"),
+            FlexiblePlace("Washington, United States", auto_fill=False),
+            FlexiblePlace("Walla Walla, Washingon", auto_fill=False),
+            FlexiblePlace("Walla Walla, Wasington, United Sates", auto_fill=False),
         ]
         lm = LocationMatrix([p.get_location_components() for p in places])
         expected = (

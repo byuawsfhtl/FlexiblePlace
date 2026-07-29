@@ -3,6 +3,7 @@ from __future__ import annotations
 from rapidfuzz import fuzz
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from functools import cache
+from FlexiblePlace.src.AutoFillLocation import auto_fill_location
 
 class FlexiblePlace:
     """Represents a geographic location with multiple hierarchical components stored in reverse order.
@@ -14,7 +15,7 @@ class FlexiblePlace:
     Attributes:
         location (list[str]): Location components in reverse order (least to most specific), all lowercase.
     """
-    def __init__(self, location: str | list[str], place_description: str = "") -> None:
+    def __init__(self, location: str | list[str], place_description: str = "", auto_fill = True) -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
         Parses the input location and stores its components in reverse order (from most specific to least specific)
@@ -32,6 +33,8 @@ class FlexiblePlace:
         else:
             location_components = location
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
+        if auto_fill:
+            auto_fill_location(self.location)
         self.place_description = place_description
 
     def __str__(self) -> str:
@@ -229,7 +232,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             else:
                 _eliminate_partial_rows(location_matrix)
     place_description: str = _find_closest_description(combined_place, places)
-    return FlexiblePlace(combined_place, place_description)
+    return FlexiblePlace(combined_place[::1], place_description)
 
 def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
     """Attempt to determine and add a component for a given column index into the combined_place.
@@ -274,7 +277,7 @@ def _find_closest_description(combined_place: list[str], places: list[FlexiblePl
     Returns:
         str: The place_description of the closest match. (Ties are broken by number of components)."""
         
-    target: FlexiblePlace = FlexiblePlace(combined_place)
+    target: FlexiblePlace = FlexiblePlace(combined_place[::-1])
     scores: list[float] = [target.compare(place) for place in places]
     max_score: float = max(scores, default=0)
     if max_score < 80:
