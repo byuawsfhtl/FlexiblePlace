@@ -123,7 +123,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
          returns "Walla Walla, Washington, United States").
         """
         places = [
-            FlexiblePlace("Washington, Utah"),
+            FlexiblePlace("Washington, Utah", auto_fill=False),
             FlexiblePlace("Walla Walla, Washington"),
             FlexiblePlace("Washington, United States")
         ]
@@ -159,7 +159,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
         places = [
             FlexiblePlace("United States"),
             FlexiblePlace("Belgium"),
-            FlexiblePlace("Washington, Utah"),
+            FlexiblePlace("Washington, Utah", auto_fill=False),
             FlexiblePlace("Walla Walla, Washington"),
             FlexiblePlace("Washington, United States")
         ]

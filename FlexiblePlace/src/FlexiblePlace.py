@@ -49,7 +49,7 @@ class FlexiblePlace:
             str: A formatted location string with title-cased components.
         """
         #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
-        return ", ".join(map(str.title, self.location))
+        return ", ".join(map(str.title, self.location[::-1]))
     
     def __repr__(self) -> str:
         """FamilySearch-standardized string representation of the FlexiblePlace object.
@@ -232,7 +232,7 @@ def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
             else:
                 _eliminate_partial_rows(location_matrix)
     place_description: str = _find_closest_description(combined_place, places)
-    return FlexiblePlace(combined_place[::1], place_description)
+    return FlexiblePlace(combined_place[::-1], place_description)
 
 def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
     """Attempt to determine and add a component for a given column index into the combined_place.
