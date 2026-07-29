@@ -1,21 +1,21 @@
-import unittest
+import pytest
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
 
 
-class TestCombineFlexiblePlacesBasic(unittest.TestCase):
+class TestCombineFlexiblePlacesBasic:
     """Basic tests for FlexiblePlace.combine_flexible_places static method"""
 
     def test_null_returns_null(self) -> None:
         """Null returns null."""
         places = []
         result = combine_flexible_places(places)
-        self.assertFalse(result)
+        assert not result
 
     def test_single_object_returns_same_object(self) -> None:
         """Single object returns the same object."""
         places = [FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Belgium")
+        assert str(result) == "Belgium"
 
     def test_duplicate_objects_return_same_object(self) -> None:
         """
@@ -24,7 +24,7 @@ class TestCombineFlexiblePlacesBasic(unittest.TestCase):
         """
         places = [FlexiblePlace("Belgium"), FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Belgium")
+        assert str(result) == "Belgium"
 
     def test_indecision_yields_longest_string(self) -> None:
         """
@@ -33,7 +33,7 @@ class TestCombineFlexiblePlacesBasic(unittest.TestCase):
         """
         places = [FlexiblePlace("Paris"), FlexiblePlace("Belgium")]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Belgium")
+        assert str(result) == "Belgium"
 
     def test_tie_yields_first(self) -> None:
         """
@@ -42,8 +42,4 @@ class TestCombineFlexiblePlacesBasic(unittest.TestCase):
         """
         places = [FlexiblePlace("Egypt"), FlexiblePlace("Japan")]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Egypt")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert str(result) == "Egypt"

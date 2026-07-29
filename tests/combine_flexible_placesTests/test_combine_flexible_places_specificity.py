@@ -1,8 +1,8 @@
-import unittest
+import pytest
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
 
 
-class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
+class TestCombineFlexiblePlacesSpecificity:
     """Specificity tests for FlexiblePlace.combine_flexible_places static method"""
 
     def test_more_specific_replaces_less_specific_new_york(self) -> None:
@@ -19,7 +19,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("reallylongcityname, reallylongstatename, UnitedStates")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "New York, New York, United States")
+        assert str(result) == "New York, New York, United States"
 
     def test_combining_location_with_county_versus_not(self) -> None:
         """
@@ -33,7 +33,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Lawrence, Essex, Massachusetts, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Lawrence, Essex, Massachusetts, United States")
+        assert str(result) == "Lawrence, Essex, Massachusetts, United States"
 
     def test_combining_location_with_county_to_make_more_specific_new_york(self) -> None:
         """
@@ -47,7 +47,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Buffalo, Erie, New York")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Buffalo, Erie, New York, United States")
+        assert str(result) == "Buffalo, Erie, New York, United States"
 
     def test_combining_location_with_county_to_make_more_specific_illinois(self) -> None:
         """
@@ -63,7 +63,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("reallylongcityname, Sangamon, Illinois, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Springfield, Sangamon, Illinois, United States")
+        assert str(result) == "Springfield, Sangamon, Illinois, United States"
 
     def test_combines_data_from_incomplete_but_matching_sources(self) -> None:
         """
@@ -79,7 +79,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Sugarloaf Township, Luzerne, Pennsylvania")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Sugarloaf Township, Luzerne, Pennsylvania, United States")
+        assert str(result) == "Sugarloaf Township, Luzerne, Pennsylvania, United States"
 
     def test_disambiguates_multiple_locations_paris_texas(self) -> None:
         """
@@ -95,7 +95,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Texas, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Paris, Texas, United States")
+        assert str(result) == "Paris, Texas, United States"
 
     def test_disambiguates_multiple_locations_new_york(self) -> None:
         """
@@ -111,7 +111,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("New York, New York, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "New York, New York, United States")
+        assert str(result) == "New York, New York, United States"
 
 
     def test_disambiguates_multiple_locations_walla_walla(self) -> None:
@@ -128,7 +128,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Washington, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Walla Walla, Washington, United States")
+        assert str(result) == "Walla Walla, Washington, United States"
 
     def test_disambiguates_multiple_locations_florida(self) -> None:
         """
@@ -144,7 +144,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Orlando, Orange, Florida")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Orlando, Orange, Florida, United States")
+        assert str(result) == "Orlando, Orange, Florida, United States"
 
     def test_works_with_large_input_washington(self) -> None:
         """
@@ -164,7 +164,7 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Washington, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Walla Walla, Washington, United States")
+        assert str(result) == "Walla Walla, Washington, United States"
 
     def test_works_with_a_large_input_massachusetts(self) -> None:
         """
@@ -188,8 +188,4 @@ class TestCombineFlexiblePlacesSpecificity(unittest.TestCase):
             FlexiblePlace("Belgium")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert str(result) == "Bucksport, Lincoln, Massachusetts Bay Colony, British Colonial America"

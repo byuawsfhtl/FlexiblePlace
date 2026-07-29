@@ -1,9 +1,9 @@
-import unittest
+import pytest
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 
-class TestLocationMatrixAlignment(unittest.TestCase):
+class TestLocationMatrixAlignment:
     """Test LocationMatrix construction and alignment."""
 
     def test_empty_pair_constructs_with_correct_dimensions_and_format(self) -> None:
@@ -14,7 +14,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
         lm = LocationMatrix([p1.get_location_components(), p2.get_location_components()])
         
         expected = "|  |\n|  |"
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_single_location_group_constructs_and_formats_correctly(self) -> None:
         """Verify that a group with a single location constructs with correct dimensions and formats properly."""
@@ -23,7 +23,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
         lm = LocationMatrix([fp.get_location_components() for fp in fps])
         
         expected = "| belgium |"
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
 
     def test_first_empty_second_populated_pair_constructs_and_formats_correctly(self) -> None:
@@ -37,7 +37,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "| united states | new jersey | passaic | paterson |\n"
             "|               |            |         |          |"
         )
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_similar_nested_locations_pair_aligns_and_formats_correctly(self) -> None:
         """Verify that similar locations with different levels of detail align correctly and format properly."""
@@ -50,7 +50,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "| united states | new jersey | camden | camden |\n"
             "| united states | new jersey | camden |        |"
         )
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_different_detail_levels_pair_aligns_and_formats_correctly(self) -> None:
         """Verify that locations with different detail levels align properly and format with correct structure."""
@@ -63,7 +63,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "| united states | texas | harris | houston |\n"
             "|               | texas |        | houston |"
         )
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_multi_level_camden_group_aligns_and_formats_correctly(self) -> None:
         """Verify that a group with Camden at different detail levels aligns correctly and formats properly."""
@@ -80,7 +80,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "| reallylongcountryname | reallylongstatename | reallylongcountyname | reallylongcityname |\n"
             "|                       | new jersey          | camden               |                    |"
         )
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_springfield_illinois_group_aligns_and_formats_correctly(self) -> None:
         """Verify that Springfield, Illinois with various detail levels aligns correctly and formats properly."""
@@ -97,7 +97,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "|               | illinois | sangamon | springfield        |\n"
             "| united states | illinois |          | springfield        |"
         )
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_paris_disambiguation_group_aligns_and_formats_correctly(self) -> None:
         """Verify that Paris in different countries disambiguates and aligns correctly and formats properly."""
@@ -114,7 +114,7 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "|               | texas | paris |\n"
             "| united states | texas |       |"
         )
-        self.assertEqual(str(lm), expected)
+        assert str(lm) == expected
 
     def test_massachusetts_bay_colony_group_aligns_and_formats_correctly(self) -> None:
         """Verify that a larger set of inputs can still be aligned properly."""
@@ -139,8 +139,4 @@ class TestLocationMatrixAlignment(unittest.TestCase):
             "| british colonial america   |                          |                           |                         |\n"
             "| belgium                    |                          |                           |                         |"
         )
-        self.assertEqual(str(lm), expected)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert str(lm) == expected

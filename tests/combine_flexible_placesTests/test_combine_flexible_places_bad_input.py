@@ -1,8 +1,8 @@
-import unittest
+import pytest
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
 
 
-class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
+class TestCombineFlexiblePlacesBadInput:
     """Bad input tests for FlexiblePlace.combine_flexible_places static method"""
 
     def test_many_linked_components(self) -> None:
@@ -27,7 +27,7 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace("C, D, E")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "A, B, C, D, E")
+        assert str(result) == "A, B, C, D, E"
 
     def test_identical_components(self) -> None:
         """Checks multiple identical components are handled correctly.
@@ -45,7 +45,7 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace("A, B, C, D"),
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "A, A, A, A")
+        assert str(result) == "A, A, A, A"
 
     def test_no_correlation(self) -> None:
         """If data does not correlate, first is returned
@@ -59,7 +59,7 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace("H, I, J"),
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "A, B, C")
+        assert str(result) == "A, B, C"
 
     def test_void_input(self) -> None:
         """If data is different types of null, null is still returned"""
@@ -70,7 +70,7 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace(" , ")
         ]
         result = combine_flexible_places(places)
-        self.assertFalse(result)
+        assert not result
 
     def test_bad_align(self) -> None:
         """Badly aligned data will create stange combination
@@ -82,7 +82,7 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace("Florida, Utah, United States")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Orlando, Florida, Utah, United States")
+        assert str(result) == "Orlando, Florida, Utah, United States"
 
     def test_bad_align_by_auto_fill(self) -> None:
         """Badly aligned data (caused by autofill) will create stange combination
@@ -96,7 +96,7 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace("Washington, Utah")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "Walla Walla, Washington, Utah, United States")
+        assert str(result) == "Walla Walla, Washington, Utah, United States"
 
 
     def test_bad_order(self) -> None:
@@ -109,8 +109,4 @@ class TestCombineFlexiblePlacesBadInput(unittest.TestCase):
             FlexiblePlace("B, A")
         ]
         result = combine_flexible_places(places)
-        self.assertEqual(str(result), "B, A, B")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert str(result) == "B, A, B"
