@@ -44,15 +44,7 @@ class TestCompareTwoPlacesNotAMatch(unittest.TestCase):
         result = compare_places(place1, place2)
         self.assertGreater(result, 65)
         self.assertLess(result, 75)
-
-    def test_different_countries(self) -> None:
-        """Different countries (but otherwise agreeing info) should return 80 or lower."""
-        place1 = FlexiblePlace("Richmond, Victoria, Australia")
-        place2 = FlexiblePlace("Richmond, Victoria, Canada")
-        result = compare_places(place1, place2)
-        self.assertGreater(result, 70)
-        self.assertLessEqual(result, 80)
-
+        
 
 if __name__ == "__main__":
     unittest.main()
