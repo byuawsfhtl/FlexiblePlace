@@ -2,6 +2,11 @@ from FlexiblePlace.src.LocationComponent import LocationComponent
 from rapidfuzz import fuzz
 from functools import cache
 
+# This is where the magic happens when deciding if two LocationComponents are a close enough match to link
+# together. Most issues with compare FlexiblePlace objects and combining them together can be traced bac to 
+# how accurately the components line up. Thus, the comparison algorithms in this file will be the primary
+# to costumization as to how precisely FlexiblePlace objects are compared and combined 
+
 @cache
 def basic_comparison_algorithm(location_a: LocationComponent, location_b: LocationComponent) -> float:
     """Calculates a score out of 100 of the likelihood that 2 location components refer to the same location.
