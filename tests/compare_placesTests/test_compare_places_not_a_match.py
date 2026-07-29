@@ -5,15 +5,53 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, compare_places
 class TestCompareTwoPlacesNotAMatch(unittest.TestCase):
     """Test for low scoring matches for FlexiblePlace.compare_places static method."""
 
-    def test_dont_match_different_components(self) -> None:
-        """
-        Different components should not return 100
-        ("Paris, Texas", "Paris, France" does not return 100).
-        """
-        place1 = FlexiblePlace("Paris, Texas")
-        place2 = FlexiblePlace("Paris, France")
+    def test_completely_different(self) -> None:
+        """Completely different locations should return a score lower than 40"""
+        place1 = FlexiblePlace("Walla Walla, Washington, United States")
+        place2 = FlexiblePlace("Paris, Île-de-France, France")
         result = compare_places(place1, place2)
-        self.assertLess(result, 30)
+        self.assertGreater(result, 30)
+        self.assertLess(result, 40)
+
+    def test_only_city_matches(self) -> None:
+        """Different locations but same state name should return a score lower than 60"""
+        place1 = FlexiblePlace("Paris, Île-de-France, France")
+        place2 = FlexiblePlace("Paris, Texas, United States")
+        result = compare_places(place1, place2)
+        self.assertGreater(result, 50)
+        self.assertLess(result, 60)
+
+    def test_only_state_matches(self) -> None:
+        """Different locations but same state name should return a score lower than 70"""
+        place1 = FlexiblePlace("Manus, Amazonas, Brazil")
+        place2 = FlexiblePlace("Leticia, Amazonas, Colombia")
+        result = compare_places(place1, place2)
+        self.assertGreater(result, 60)
+        self.assertLess(result, 70)
+
+    def test_only_country_matches(self) -> None:
+        """Different locations but same country should return a score lower than 70"""
+        place1 = FlexiblePlace("Walla Walla, Washington, United States")
+        place2 = FlexiblePlace("Provo, Utah, United States")
+        result = compare_places(place1, place2)
+        self.assertGreater(result, 60)
+        self.assertLess(result, 70)
+
+    def test_different_specificity(self) -> None:
+        """Different locations of different specificity levels should return a score lower than 75"""
+        place1 = FlexiblePlace("Walla Walla, Washington, United States")
+        place2 = FlexiblePlace("Belgium")
+        result = compare_places(place1, place2)
+        self.assertGreater(result, 65)
+        self.assertLess(result, 75)
+
+    def test_different_countries(self) -> None:
+        """Different countries (but otherwise agreeing info) should return 80 or lower."""
+        place1 = FlexiblePlace("Richmond, Victoria, Australia")
+        place2 = FlexiblePlace("Richmond, Victoria, Canada")
+        result = compare_places(place1, place2)
+        self.assertGreater(result, 70)
+        self.assertLessEqual(result, 80)
 
 
 if __name__ == "__main__":
