@@ -15,7 +15,7 @@ class FlexiblePlace:
     Attributes:
         location (list[str]): Location components in reverse order (least to most specific), all lowercase.
     """
-    def __init__(self, location: str | list[str], place_description: str = "", auto_fill = True) -> None:
+    def __init__(self, location: str | list[str], place_description: str = "", auto_fill: bool = True) -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
         Parses the input location and stores its components in reverse order (from most specific to least specific)
@@ -25,6 +25,7 @@ class FlexiblePlace:
             location (str | list[str]): Either a comma-separated string of location components 
                 (e.g., "Paris, France") or a list of location component strings.
             place_description (str): FamilySearch uses PlaceDescriptions to standardize places to geo-coordinates.
+            auto_fill (bool): If True, this FlexiblePlace object will guess missing data within the location (e.g. append 'United States' to 'Washington')
         Returns:
             None.
         """
@@ -74,6 +75,9 @@ class FlexiblePlace:
         return False
 
     def __hash__(self) -> int:
+        """Hashes the FlexiblePlace object
+        Returns:
+            None."""
         location_tuple: tuple[str, ...] = tuple(self.location)
         return hash((location_tuple, self.place_description))
     

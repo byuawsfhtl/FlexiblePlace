@@ -37,6 +37,7 @@ class LocationMatrix:
         self.align()
 
     def __bool__(self) -> bool:
+        """If the matrix is empty, returns False. Otherwise, returns True."""
         return bool(self.matrix)
     
     def __str__(self) -> str:
