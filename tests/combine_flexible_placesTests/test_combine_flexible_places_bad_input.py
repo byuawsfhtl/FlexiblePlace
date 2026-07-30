@@ -102,11 +102,25 @@ class TestCombineFlexiblePlacesBadInput:
     def test_bad_order(self) -> None:
         """Badly ordered data still works
         ("A, B",
-            "B, A",
-            returns "B, A, B")"""
+         "B, A",
+         returns "B, A, B")"""
         places = [
             FlexiblePlace("A, B"),
             FlexiblePlace("B, A")
         ]
         result = combine_flexible_places(places)
         assert str(result) == "B, A, B"
+
+    def test_misspelled_data(self) -> None:
+            """Misspelled data is still combined correctly
+            ("Walla Walla, Washingon",
+             "Washington, Unided Sates",
+             "United States"
+             returns "Walla Walla, Washington, United States")"""
+            places = [
+                FlexiblePlace("Walla Walla, Washingon"),
+                FlexiblePlace("Washington, Unided Sates"),
+                FlexiblePlace("United States")
+            ]
+            result = combine_flexible_places(places)
+            assert str(result) == "Walla Walla, Washington, United States"
