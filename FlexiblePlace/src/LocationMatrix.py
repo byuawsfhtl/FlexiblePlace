@@ -1,11 +1,11 @@
-from FlexiblePlace.src import CompareLocations
+from FlexiblePlace.src import CompareLocationComponents
 from FlexiblePlace.src.LocationComponent import LocationComponent
 
 class LocationMatrix:
     """A class that represents a matrix of locations, where each row corresponds to the string array of a 
     FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
-    with the correct component in other locations.
+    with the correct component in other locations. Rows are ordered by length.
     
     Example:
     locations = [FlexiblePlace("Washington, United States").get_location_components,
@@ -13,9 +13,9 @@ class LocationMatrix:
                  FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
         location_matrix = LocationMatrix(locations)
         print(location_matrix)
+        # | united states | washington | walla walla |
         # | united states | washington |             |
         # |               | washington | walla walla |
-        # | united states | washington | walla walla |
     """
 
     def __init__(self, locations: list[list[str]]) -> None:
@@ -33,9 +33,16 @@ class LocationMatrix:
         self.row_count: int = 0
         self.column_count: int = 0
         self.matrix: list[list[LocationComponent]] = []        
-        self.load_places(locations)
+        self.load_places(sorted(locations, key=len, reverse=True))
         self.align()
 
+    def __bool__(self) -> bool:
+        """If the matrix is empty, returns False. Otherwise, returns True.
+        
+        Returns:
+            bool"""
+        return bool(self.matrix)
+    
     def __str__(self) -> str:
         """Returns a formatted string representation of the LocationMatrix.
         
@@ -56,8 +63,8 @@ class LocationMatrix:
             max_len = 0
             for row in range(len(self.matrix)):
                 # Guard against rows shorter than column_count (shouldn't happen after resizing)
-                if col < len(self.matrix[row]):
-                    val = self.matrix[row][col].value or ""
+                if col < len(self.get_row(row)):
+                    val = self.get(row,col).value or ""
                     max_len = max(max_len, len(val))
             widths.append(max_len)
         # Build each row as a pipe-separated string with left-aligned padding
@@ -66,13 +73,49 @@ class LocationMatrix:
             cells: list[str] = []
             for col in range(self.column_count):
                 val = ""
-                if col < len(self.matrix[row]):
-                    val = self.matrix[row][col].value or ""
+                if col < len(self.get_row(row)):
+                    val = self.get(row, col).value or ""
                 cells.append(val.ljust(widths[col]))
             line = "| " + " | ".join(cells) + " |"
             lines.append(line)
         return "\n".join(lines)
     
+    def get(self, row: int, col: int) -> LocationComponent:
+        """Return the LocationComponent at the specified row and column.
+        Args:
+            row (int): Zero-based row index.
+            col (int): Zero-based column index.
+        Returns:
+            LocationComponent: The LocationComponent instance at the specified location."""
+        return self.matrix[row][col]
+    
+    def get_row(self, row: int) -> list[LocationComponent]:
+        """Return an entire row of LocationComponent objects.
+        Args:
+           row (int): Zero-based row index.
+        Returns:
+            list[LocationComponent]: The list of LocationComponent objects representing the row."""
+        return self.matrix[row]
+
+    def get_column(self, column: int) -> list[LocationComponent]:
+        """Return a column from the matrix as a list of LocationComponent objects.
+        Args:
+            column (int): Zero-based column index.
+        Returns:
+            list[LocationComponent]: The column components in row order."""
+        return [row[column] for row in self.matrix]
+    
+    def insert(self, component: LocationComponent) -> None:
+        """Insert or replace a LocationComponent into the internal matrix at its (row, column).
+        Args:
+            component (LocationComponent): The LocationComponent to insert.
+        Returns:
+            None."""
+        row: int = component.row
+        col: int = component.column
+        self.matrix[row][col] = component
+
+
     def load_places(self, places: list[list[str]]) -> None:
         """Populates the LocationMatrix with location components from a list of place component lists.
         Converts each string component into a LocationComponent object and adds it to the matrix. Automatically
@@ -96,7 +139,8 @@ class LocationMatrix:
 
     def _resize(self, new_size: int) -> None:
         """Resizes the LocationMatrix to have the specified number of columns by padding rows with empty
-        LocationComponent objects as needed. Updates the column_count to reflect the new size.
+        LocationComponent objects as needed. Updates the column_count to reflect the new size. (Note: cannot
+        be used to make matrix smaller than current size).
         
         Args:
             new_size (int): The new number of columns for the matrix.
@@ -113,15 +157,18 @@ class LocationMatrix:
         rows to find optimal alignments based on similarity scores.
         
         Returns:
-            None
-        """
+            None."""
         for row in range(1, len(self.matrix)):
             while (True):
                 match: tuple[tuple[int, int], tuple[int, int]] = self._find_best_match(row)
                 if not match:
                     break
-                component_a: LocationComponent = self.matrix[match[0][0]][match[0][1]]
-                component_b: LocationComponent = self.matrix[match[1][0]][match[1][1]]
+                row_a: int = match[0][0]
+                col_a: int = match[0][1]
+                component_a: LocationComponent = self.get(row_a, col_a)
+                row_b: int = match[1][0]
+                col_b: int = match[1][1]
+                component_b: LocationComponent = self.get(row_b, col_b)
                 self.link(component_a, component_b)
 
     def _find_best_match(self, row: int) -> tuple[tuple[int, int], tuple[int, int]]:
@@ -137,8 +184,8 @@ class LocationMatrix:
         """
         best_score: float = 80.0    # This (80) is the threshold for a match
         best_match: tuple[tuple[int, int], tuple[int, int]] | tuple = ()
-        for column in range(len(self.matrix[row])):
-            component_a: LocationComponent = self.matrix[row][column]
+        for column in range(len(self.get_row(row))):
+            component_a: LocationComponent = self.get(row, column)
             if component_a.links:
                 continue
             best_score, best_match = self._compare_with_previous(component_a, best_score, best_match)
@@ -162,8 +209,8 @@ class LocationMatrix:
         column: int = component_a.column
         for i in range(row):
             for j in range(self.column_count):
-                component_b: LocationComponent = self.matrix[i][j]
-                score: float = CompareLocations.basic_comparison_algorithm(component_a, component_b)
+                component_b: LocationComponent = self.get(i,j)
+                score: float = CompareLocationComponents.basic_comparison_algorithm(component_a, component_b)
                 if score > best_score:
                     best_score = score
                     best_match = ((row,column), (i, j))
@@ -178,8 +225,8 @@ class LocationMatrix:
             # |% washington  %|             |             |
             # |% washington  %| walla walla |             |
             # | united states | washington  | walla walla |
-            component_a: LocationComponent = location_matrix.matrix[2][1] # 'washington' in last row
-            component_b: LocationComponent = location_matrix.matrix[1][0] # 'washington' in 2nd row
+            component_a: LocationComponent = location_matrix.get(2,1) # 'washington' in last row
+            component_b: LocationComponent = location_matrix.get(1,0) # 'washington' in 2nd row
             location_matrix.link(component_a, component_b)
             print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
             # |               |% washington %|             |
@@ -224,7 +271,7 @@ class LocationMatrix:
         if not component_a or not component_b:
             return True
         for i in range(component_a.column, component_b.column + 1):
-            component_to_check: LocationComponent = self.matrix[component_a.row][i]
+            component_to_check: LocationComponent = self.get(component_a.row,i)
             if component_to_check.links and any(component.row == component_b.row for component in component_to_check.links):
                 return True
         return False
@@ -258,14 +305,98 @@ class LocationMatrix:
         else:
             row: int = component.row
             column: int = component.column
-            self.matrix[row][column] = LocationComponent((row,column))
+            self.insert(LocationComponent((row,column)))
             component.column += 1
             column += 1
-            self._shift_right(self.matrix[row][column])
-            self.matrix[row][column] = component
+            self._shift_right(self.get(row,column))
+            self.insert(component)
             for linked_component in component.links:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
 
+    def remove_outliers(self, column: int) -> None:
+        """Remove rows that are outliers for the specified column.
 
+        Determines the maximum number of links for any component in the specified column,
+        treats components with fewer links as outliers, and removes their rows from the matrix.
+        This helps to prune rows that do not share consensus with the plurality in that column.
+
+        Args:
+            column (int): Zero-based column index to inspect for outliers.
+        Returns:
+            None"""
+        if not self:
+            return
+        components_in_column: list[LocationComponent] = self.get_column(column)
+        max_count: int = max(len(component.links) for component in components_in_column)
+        rows_to_remove: list[int] = [component.row for component in components_in_column if component and len(component.links) < max_count]
+        self._remove_rows(rows_to_remove)
+
+    def _remove_rows(self, rows: list[int]) -> None:
+        """Remove multiple rows by index from the matrix.
+        Args:
+            rows (list[int]): A list of zero-based row indices to remove.
+        Returns:
+            None."""
+        for row in sorted(rows, reverse=True):
+            self._remove_row(row)
+
+    def _remove_row(self, row: int) -> None:
+        """Remove a single row from the matrix.
+        Args:
+            row (int): Zero-based index of the row to remove.
+        Returns:
+            None."""
+        self.matrix.pop(row)
+        self.row_count -= 1
+
+    def column_consensus(self, column: int) -> str:
+        """Return a consensus string for a given column if all non-empty components agree (or are linked).
+        Args:
+            column (int): Zero-based column index to compute consensus for.
+        Returns:
+            str: The consensus component string (the longest matching component's value) if consensus is found,
+                otherwise an empty string."""
+        components_in_column: list[LocationComponent] = [component for component in self.get_column(column) if component]
+        if not all(component is components_in_column[0] or component in components_in_column[0].links
+                   for component in components_in_column):
+            return ""
+        return max((component.value for component in components_in_column), key=len, default="")
     
+    def remove_least_accurate_row(self) -> bool:
+        """Remove the first row that lacks a component where other rows have one (i.e., the least accurate row).
+        Args:
+            None
+        Returns:
+            bool: True if a row was removed, False if no candidate row was found."""
+        for column in range(self.column_count):
+            if not any(component for component in self.get_column(column)):
+                continue
+            for row in range(self.row_count):
+                if not self.get(row, column):
+                    self._remove_row(row)
+                    return True
+        return False
+    
+    def remove_row_with_smallest_component(self) -> bool:
+        """Remove a row that contains the uniquely smallest component (by string length) in any column.
+        Args:
+            None
+        Returns:
+            bool: True if a row was removed, False otherwise."""
+        for column in range(self.column_count):
+            column_components = self.get_column(column)
+            min_len = len(min(column_components, key=lambda component: len(component.value)).value)
+            min_indeces = [comp.row for comp in column_components if len(comp.value) == min_len]
+            if len(min_indeces) == 1:
+                self._remove_row(min_indeces[0])
+                return True
+        return False
+    
+    def remove_last_row(self) -> None:
+        """Remove the last row in the matrix.
+        Args:
+            None.
+        Returns:
+            None."""
+        self._remove_row(self.row_count - 1)
