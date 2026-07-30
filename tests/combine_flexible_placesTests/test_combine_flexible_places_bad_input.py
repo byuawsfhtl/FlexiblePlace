@@ -1,6 +1,6 @@
-import pytest
-from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
+combine_flexible_places = FlexiblePlace.combine_flexible_places
 
 class TestCombineFlexiblePlacesBadInput:
     """Bad input tests for FlexiblePlace.combine_flexible_places static method"""

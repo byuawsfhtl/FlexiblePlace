@@ -3,7 +3,8 @@ from __future__ import annotations
 from rapidfuzz import fuzz
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from functools import cache
-from FlexiblePlace.src.AutoFillLocation import auto_fill_location
+from FlexiblePlace.src.auto_fill_location import auto_fill_location
+from FlexiblePlace.src.get_place_description import get_place_description
 
 class FlexiblePlace:
     """Represents a geographic location with multiple hierarchical components stored in reverse order.
@@ -112,7 +113,7 @@ class FlexiblePlace:
         Returns:
             float | int: A similarity score out of 100, as returned by compare_places().
         """
-        return self.compare_places(self, other)
+        return FlexiblePlace.compare_places(self, other)
 
     @cache
     @staticmethod
