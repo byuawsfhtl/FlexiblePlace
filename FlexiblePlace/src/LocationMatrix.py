@@ -139,7 +139,8 @@ class LocationMatrix:
 
     def _resize(self, new_size: int) -> None:
         """Resizes the LocationMatrix to have the specified number of columns by padding rows with empty
-        LocationComponent objects as needed. Updates the column_count to reflect the new size.
+        LocationComponent objects as needed. Updates the column_count to reflect the new size. (Note: cannot
+        be used to make matrix smaller than current size)
         
         Args:
             new_size (int): The new number of columns for the matrix.
@@ -156,8 +157,7 @@ class LocationMatrix:
         rows to find optimal alignments based on similarity scores.
         
         Returns:
-            None
-        """
+            None."""
         for row in range(1, len(self.matrix)):
             while (True):
                 match: tuple[tuple[int, int], tuple[int, int]] = self._find_best_match(row)
