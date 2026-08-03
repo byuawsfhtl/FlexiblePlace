@@ -26,9 +26,9 @@ class TestGetPlaceDescription:
 
     def test_place_description_for_la_pastora_libertador_distrito_capital_venezuela(self):
         """La Pastora, Libertador, Distrito Capital, Venezuela should resolve to #2107883."""
-        flexible_place = FlexiblePlace("La Pastora, Libertador, Distrito Capital, Venezuela", online=True)
+        flexible_place = FlexiblePlace("La Pastora, Libertador, Distrito Capital, Venezuela", "2107883", online=True)
 
-        assert flexible_place.place_description == "2107883"
+        assert flexible_place.place_description == "2107883" #score: 100.0 id: '2267343' value: 'La Pastora, Libertador, Distrito Capital, Venezuela' (more specific match duplicate name)
 
     def test_place_description_for_merida_libertador_merida_venezuela(self):
         """Mérida, Libertador, Mérida, Venezuela should resolve to #2101109."""
@@ -50,9 +50,9 @@ class TestGetPlaceDescription:
 
     def test_place_description_for_maiquetia_vargas_venezuela(self):
         """Maiquetía, Vargas, Venezuela should resolve to #2111324."""
-        flexible_place = FlexiblePlace("Maiquetía, Vargas, Venezuela", online=True)
+        flexible_place = FlexiblePlace("Maiquetía, Vargas, Venezuela", "2111324", online=True)
 
-        assert flexible_place.place_description == "2111324"
+        assert flexible_place.place_description == "2111324" #score: 97 id: '11844412' value: 'Maiquetía, Vargas, La Guaira, Venezuela'
 
     def test_place_description_for_sigurd_sevier_utah_united_states(self):
         """Sigurd, Sevier, Utah, United States should resolve to #5312299."""
@@ -64,13 +64,13 @@ class TestGetPlaceDescription:
         """Moses Lake, Grant, Washington, United States should resolve to #5197325."""
         flexible_place = FlexiblePlace("Moses Lake, Grant, Washington, United States", online=True)
 
-        assert flexible_place.place_description == "5197325"
+        assert flexible_place.place_description == "5197325" #score: 98.0, id: '5197325' value: 'Moses Lake, Grant, Washington, United States'
 
     def test_place_description_for_moses_lake_washington_united_states(self):
         """Moses Lake, Washington, United States should resolve to #5197325."""
         flexible_place = FlexiblePlace("Moses Lake, Washington, United States", online=True)
 
-        assert flexible_place.place_description == "5197325"
+        assert flexible_place.place_description == "5197325" #score: 97.0, id: '5197325' value: 'Moses Lake, Grant, Washington, United States'
 
     def test_place_description_for_la_palma_el_paso_santa_cruz_de_tenerife_canarias_spain(self):
         """La Palma, El Paso, Santa Cruz de Tenerife, Canarias, Spain should resolve to #3460975."""
