@@ -4,8 +4,6 @@ from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 class TestGetPlaceDescription:
     """Tests for FlexiblePlace.place_description accuracy when initialized online."""
 
-
-
     def test_country_by_itself(self):
         """'Venezuela' should resolve to '152'."""
         flexible_place = FlexiblePlace("Venezuela", online=True)
@@ -39,49 +37,49 @@ class TestGetPlaceDescription:
         assert flexible_place.place_description == "5197325"
 
     def test_null_input(self):
-        """Empty string should handle gracefully."""
+        """Empty string should be handled gracefully."""
         flexible_place = FlexiblePlace("", online=True)
 
-        assert flexible_place.place_description is None or flexible_place.place_description == ""
-
-    def test_fake_place(self):
-        """Non-existent place 'Fakeville, Nonexistent, Country' should not resolve to a valid ID."""
-        flexible_place = FlexiblePlace("Fakeville, Nonexistent, Country", online=True)
-
-        assert flexible_place.place_description is None or flexible_place.place_description == ""
-
-    def test_string_with_numbers(self):
-        """Place name with numbers 'Area 51, Nevada, United States' should handle correctly."""
-        flexible_place = FlexiblePlace("Area 51, Nevada, United States", online=True)
-
-        assert flexible_place.place_description is not None
-
-    def test_string_with_special_characters(self):
-        """Place name with special characters 'São Paulo, Brazil' should resolve correctly."""
-        flexible_place = FlexiblePlace("São Paulo, Brazil", online=True)
-
-        assert flexible_place.place_description is not None and flexible_place.place_description != ""
-
-    def test_string_with_apostrophe(self):
-        """Place name with apostrophe 'Saint John's, Newfoundland, Canada' should resolve correctly."""
-        flexible_place = FlexiblePlace("Saint John's, Newfoundland, Canada", online=True)
-
-        assert flexible_place.place_description is not None
-
-    def test_string_with_hyphens(self):
-        """Place name with hyphens 'San Juan, Puerto Rico, United States' should resolve correctly."""
-        flexible_place = FlexiblePlace("San Juan, Puerto Rico, United States", online=True)
-
-        assert flexible_place.place_description is not None and flexible_place.place_description != ""
+        assert flexible_place.place_description == ""
 
     def test_whitespace_only(self):
-        """String with only whitespace should handle gracefully."""
+        """String with only whitespace should be handled gracefully."""
         flexible_place = FlexiblePlace("   ", online=True)
 
-        assert flexible_place.place_description is None or flexible_place.place_description == ""
+        assert flexible_place.place_description == ""
 
     def test_place_with_leading_trailing_spaces(self):
         """Place name with leading and trailing spaces should resolve correctly."""
         flexible_place = FlexiblePlace("  Venezuela  ", online=True)
 
         assert flexible_place.place_description == "152"
+
+    def test_string_with_numbers(self):
+        """Place name with numbers 'Encino 75, Texas, United States' should be handled correctly."""
+        flexible_place = FlexiblePlace("Encino 75, Texas, United States", online=True)
+
+        assert flexible_place.place_description == "5177603"
+
+    def test_string_with_apostrophe(self):
+        """Place name with apostrophe 'Saint John's, Newfoundland, Canada' should resolve correctly."""
+        flexible_place = FlexiblePlace("Saint John's, Newfoundland, Canada", online=True)
+
+        assert flexible_place.place_description == "2241580"
+
+    def test_string_with_hyphens(self):
+        """Place name with hyphens 'Winston-Salem, North Carolina, United States' should resolve correctly."""
+        flexible_place = FlexiblePlace("Winston-Salem, North Carolina, United States", online=True)
+
+        assert flexible_place.place_description == "4757877"
+
+    def test_fake_place(self):
+        """Non-existent place 'Fakeville, Nonexistent, Country' should not resolve to a valid place_description."""
+        flexible_place = FlexiblePlace("Fakeville, Nonexistent, Country", online=True)
+
+        assert flexible_place.place_description == ""
+
+    def test_garbage_input(self):
+        """Bad input 'Wal*? w4lla, W^5#1n70N, un1t3d $t@te$' should not resolve to a valid place_description."""
+        flexible_place = FlexiblePlace("Wal*? w4lla, W^5#1n70N, un1t3d $t@te$", online=True)
+
+        assert flexible_place.place_description == ""
