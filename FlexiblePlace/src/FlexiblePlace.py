@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from rapidfuzz import fuzz
-from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from functools import cache
+from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.auto_fill_location import auto_fill_location
 from FlexiblePlace.src.get_place_description import get_place_description
 

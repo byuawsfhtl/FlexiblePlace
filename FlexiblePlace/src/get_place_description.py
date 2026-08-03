@@ -1,6 +1,5 @@
 import requests
 
-
 def get_place_description(location: str) -> str:
     escaped_location: str = location.replace("?",r"\?").replace("*",r"\*")
     url: str = f'https://apibeta.familysearch.org/platform/places/search?q=name:"{escaped_location}"'
