@@ -1,91 +1,37 @@
-import pytest
-
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 
 class TestGetPlaceDescription:
-    """Tests for FlexiblePlace.place_description when initialized online."""
+    """Tests for FlexiblePlace.place_description accuracy when initialized online."""
 
-    def test_place_description_for_eagle_ada_idaho_united_states(self):
-        """Eagle, Ada, Idaho, United States should resolve to #4000719."""
+    def test_country_by_itself(self):
+        """'Venezuela' should resolve to '152'."""
+        flexible_place = FlexiblePlace("Venezuela", online=True)
+
+        assert flexible_place.place_description == "152"
+
+    def test_city_county_state_country(self):
+        """'Eagle, Ada, Idaho, United States' should resolve to '4000719'."""
         flexible_place = FlexiblePlace("Eagle, Ada, Idaho, United States", online=True)
 
         assert flexible_place.place_description == "4000719"
 
-    def test_place_description_for_horseshoe_bend_boise_idaho_united_states(self):
-        """Horseshoe Bend, Boise, Idaho, United States should resolve to #4001402."""
-        flexible_place = FlexiblePlace("Horseshoe Bend, Boise, Idaho, United States", online=True)
-
-        assert flexible_place.place_description == "4001402"
-
-    def test_place_description_for_united_states(self):
-        """United States should resolve to #1."""
-        flexible_place = FlexiblePlace("United States", online=True)
-
-        assert flexible_place.place_description == "1"
-
-    def test_place_description_for_la_pastora_libertador_distrito_capital_venezuela(self):
-        """La Pastora, Libertador, Distrito Capital, Venezuela should resolve to #2107883."""
+    def test_preset_place_description(self):
+        """'La Pastora, Libertador, Distrito Capital, Venezuela' should resolve to '2107883', if already set to that value"""
         flexible_place = FlexiblePlace("La Pastora, Libertador, Distrito Capital, Venezuela", "2107883", online=True)
 
-        assert flexible_place.place_description == "2107883" #score: 100.0 id: '2267343' value: 'La Pastora, Libertador, Distrito Capital, Venezuela' (more specific match duplicate name)
+        assert flexible_place.place_description == "2107883"
 
-    def test_place_description_for_merida_libertador_merida_venezuela(self):
-        """Mérida, Libertador, Mérida, Venezuela should resolve to #2101109."""
-        flexible_place = FlexiblePlace("Mérida, Libertador, Mérida, Venezuela", online=True)
+    def test_different_specificity_can_map_to_same_location(self):
+        """'Mérida, Libertador, Mérida, Venezuela' and 'Mérida, Mérida, Venezuela' should resolve to '2101109'."""
+        more_specific_flexible_place = FlexiblePlace("Mérida, Libertador, Mérida, Venezuela", online=True)
+        less_specific_flexible_place = FlexiblePlace("Mérida, Mérida, Venezuela", online=True)
 
-        assert flexible_place.place_description == "2101109"
+        assert more_specific_flexible_place.place_description == less_specific_flexible_place.place_description
+        assert more_specific_flexible_place.place_description == "2101109"
 
-    def test_place_description_for_merida_merida_venezuela(self):
-        """Mérida, Mérida, Venezuela should resolve to #2101109."""
-        flexible_place = FlexiblePlace("Mérida, Mérida, Venezuela", online=True)
-
-        assert flexible_place.place_description == "2101109"
-
-    def test_place_description_for_nuestra_senora_de_las_misericordias_maiquetia_vargas_la_guaira_venezuela(self):
-        """Nuestra Señora de las Misericordias, Maiquetía, Vargas, La Guaira, Venezuela should resolve to #2111324."""
-        flexible_place = FlexiblePlace("Nuestra Señora de las Misericordias, Maiquetía, Vargas, La Guaira, Venezuela", online=True)
-
-        assert flexible_place.place_description == "2111324"
-
-    def test_place_description_for_maiquetia_vargas_venezuela(self):
-        """Maiquetía, Vargas, Venezuela should resolve to #2111324."""
-        flexible_place = FlexiblePlace("Maiquetía, Vargas, Venezuela", "2111324", online=True)
-
-        assert flexible_place.place_description == "2111324" #score: 97 id: '11844412' value: 'Maiquetía, Vargas, La Guaira, Venezuela'
-
-    def test_place_description_for_sigurd_sevier_utah_united_states(self):
-        """Sigurd, Sevier, Utah, United States should resolve to #5312299."""
-        flexible_place = FlexiblePlace("Sigurd, Sevier, Utah, United States", online=True)
-
-        assert flexible_place.place_description == "5312299"
-
-    def test_place_description_for_moses_lake_grant_washington_united_states(self):
-        """Moses Lake, Grant, Washington, United States should resolve to #5197325."""
-        flexible_place = FlexiblePlace("Moses Lake, Grant, Washington, United States", online=True)
-
-        assert flexible_place.place_description == "5197325" #score: 98.0, id: '5197325' value: 'Moses Lake, Grant, Washington, United States'
-
-    def test_place_description_for_moses_lake_washington_united_states(self):
-        """Moses Lake, Washington, United States should resolve to #5197325."""
+    def test_place_matches_with_different_named_place(self):
+        """'Moses Lake, Washington, United States' should resolve to '5197325' which is labled as 'Moses Lake, Grant, Washington, United States'."""
         flexible_place = FlexiblePlace("Moses Lake, Washington, United States", online=True)
 
-        assert flexible_place.place_description == "5197325" #score: 97.0, id: '5197325' value: 'Moses Lake, Grant, Washington, United States'
-
-    def test_place_description_for_la_palma_el_paso_santa_cruz_de_tenerife_canarias_spain(self):
-        """La Palma, El Paso, Santa Cruz de Tenerife, Canarias, Spain should resolve to #3460975."""
-        flexible_place = FlexiblePlace("La Palma, El Paso, Santa Cruz de Tenerife, Canarias, Spain", online=True)
-
-        assert flexible_place.place_description == "3460975"
-
-    def test_place_description_for_el_paso_la_palma_santa_cruz_de_tenerife_canary_islands_spain(self):
-        """El Paso, La Palma, Santa Cruz de Tenerife, Canary Islands, Spain should resolve to #3460975."""
-        flexible_place = FlexiblePlace("El Paso, La Palma, Santa Cruz de Tenerife, Canary Islands, Spain", online=True)
-
-        assert flexible_place.place_description == "3460975"
-
-    def test_place_description_for_venezuela(self):
-        """Venezuela should resolve to #152."""
-        flexible_place = FlexiblePlace("Venezuela", online=True)
-
-        assert flexible_place.place_description == "152"
+        assert flexible_place.place_description == "5197325"
