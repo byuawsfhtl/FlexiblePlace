@@ -38,7 +38,7 @@ class FlexiblePlace:
         if auto_fill:
             auto_fill_location(self.location)
         if not place_description and online:
-            self.place_description = get_place_description(self.location)
+            self.place_description = get_place_description(str(self))
         else:
             self.place_description = place_description
 
