@@ -9,7 +9,7 @@ def get_place_description(location: str) -> str:
         return ""
     response_dict: dict = response.json()
     score: float = response_dict['entries'][0]['score']
-    if score < 100.0:
+    if score < 95.0:
         return ""
     place_description: str = response_dict['entries'][0]['id']
     return place_description
