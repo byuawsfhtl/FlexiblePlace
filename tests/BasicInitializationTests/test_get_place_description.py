@@ -1,8 +1,30 @@
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
+from unittest.mock import patch, MagicMock
+import json
+
+def fs_api_mocker(url: str, *args, **kwargs) -> MagicMock:
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    location = url.split('q=name:"')[1].rstrip('"').replace("*","").replace("?","")
+    try:
+        with open(f"FlexiblePlace/tests/BasicInitializationTests/expected_API_call_responses/{location}", "r", encoding="utf-8") as expected:
+            mock_resp.json.return_value = json.load(expected)
+    except (FileNotFoundError, json.JSONDecodeError):
+        mock_resp.status_code = 204
+        mock_resp.json.return_value = {}
+
+    return mock_resp
 
 
 class TestGetPlaceDescription:
     """Tests for FlexiblePlace.place_description accuracy when initialized online."""
+
+    def setup_method(self):
+        self.patcher = patch('FlexiblePlace.src.get_place_description.requests.get', side_effect=fs_api_mocker)
+        self.mock_get = self.patcher.start()
+
+    def teardown_method(self):
+        self.patcher.stop()
 
     def test_country_by_itself(self):
         """'Venezuela' should resolve to '152'."""
