@@ -293,8 +293,8 @@ class FlexiblePlace:
         target: FlexiblePlace = FlexiblePlace(combined_place[::-1])
         scores: list[float] = [target.compare(place) for place in places]
         max_score: float = max(scores, default=0)
-        if max_score < 80:
-            max_score = 80
+        if max_score < 90:
+            max_score = 90
         best_matches: list[FlexiblePlace] = [places[i] for i in range(len(scores)) if scores[i] == max_score]
         best_match: FlexiblePlace = max(best_matches, key=lambda place: len(place.location), default=target)
         return best_match.place_description
