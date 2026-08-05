@@ -5,7 +5,7 @@ def get_place_description(location: str) -> str:
         return ""
     url: str = f'https://apibeta.familysearch.org/platform/places/search?q=name:"{location}"'
     response: requests.models.Response = requests.get(url)
-    if not response.ok:
+    if not response.status_code == 200:
         return ""
     response_dict: dict = response.json()
     score: float = response_dict['entries'][0]['score']
