@@ -166,7 +166,7 @@ class FlexiblePlace:
         return fuzzy_score + redeemed_points
 
     @staticmethod
-    def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
+    def combine_flexible_places(places: list[FlexiblePlace], online = False) -> FlexiblePlace:
         """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
         
         This function attempts to intelligently resolve conflicts and fill gaps across multiple place
@@ -240,7 +240,7 @@ class FlexiblePlace:
                     break
                 else:
                     FlexiblePlace._eliminate_partial_rows(location_matrix)
-        place_description: str = FlexiblePlace._find_closest_description(combined_place, places)
+        place_description: str = FlexiblePlace._find_closest_description(combined_place, places, online)
         return FlexiblePlace(combined_place[::-1], place_description)
 
     @staticmethod
@@ -282,7 +282,7 @@ class FlexiblePlace:
             lm.remove_last_row()
 
     @staticmethod
-    def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace]) -> str:
+    def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace], online) -> str:
         """The place_description of the most similar FlexiblePlace to the target is returned.
         Args:
             combined_place (list[str]): The target location to be compared with.
@@ -295,6 +295,8 @@ class FlexiblePlace:
         max_score: float = max(scores, default=0)
         if max_score < 90:
             max_score = 90
-        best_matches: list[FlexiblePlace] = [places[i] for i in range(len(scores)) if scores[i] == max_score]
+        best_matches: list[FlexiblePlace] = [places[i] for i in range(len(scores)) if scores[i] == max_score and places[i].place_description]
         best_match: FlexiblePlace = max(best_matches, key=lambda place: len(place.location), default=target)
+        if online and (not best_match.place_description or best_match.location < target.location):
+            return get_place_description(str(target))        
         return best_match.place_description
