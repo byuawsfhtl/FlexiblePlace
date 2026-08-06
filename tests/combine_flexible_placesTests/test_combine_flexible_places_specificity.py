@@ -117,13 +117,13 @@ class TestCombineFlexiblePlacesSpecificity:
     def test_disambiguates_multiple_locations_walla_walla(self) -> None:
         """
         Matches coinsiding places and removes outlier
-        ("Washington, Utah",
+        ("Washington, D.C.",
          "Walla Walla, Washington",
          "Washington, United States"
          returns "Walla Walla, Washington, United States").
         """
         places = [
-            FlexiblePlace("Washington, Utah", auto_fill=False),
+            FlexiblePlace("Washington, D.C."),
             FlexiblePlace("Walla Walla, Washington"),
             FlexiblePlace("Washington, United States")
         ]

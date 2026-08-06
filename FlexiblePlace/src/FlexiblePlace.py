@@ -53,7 +53,6 @@ class FlexiblePlace:
         Returns:
             str: A formatted location string with title-cased components.
         """
-        #Needs work to be able to output abreviations well (e.g. United States vs Usa, D.C. vs D.c)
         return ", ".join(map(str.title, self.location[::-1]))
     
     def __repr__(self) -> str:
@@ -176,7 +175,7 @@ class FlexiblePlace:
             
             1. Align components of the locations provided.
                 ```
-                "Washington, Utah"             ->  |             | Washington | Utah          |
+                "Washington, D.C"              ->  |             | Washington | D.C.          |
                 "Walla Walla, Washington"      ->  | Walla Walla | Washington |               |
                 "Washington, United States"    ->  |             | Washington | United States |
                 "bad data, bad data, bad data" ->  | bad data    | bad data   | bad data      |
@@ -186,7 +185,7 @@ class FlexiblePlace:
             
             2. Remove clear outliers.
                 ```
-                |             | Washington | Utah          |  ->  |             | Washington | Utah          |
+                |             | Washington | D.C.          |  ->  |             | Washington | D.C.          |
                 | Walla Walla | Washington |               |  ->  | Walla Walla | Washington |               |
                 |             | Washington | United States |  ->  |             | Washington | United States |
                 | bad data    | bad data   | bad data      |  ->  
@@ -196,7 +195,7 @@ class FlexiblePlace:
             
             3. Remove least precise inputs.
                 ```
-                |             | Washington | Utah          |  ->  |             | Washington | Utah          |
+                |             | Washington | D.C.          |  ->  |             | Washington | D.C.          |
                 | Walla Walla | Washington |               |  ->  
                 |             | Washington | United States |  ->  |             | Washington | United States |
 
@@ -205,7 +204,7 @@ class FlexiblePlace:
             
             4. Remove inputs with the smallest components.
                 ```
-                |             | Washington | Utah          |  ->  
+                |             | Washington | D.C.          |  ->  
                 |             | Washington | United States |  ->  |             | Washington | United States |
 
                 merged_location -> | Walla Walla | Washington | United States |
