@@ -175,7 +175,7 @@ class FlexiblePlace:
             
             1. Align components of the locations provided.
                 ```
-                "Washington, D.C"              ->  |             | Washington | D.C.          |
+                "Washington, D.C."             ->  |             | Washington | D.C.          |
                 "Walla Walla, Washington"      ->  | Walla Walla | Washington |               |
                 "Washington, United States"    ->  |             | Washington | United States |
                 "bad data, bad data, bad data" ->  | bad data    | bad data   | bad data      |
