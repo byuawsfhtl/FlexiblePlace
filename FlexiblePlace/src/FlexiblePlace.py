@@ -27,6 +27,7 @@ class FlexiblePlace:
                 (e.g., "Paris, France") or a list of location component strings.
             place_description (str): FamilySearch uses PlaceDescriptions to standardize places to geo-coordinates.
             auto_fill (bool): If True, this FlexiblePlace object will guess missing data within the location (e.g. append 'United States' to 'Washington')
+            online (bool): If True, the FlexiblePlace object will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             None.
         """
@@ -165,7 +166,7 @@ class FlexiblePlace:
         return fuzzy_score + redeemed_points
 
     @staticmethod
-    def combine_flexible_places(places: list[FlexiblePlace], online = False) -> FlexiblePlace:
+    def combine_flexible_places(places: list[FlexiblePlace], online: bool = False) -> FlexiblePlace:
         """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
         
         This function attempts to intelligently resolve conflicts and fill gaps across multiple place
@@ -222,6 +223,7 @@ class FlexiblePlace:
 
         Args:
             places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
+            online (bool): If True, the function will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             FlexiblePlace: A new FlexiblePlace object representing the combined locations."""
         location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
@@ -281,11 +283,12 @@ class FlexiblePlace:
             lm.remove_last_row()
 
     @staticmethod
-    def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace], online) -> str:
+    def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace], online: bool) -> str:
         """The place_description of the most similar FlexiblePlace to the target is returned.
         Args:
             combined_place (list[str]): The target location to be compared with.
             places (list[FlexiblePlace]): FlexiblePlace objects to compare.
+            online (bool): If True, the function will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             str: The place_description of the closest match. (Ties are broken by number of components)."""
             
