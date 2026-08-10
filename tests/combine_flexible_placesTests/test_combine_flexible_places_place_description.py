@@ -47,7 +47,7 @@ class TestPlaceDescriptionOfCombinedPlace:
         assert result.place_description == "396089"
 
     def test_online_version_doesnt_replace_place_description(self):
-        """If no description is provided, online version will look up the place_description."""
+        """If description is provided (and place is specific), online version will not look up the place_description."""
         places = [
             FlexiblePlace("Washington, United States"),
             FlexiblePlace("Walla Walla"),
@@ -58,7 +58,7 @@ class TestPlaceDescriptionOfCombinedPlace:
         assert result.place_description == "CORRECT"
 
     def test_online_version_unspecific_place_description(self):
-        """If no description is provided, online version will look up the place_description."""
+        """If description is provided and location is not specific, online version will look up the place_description."""
         places = [
             FlexiblePlace("Washington, United States", "incorrect"),
             FlexiblePlace("Walla Walla"),

@@ -19,7 +19,7 @@ class TestBasicFlexiblePlaceInitialization:
         assert str(fp) == "Walla Walla, Washington, U.S.A."
 
     def test_repr_format(self):
-        """Test repr formatting with and without an place_description parameter."""
+        """Test repr formatting with and without a place_description parameter."""
         fp1 = FlexiblePlace("Walla Walla, Washington, United States")
         assert repr(fp1) == ""
         fp2 = FlexiblePlace("Walla Walla, Washington, United States", "24")
