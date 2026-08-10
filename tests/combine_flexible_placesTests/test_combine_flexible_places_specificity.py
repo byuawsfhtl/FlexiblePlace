@@ -116,7 +116,7 @@ class TestCombineFlexiblePlacesSpecificity:
 
     def test_disambiguates_multiple_locations_walla_walla(self) -> None:
         """
-        Matches coinsiding places and removes outlier
+        Matches coinciding places and removes outlier
         ("Washington, D.C.",
          "Walla Walla, Washington",
          "Washington, United States"

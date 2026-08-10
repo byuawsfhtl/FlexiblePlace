@@ -39,7 +39,7 @@ class TestGetPlaceDescription:
         assert more_specific_flexible_place.place_description == "2101109"
 
     def test_place_matches_with_different_named_place(self):
-        """'Moses Lake, Washington, United States' should resolve to '5197325' which is labled as 'Moses Lake, Grant, Washington, United States'."""
+        """'Moses Lake, Washington, United States' should resolve to '5197325' which is labeled as 'Moses Lake, Grant, Washington, United States'."""
         flexible_place = FlexiblePlace("Moses Lake, Washington, United States", online=True)
 
         assert flexible_place.place_description == "5197325"

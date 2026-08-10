@@ -174,7 +174,7 @@ class FlexiblePlace:
         (Note: The algorithm does not move unto the next step until the current step fails to change
         merged_location).
             
-            1. Align components of the locations provided.
+            1. Align components of the locations provided (LocationMatrix auto-aligns everything).
                 ```
                 "Washington, D.C."             ->  |             | Washington | D.C.          |
                 "Walla Walla, Washington"      ->  | Walla Walla | Washington |               |
@@ -184,7 +184,7 @@ class FlexiblePlace:
                 merged_location -> | ___ | ___ | ___ |
                 ```.
             
-            2. Remove clear outliers.
+            2. Remove clear outliers (checks column by column, beginning with the least specific component).
                 ```
                 |             | Washington | D.C.          |  ->  |             | Washington | D.C.          |
                 | Walla Walla | Washington |               |  ->  | Walla Walla | Washington |               |
@@ -274,7 +274,7 @@ class FlexiblePlace:
 
     @staticmethod
     def _eliminate_partial_rows(lm: LocationMatrix) -> None:
-        """A row needs to be elimintated. This function picks which one by prioritizing the least empty cells.
+        """A row needs to be eliminated. This function picks which one by prioritizing the least empty cells.
         Args: 
             lm (LocationMatrix): LocationMatrix object to be pruned.
         Returns:

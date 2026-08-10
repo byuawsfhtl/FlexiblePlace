@@ -8,7 +8,7 @@ def get_place_description(location: str) -> str:
         str: The place description retrieved from the API, or an empty string if the query fails or the score is below 95.0."""
     if not location:
         return ""
-    url: str = f'https://apibeta.familysearch.org/platform/places/search?q=name:"{location}"'
+    url: str = f'https://api.familysearch.org/platform/places/search?q=name:"{location}"'
     response: requests.models.Response = requests.get(url)
     if not response.status_code == 200:
         return ""

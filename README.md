@@ -22,7 +22,7 @@ print(fp1.place_description) #
 ```
 
 ## compare_places
-This static method is used to calulate a score out of 100 that represents how likely two FlexiblePlace objects refer to the same location. Locations of differing specificity, but with otherwise aggreeing information, are a 100% match.
+This static method is used to calculate a score out of 100 that represents how likely two FlexiblePlace objects refer to the same location. Locations of differing specificity, but with otherwise agreeing information, are a 100% match.s
 ```python
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 compare_places = FlexiblePlace.compare_places
@@ -47,9 +47,9 @@ washington = FlexiblePlace("Washington, United States")
 united_states = FlexiblePlace("United States")
 dc = FlexiblePlace("Washington, D.C.")
 
-combined_place = combined_flexible_places([walla_walla, washington, united_states, dc])
+combined_place = combine_flexible_places([walla_walla, washington, united_states, dc])
 print(combined_place) # Walla Walla, Washington, United States
 
-online_combined_place = combined_flexible_places([walla_walla, washington, united_states, dc], online = True)
+online_combined_place = combine_flexible_places([walla_walla, washington, united_states, dc], online = True)
 print(online_combined_place.place_description) # 396089
 ```
