@@ -232,7 +232,7 @@ class FlexiblePlace:
             has_changed: bool = False
             for index in (i for i, comp in enumerate(combined_place) if not comp):
                 location_matrix.remove_outliers(index)
-                has_changed = FlexiblePlace._add_place_component(location_matrix, combined_place, index)
+                has_changed |= FlexiblePlace._add_place_component(location_matrix, combined_place, index)
             if not has_changed:
                 if FlexiblePlace._isFull(combined_place):
                     break

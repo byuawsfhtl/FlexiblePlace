@@ -347,8 +347,12 @@ class LocationMatrix:
             row (int): Zero-based index of the row to remove.
         Returns:
             None."""
-        self.matrix.pop(row)
+        for component in self.matrix.pop(row):
+            component.links.discard(component)
         self.row_count -= 1
+        for r in self.matrix[row:]:
+            for component in r:
+                component.row -= 1
 
     def column_consensus(self, column: int) -> str:
         """Return a consensus string for a given column if all non-empty components agree (or are linked).
