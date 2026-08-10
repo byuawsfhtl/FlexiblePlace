@@ -130,6 +130,45 @@ class TestCombineFlexiblePlacesSpecificity:
         result = combine_flexible_places(places)
         assert str(result) == "Walla Walla, Washington, United States"
 
+    def test_disambiguates_multiple_locations_college_place(self) -> None:
+        """
+        Matches coinsiding places and removes outlier
+        ("badcity, badstate, badcountry",
+         "Walla Walla, Washington",
+         "Washington, United States",
+         "College Place, Washington, badcountry",
+         "United States"
+         returns "Walla Walla, Washington, United States").
+        """
+        places = [
+            FlexiblePlace("badcity, badstate, badcountry"),
+            FlexiblePlace("Walla Walla, Washington", auto_fill = False),
+            FlexiblePlace("Washington, United States"),
+            FlexiblePlace("College Place, Washington, badcountry"),
+            FlexiblePlace("United States")
+        ]
+        result = combine_flexible_places(places)
+        assert str(result) == "Walla Walla, Washington, United States"
+
+    def test_disambiguates_multiple_locations_bad_city(self) -> None:
+        """
+        Matches coinsiding places and removes outlier
+        ("badcity, Washington, incorrectcountry",
+         "incorrectcity, Washington, badcountry",
+         "Washington, United States",
+         "Washington, United States",
+         returns "Washington, United States").
+        """
+        places = [
+            FlexiblePlace("badcity, Washington, incorrectcountry"),
+            FlexiblePlace("incorrectcity, Washington, badcountry"),
+            FlexiblePlace("Washington, United States"),
+            FlexiblePlace("Washington, United States")
+        ]
+        result = combine_flexible_places(places)
+        assert str(result) == "Washington, United States"
+
+
     def test_disambiguates_multiple_locations_florida(self) -> None:
         """
         Matches coinsiding places and removes outlier
