@@ -6,8 +6,10 @@ async def get_place_description(location: str) -> str:
         location (str): The location string to be queried.
     Returns:
         str: The place description retrieved from the API, or an empty string if the query fails or the score is below 95.0."""
-    if not location:
+    if not location or not location.strip():
         return ""
+    
+    location = location.strip()
     url: str = f'https://api.familysearch.org/platform/places/search?q=name:"{location}"'
     TIMEOUT = httpx.Timeout(
         connect=5,
@@ -20,11 +22,23 @@ async def get_place_description(location: str) -> str:
             response = await client.get(url, timeout=TIMEOUT)
     except httpx.TimeoutException:
         return ""
+    except Exception:
+        return ""
+    
     if not response.status_code == 200:
         return ""
-    response_dict: dict = response.json()
-    score: float = response_dict['entries'][0]['score']
+    
+    try:
+        response_dict: dict = response.json()
+    except Exception:
+        return ""
+    
+    if not response_dict.get('entries') or len(response_dict['entries']) == 0:
+        return ""
+    
+    score: float = response_dict['entries'][0].get('score', 0)
     if score < 95.0:
         return ""
-    place_description: str = response_dict['entries'][0]['id']
+    
+    place_description: str = response_dict['entries'][0].get('id', '')
     return place_description

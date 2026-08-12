@@ -9,7 +9,7 @@ class TestGetPlaceDescription:
 
     def setup_method(self):
         self.patcher = patch(
-            'FlexiblePlace.src.get_place_description.httpx.get',
+            'FlexiblePlace.src.get_place_description.httpx.AsyncClient.get',
             new_callable=AsyncMock,
             side_effect=fs_api_mocker,
         )
@@ -93,7 +93,7 @@ class TestGetPlaceDescription:
         assert flexible_place.place_description == ""
 
     def test_garbage_input(self):
-        """Bad input 'Wal*? w4lla, W^5#1n70N, un1t3d $t@te$' should not resolve to a valid place_description."""
-        flexible_place = asyncio.run(FlexiblePlace.online("Wal*? w4lla, W^5#1n70N, un1t3d $t@te$"))
+        """Bad input 'Wal*? w4lla, W^5#1N70N, un1t3d $t@te$' should not resolve to a valid place_description."""
+        flexible_place = asyncio.run(FlexiblePlace.online("Wal*? w4lla, W^5#1N70N, un1t3d $t@te$"))
 
         assert flexible_place.place_description == ""
