@@ -1,9 +1,9 @@
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock
 import json
 import os
 
-def fs_api_mocker(url: str, *args, **kwargs) -> MagicMock:
-    mock_resp = MagicMock()
+async def fs_api_mocker(url: str, *args, **kwargs) -> AsyncMock:
+    mock_resp = AsyncMock()
     mock_resp.status_code = 200
     location = url.split('q=name:"')[1].rstrip('"').replace("*","").replace("?","")
     try:

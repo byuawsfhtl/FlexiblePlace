@@ -92,9 +92,9 @@ class FlexiblePlace:
         return bool(self.location)
 
     @staticmethod
-    def online(location: str | list[str], description: str = "", auto_fill: bool = True) -> FlexiblePlace:
+    async def online(location: str | list[str], description: str = "", auto_fill: bool = True) -> FlexiblePlace:
         temp = FlexiblePlace(location, auto_fill=auto_fill)
-        place_description = get_place_description(str(temp)) if not description else description
+        place_description = await get_place_description(str(temp)) if not description else description
         return FlexiblePlace(str(temp), place_description)
     
     def get_location_components(self) -> list[str]:
@@ -309,9 +309,9 @@ class FlexiblePlace:
         return best_match
 
     @staticmethod
-    def combine_flexible_places_online(places: list[FlexiblePlace]) -> FlexiblePlace:
+    async def combine_flexible_places_online(places: list[FlexiblePlace]) -> FlexiblePlace:
         combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
         closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
         temp: FlexiblePlace = FlexiblePlace(combined_place)
-        place_description: str = get_place_description(str(temp)) if not closest_match.place_description or closest_match.location < temp.location else closest_match.place_description
+        place_description: str = await get_place_description(str(temp)) if not closest_match.place_description or closest_match.location < temp.location else closest_match.place_description
         return FlexiblePlace(combined_place, place_description)

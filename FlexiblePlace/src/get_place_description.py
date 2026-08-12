@@ -1,6 +1,6 @@
-import requests
+import httpx
 
-def get_place_description(location: str) -> str:
+async def get_place_description(location: str) -> str:
     """Given a location string, this function queries the FamilySearch API to retrieve the corresponding place description.
     Args:
         location (str): The location string to be queried.
@@ -9,7 +9,17 @@ def get_place_description(location: str) -> str:
     if not location:
         return ""
     url: str = f'https://api.familysearch.org/platform/places/search?q=name:"{location}"'
-    response: requests.models.Response = requests.get(url)
+    TIMEOUT = httpx.Timeout(
+        connect=5,
+        read=15,
+        write=10,
+        pool=5
+    )
+    try:        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, timeout=TIMEOUT)
+    except httpx.TimeoutException:
+        return ""
     if not response.status_code == 200:
         return ""
     response_dict: dict = response.json()
