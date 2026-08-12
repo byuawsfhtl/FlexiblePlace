@@ -16,7 +16,7 @@ class FlexiblePlace:
     Attributes:
         location (list[str]): Location components in reverse order (least to most specific), all lowercase.
     """
-    def __init__(self, location: str | list[str], place_description: str = "", auto_fill: bool = True, online: bool = False) -> None:
+    def __init__(self, location: str | list[str], place_description: str = "", auto_fill: bool = True) -> None:
         """Initializes a FlexiblePlace object from a location string or list of location components.
         
         Parses the input location and stores its components in reverse order (from most specific to least specific)
@@ -38,10 +38,7 @@ class FlexiblePlace:
         self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
         if auto_fill:
             auto_fill_location(self.location)
-        if not place_description and online:
-            self.place_description = get_place_description(str(self))
-        else:
-            self.place_description = place_description
+        self.place_description = place_description
 
     def __str__(self) -> str:
         """Returns a human-readable string representation of the FlexiblePlace object.
@@ -94,6 +91,12 @@ class FlexiblePlace:
             bool: True if the location list is non-empty, False otherwise.
         """
         return bool(self.location)
+
+    @staticmethod
+    def online(location: str | list[str], description: str = "", auto_fill: bool = True) -> FlexiblePlace:
+        temp = FlexiblePlace(location, auto_fill=auto_fill)
+        place_description = get_place_description(str(temp)) if not description else description
+        return FlexiblePlace(str(temp), place_description)
     
     def get_location_components(self) -> list[str]:
         """Returns the list of location components for this FlexiblePlace object.
