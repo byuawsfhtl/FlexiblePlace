@@ -3,6 +3,7 @@ from unittest.mock import patch
 from tests.resources.fs_api_mocker import fs_api_mocker
 
 combine_flexible_places = FlexiblePlace.combine_flexible_places
+combine_flexible_places_online = FlexiblePlace.combine_flexible_places_online
 
 class TestPlaceDescriptionOfCombinedPlace:
     def setup_method(self):
@@ -42,7 +43,7 @@ class TestPlaceDescriptionOfCombinedPlace:
             FlexiblePlace("Walla Walla"),
             FlexiblePlace("Walla Walla, Washington, United States")
         ]
-        result = combine_flexible_places(places, online = True)
+        result = combine_flexible_places_online(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "396089"
 
@@ -53,7 +54,7 @@ class TestPlaceDescriptionOfCombinedPlace:
             FlexiblePlace("Walla Walla"),
             FlexiblePlace("Walla Walla, Washington, United States", "CORRECT")
         ]
-        result = combine_flexible_places(places, online = True)
+        result = combine_flexible_places_online(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "CORRECT"
 
@@ -64,6 +65,6 @@ class TestPlaceDescriptionOfCombinedPlace:
             FlexiblePlace("Walla Walla"),
             FlexiblePlace("Walla Walla, Washington, United States")
         ]
-        result = combine_flexible_places(places, online = True)
+        result = combine_flexible_places_online(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "396089"

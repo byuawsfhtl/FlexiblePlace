@@ -27,7 +27,6 @@ class FlexiblePlace:
                 (e.g., "Paris, France") or a list of location component strings.
             place_description (str): FamilySearch uses PlaceDescriptions to standardize places to geo-coordinates.
             auto_fill (bool): If True, this FlexiblePlace object will guess missing data within the location (e.g. append 'United States' to 'Washington')
-            online (bool): If True, the FlexiblePlace object will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             None.
         """
@@ -169,7 +168,7 @@ class FlexiblePlace:
         return fuzzy_score + redeemed_points
 
     @staticmethod
-    def combine_flexible_places(places: list[FlexiblePlace], online: bool = False) -> FlexiblePlace:
+    def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
         """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
         
         This function attempts to intelligently resolve conflicts and fill gaps across multiple place
@@ -229,6 +228,13 @@ class FlexiblePlace:
             online (bool): If True, the function will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             FlexiblePlace: A new FlexiblePlace object representing the combined locations."""
+        combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
+        closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
+        place_description: str = closest_match.place_description
+        return FlexiblePlace(combined_place, place_description)
+
+    @staticmethod
+    def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
         location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
         combined_place: list[str] = [""] * location_matrix.column_count
         while True:
@@ -244,8 +250,7 @@ class FlexiblePlace:
                     break
                 else:
                     FlexiblePlace._eliminate_partial_rows(location_matrix)
-        place_description: str = FlexiblePlace._find_closest_description(combined_place, places, online)
-        return FlexiblePlace(combined_place[::-1], place_description)
+        return combined_place[::-1]
 
     @staticmethod
     def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
@@ -286,7 +291,7 @@ class FlexiblePlace:
             lm.remove_last_row()
 
     @staticmethod
-    def _find_closest_description(combined_place: list[str], places: list[FlexiblePlace], online: bool) -> str:
+    def _find_closest_match(combined_place: list[str], places: list[FlexiblePlace]) -> FlexiblePlace:
         """The place_description of the most similar FlexiblePlace to the target is returned.
         Args:
             combined_place (list[str]): The target location to be compared with.
@@ -294,14 +299,19 @@ class FlexiblePlace:
             online (bool): If True, the function will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             str: The place_description of the closest match. (Ties are broken by number of components)."""
-            
-        target: FlexiblePlace = FlexiblePlace(combined_place[::-1])
+        target: FlexiblePlace = FlexiblePlace(combined_place)
         scores: list[float] = [target.compare(place) for place in places]
         max_score: float = max(scores, default=0)
         if max_score < 90:
             max_score = 90
         best_matches: list[FlexiblePlace] = [places[i] for i in range(len(scores)) if scores[i] == max_score and places[i].place_description]
         best_match: FlexiblePlace = max(best_matches, key=lambda place: len(place.location), default=target)
-        if online and (not best_match.place_description or best_match.location < target.location):
-            return get_place_description(str(target))        
-        return best_match.place_description
+        return best_match
+
+    @staticmethod
+    def combine_flexible_places_online(places: list[FlexiblePlace]) -> FlexiblePlace:
+        combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
+        closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
+        temp: FlexiblePlace = FlexiblePlace(combined_place)
+        place_description: str = get_place_description(str(temp)) if not closest_match.place_description or closest_match.location < temp.location else closest_match.place_description
+        return FlexiblePlace(combined_place, place_description)
