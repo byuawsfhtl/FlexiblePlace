@@ -1,4 +1,5 @@
-import asyncio
+import pytest
+
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 from unittest.mock import patch, AsyncMock
 from tests.resources.fs_api_mocker import fs_api_mocker
@@ -41,35 +42,38 @@ class TestPlaceDescriptionOfCombinedPlace:
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "CORRECT"
 
-    def test_online_version_adds_place_description(self):
+    @pytest.mark.asyncio
+    async def test_online_version_adds_place_description(self):
         """If no description is provided, online version will look up the place_description."""
         places = [
             FlexiblePlace("Washington, United States"),
             FlexiblePlace("Walla Walla"),
             FlexiblePlace("Walla Walla, Washington, United States")
         ]
-        result = asyncio.run(combine_flexible_places_online(places))
+        result = await combine_flexible_places_online(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "396089"
 
-    def test_online_version_doesnt_replace_place_description(self):
+    @pytest.mark.asyncio
+    async def test_online_version_doesnt_replace_place_description(self):
         """If description is provided (and place is specific), online version will not look up the place_description."""
         places = [
             FlexiblePlace("Washington, United States"),
             FlexiblePlace("Walla Walla"),
             FlexiblePlace("Walla Walla, Washington, United States", "CORRECT")
         ]
-        result = asyncio.run(combine_flexible_places_online(places))
+        result = await combine_flexible_places_online(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "CORRECT"
 
-    def test_online_version_unspecific_place_description(self):
+    @pytest.mark.asyncio
+    async def test_online_version_unspecific_place_description(self):
         """If description is provided and location is not specific, online version will look up the place_description."""
         places = [
             FlexiblePlace("Washington, United States", "incorrect"),
             FlexiblePlace("Walla Walla"),
             FlexiblePlace("Walla Walla, Washington, United States")
         ]
-        result = asyncio.run(combine_flexible_places_online(places))
+        result = await combine_flexible_places_online(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "396089"
