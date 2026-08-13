@@ -12,62 +12,61 @@ async def fs_api_mocker(*args, **kwargs):
     AsyncClient instance (self) and the URL will usually be the next positional
     argument. To be robust we scan the args/kwargs for the URL string.
     """
-    mock_resp = AsyncMock()
-    mock_resp.status_code = 200
-
-    # Find the URL argument (it may be the first or second positional arg,
-    # or supplied as a kwarg). We look for something that looks like a URL or
-    # contains the q=name: query used by the code under test.
-    url = None
-    for a in args:
-        if isinstance(a, str) and (a.startswith("http") or "q=name:" in a):
-            url = a
-            break
-
-    if url is None:
-        # Common kwarg names to check
-        for key in ("url", "request", "uri"):
-            candidate = kwargs.get(key)
-            if isinstance(candidate, str) and (candidate.startswith("http") or "q=name:" in candidate):
-                url = candidate
-                break
-
-    if url is None:
-        # nothing useful found; return a 204-like empty response
-        mock_resp.status_code = 204
-        mock_resp.json = AsyncMock(return_value={})
-        return mock_resp
-
-    # Extract location from URL query parameter safely.
+    mock_response = AsyncMock()
+    mock_response.status_code = 200
+    request_url = _extract_url(args, kwargs)
+    if request_url is None:
+        return _create_empty_response()
+    extracted_location = _extract_location(request_url)
     try:
-        idx = url.find('q=name:"')
-        if idx != -1:
-            start = idx + len('q=name:"')
-            end = url.find('"', start)
-            if end == -1:
-                location = url[start:]
-            else:
-                location = url[start:end]
-        else:
-            # If the URL isn't the expected search form, try to treat the whole
-            # URL (or trailing part) as the location.
-            # Strip protocol and path if present.
-            # Fallback to the entire url string if nothing else works.
-            location = url
+        response_json_data = _load_json_response_file(extracted_location)
+        mock_response.json = AsyncMock(return_value=response_json_data)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return _create_empty_response()
+    return mock_response
 
-        # Decode percent-encoding and remove wildcard/placeholder characters
+
+def _extract_url(args, kwargs):
+    """Extract URL string from positional or keyword arguments."""
+    for arg in args:
+        if isinstance(arg, str) and (arg.startswith("http") or "q=name:" in arg):
+            return arg
+    for kwarg_key in ("url", "request", "uri"):
+        candidate_value = kwargs.get(kwarg_key)
+        if isinstance(candidate_value, str) and (candidate_value.startswith("http") or "q=name:" in candidate_value):
+            return candidate_value
+    return None
+
+def _create_empty_response():
+    """Create a 204 No Content response."""
+    empty_mock_response = AsyncMock()
+    empty_mock_response.status_code = 204
+    empty_mock_response.json = AsyncMock(return_value={})
+    return empty_mock_response
+
+def _extract_location(url_string):
+    """Extract location from URL query parameter and normalize it."""
+    try:
+        query_parameter_start = url_string.find('q=name:"')
+        if query_parameter_start != -1:
+            location_start_index = query_parameter_start + len('q=name:"')
+            location_end_index = url_string.find('"', location_start_index)
+            if location_end_index == -1:
+                location = url_string[location_start_index:]
+            else:
+                location = url_string[location_start_index:location_end_index]
+        else:
+            location = url_string
         location = unquote(location)
         location = location.strip().replace("*", "").replace("?", "")
+        return location
     except Exception:
-        location = ""
+        return ""
 
-    try:
-        base_dir = os.path.join(os.path.dirname(__file__), "expected_API_call_responses")
-        file_path = os.path.join(base_dir, f"{location}.json")
-        with open(file_path, "r", encoding="utf-8") as expected:
-            mock_resp.json = AsyncMock(return_value=json.load(expected))
-    except (FileNotFoundError, json.JSONDecodeError):
-        mock_resp.status_code = 204
-        mock_resp.json = AsyncMock(return_value={})
 
-    return mock_resp
+def _load_json_response_file(location):
+    """Load JSON response file for the given location."""
+    response_directory = os.path.join(os.path.dirname(__file__), "expected_API_call_responses")
+    response_file_path = os.path.join(response_directory, f"{location}.json")
+    with open(response_file_path, "r", encoding="utf-8") as response_file:
+        return json.load(response_file)
