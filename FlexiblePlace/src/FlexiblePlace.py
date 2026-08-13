@@ -170,9 +170,21 @@ class FlexiblePlace:
     @staticmethod
     def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
         """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
-        
-        This function attempts to intelligently resolve conflicts and fill gaps across multiple place
-        definitions to create a comprehensive location representation. See merging algorithm below.
+        Args:
+            places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
+        Returns:
+            FlexiblePlace: A new FlexiblePlace object representing the combined locations."""
+        combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
+        closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
+        place_description: str = closest_match.place_description
+        return FlexiblePlace(combined_place, place_description)
+
+    @staticmethod
+    def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
+        """Generates a combined place from a list of FlexiblePlace objects.
+
+        This method intelligently resolves conflicts and fills gaps across multiple place definitions 
+        to create a comprehensive location representation. See merging algorithm below.
         (Note: The algorithm does not move unto the next step until the current step fails to change
         merged_location).
             
@@ -184,7 +196,7 @@ class FlexiblePlace:
                 "bad data, bad data, bad data" ->  | bad data    | bad data   | bad data      |
 
                 merged_location -> | ___ | ___ | ___ |
-                ```.
+                ```
             
             2. Remove clear outliers (checks column by column, beginning with the least specific component).
                 ```
@@ -194,24 +206,24 @@ class FlexiblePlace:
                 | bad data    | bad data   | bad data      |  ->  
 
                 merged_location -> | Walla Walla | Washington | ___ |
-                ```.
+                ```
             
-            3. Remove least precise inputs.
+            3. Remove least precise inputs (meaning those with empty columns).
                 ```
                 |             | Washington | D.C.          |  ->  |             | Washington | D.C.          |
                 | Walla Walla | Washington |               |  ->  
                 |             | Washington | United States |  ->  |             | Washington | United States |
 
                 merged_location -> | Walla Walla | Washington | ___ |
-                ```.
+                ```
             
-            4. Remove inputs with the smallest components.
+            4. Remove inputs with the smallest components ('smallest' meaning least characters).
                 ```
                 |             | Washington | D.C.          |  ->  
                 |             | Washington | United States |  ->  |             | Washington | United States |
 
                 merged_location -> | Walla Walla | Washington | United States |
-                ```.
+                ```
 
             5. Remove the last input.
                 *At this point in the example, the algorithm would have terminated after step 4 because the merged_location
@@ -222,19 +234,7 @@ class FlexiblePlace:
             6. Return merged_location.
                 *In the event that merged_location is still unable to fill all necessary components, it is resized and returned as 
                 the result.
-
-        Args:
-            places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
-            online (bool): If True, the function will attempt to retrieve a place description from FamilySearch if one is not provided.
-        Returns:
-            FlexiblePlace: A new FlexiblePlace object representing the combined locations."""
-        combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
-        closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
-        place_description: str = closest_match.place_description
-        return FlexiblePlace(combined_place, place_description)
-
-    @staticmethod
-    def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
+        """
         location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
         combined_place: list[str] = [""] * location_matrix.column_count
         while True:
@@ -310,6 +310,11 @@ class FlexiblePlace:
 
     @staticmethod
     async def combine_flexible_places_online(places: list[FlexiblePlace]) -> FlexiblePlace:
+        """Combines multiple FlexiblePlace objects into a single FlexiblePlace object. Retrieves the place description online if necessary.
+        Args:
+            places (list[FlexiblePlace]): The list of FlexiblePlace objects to combine.
+        Returns:
+            FlexiblePlace: The combined FlexiblePlace object."""
         combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
         closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
         temp: FlexiblePlace = FlexiblePlace(combined_place)
