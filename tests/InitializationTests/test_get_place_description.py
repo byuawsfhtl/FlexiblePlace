@@ -7,16 +7,15 @@ from tests.resources.fs_api_mocker import fs_api_mocker
 class TestGetPlaceDescription:
     """Tests for FlexiblePlace.place_description accuracy when initialized online."""
 
-    def setup_method(self):
-        self.patcher = patch(
+    @pytest.fixture(autouse=True)
+    def patch_httpx_get(self):
+        """Automatically mock httpx AsyncClient.get for all tests in this class."""
+        with patch(
             'FlexiblePlace.src.get_place_description.httpx.AsyncClient.get',
             new_callable=AsyncMock,
-            side_effect=fs_api_mocker,
-        )
-        self.mock_get = self.patcher.start()
-
-    def teardown_method(self):
-        self.patcher.stop()
+            side_effect=fs_api_mocker
+        ):
+            yield
 
     @pytest.mark.asyncio
     async def test_country_by_itself(self):

@@ -7,18 +7,8 @@ from tests.resources.fs_api_mocker import fs_api_mocker
 combine_flexible_places = FlexiblePlace.combine_flexible_places
 combine_flexible_places_online = FlexiblePlace.combine_flexible_places_online
 
-class TestPlaceDescriptionOfCombinedPlace:
-    def setup_method(self):
-        self.patcher = patch(
-            'FlexiblePlace.src.get_place_description.httpx.AsyncClient.get',
-            new_callable=AsyncMock,
-            side_effect=fs_api_mocker
-        )
-        self.mock_get = self.patcher.start()
-
-    def teardown_method(self):
-        self.patcher.stop()
-
+class TestPlaceDescriptionOfCombinedPlaceOffline:
+    """Tests for FlexiblePlace.place_description accuracy when combining multiple FlexiblePlace objects offline."""
     def test_place_description_maintained(self) -> None:
         """The place_description should be saved if combined place closely matches a previous one."""
         places = [
@@ -41,6 +31,18 @@ class TestPlaceDescriptionOfCombinedPlace:
         result = combine_flexible_places(places)
         assert str(result) == "Walla Walla, Washington, United States"
         assert result.place_description == "CORRECT"
+
+class TestPlaceDescriptionOfCombinedPlaceOnline:
+    """Tests for FlexiblePlace.place_description accuracy when combining multiple FlexiblePlace objects online."""
+    @pytest.fixture(autouse=True)
+    def patch_httpx_get(self):
+        """Automatically mock httpx AsyncClient.get for all tests in this class."""
+        with patch(
+            'FlexiblePlace.src.get_place_description.httpx.AsyncClient.get',
+            new_callable=AsyncMock,
+            side_effect=fs_api_mocker
+        ):
+            yield
 
     @pytest.mark.asyncio
     async def test_online_version_adds_place_description(self):
