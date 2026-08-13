@@ -93,6 +93,14 @@ class FlexiblePlace:
 
     @staticmethod
     async def online(location: str | list[str], description: str = "", auto_fill: bool = True) -> FlexiblePlace:
+        """Creates a FlexiblePlace object, retrieving the place description online if necessary.
+        Args:
+            location (str | list[str]): The location string or list of location components.
+            description (str, optional): The place description. Defaults to "".
+            auto_fill (bool, optional): Whether to auto-fill missing location components. Defaults to True.
+        Returns:
+            FlexiblePlace: The created FlexiblePlace object.
+        """
         temp = FlexiblePlace(location, auto_fill=auto_fill)
         place_description = await get_place_description(str(temp)) if not description else description
         return FlexiblePlace(str(temp), place_description)
@@ -170,6 +178,7 @@ class FlexiblePlace:
     @staticmethod
     def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
         """Combines multiple FlexiblePlace objects into a single FlexiblePlace object.
+        
         Args:
             places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
         Returns:
@@ -234,6 +243,11 @@ class FlexiblePlace:
             6. Return merged_location.
                 *In the event that merged_location is still unable to fill all necessary components, it is resized and returned as 
                 the result.
+        
+        Args:
+            places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
+        Returns:
+            list[str]: A list of location components representing the combined place
         """
         location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
         combined_place: list[str] = [""] * location_matrix.column_count
@@ -296,7 +310,6 @@ class FlexiblePlace:
         Args:
             combined_place (list[str]): The target location to be compared with.
             places (list[FlexiblePlace]): FlexiblePlace objects to compare.
-            online (bool): If True, the function will attempt to retrieve a place description from FamilySearch if one is not provided.
         Returns:
             str: The place_description of the closest match. (Ties are broken by number of components)."""
         target: FlexiblePlace = FlexiblePlace(combined_place)
