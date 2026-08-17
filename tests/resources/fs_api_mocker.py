@@ -1,6 +1,6 @@
 import json
 import os
-from unittest.mock import AsyncMock
+from unittest.mock import MagicMock
 from urllib.parse import unquote
 
 async def fs_api_mocker(*args, **kwargs):
@@ -11,7 +11,7 @@ async def fs_api_mocker(*args, **kwargs):
     AsyncClient instance (self) and the URL will usually be the next positional
     argument. To be robust we scan the args/kwargs for the URL string.
     """
-    mock_response = AsyncMock()
+    mock_response = MagicMock()
     mock_response.status_code = 200
     request_url = _extract_url(args, kwargs)
     if request_url is None:
@@ -19,7 +19,7 @@ async def fs_api_mocker(*args, **kwargs):
     extracted_location = _extract_location(request_url)
     try:
         response_json_data = _load_json_response_file(extracted_location)
-        mock_response.json = AsyncMock(return_value=response_json_data)
+        mock_response.json = MagicMock(return_value=response_json_data)
     except (FileNotFoundError, json.JSONDecodeError):
         return _create_empty_response()
     return mock_response
@@ -38,9 +38,9 @@ def _extract_url(args, kwargs):
 
 def _create_empty_response():
     """Create a 204 No Content response."""
-    empty_mock_response = AsyncMock()
+    empty_mock_response = MagicMock()
     empty_mock_response.status_code = 204
-    empty_mock_response.json = AsyncMock(return_value={})
+    empty_mock_response.json = MagicMock(return_value={})
     return empty_mock_response
 
 def _extract_location(url_string):
