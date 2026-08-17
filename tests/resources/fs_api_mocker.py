@@ -3,7 +3,6 @@ import os
 from unittest.mock import AsyncMock
 from urllib.parse import unquote
 
-
 async def fs_api_mocker(*args, **kwargs):
     """Mock the FamilySearch API by loading JSON responses from files offline.
 
@@ -58,11 +57,13 @@ def _extract_location(url_string):
         else:
             location = url_string
         location = unquote(location)
-        location = location.strip().replace("*", "").replace("?", "")
+        location = location.strip()
+        for ch in ('*', '?', '/', '\\', ':', '|', '"', '<', '>'):
+            location = location.replace(ch, "")
+        location = location.replace("..", "")
         return location
     except Exception:
         return ""
-
 
 def _load_json_response_file(location):
     """Load JSON response file for the given location."""
