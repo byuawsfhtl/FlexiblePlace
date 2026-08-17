@@ -29,7 +29,7 @@ async def get_place_description(location: str) -> str:
         return ""
     
     try:
-        response_dict: dict = await response.json()
+        response_dict: dict = response.json()
     except Exception:
         return ""
     
