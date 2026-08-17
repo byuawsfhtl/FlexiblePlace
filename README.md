@@ -16,13 +16,13 @@ print(fp2) # Walla Walla, Washington, United States
 
 print(fp1 == fp2) # True
 
-online_fp = FlexiblePlace("Walla Walla, Washington, United States", online = True)
+online_fp = FlexiblePlace.online("Walla Walla, Washington, United States")
 print(online_fp.place_description) # 396089
 print(fp1.place_description) # 
 ```
 
 ## compare_places
-This static method is used to calculate a score out of 100 that represents how likely two FlexiblePlace objects refer to the same location. Locations of differing specificity, but with otherwise agreeing information, are a 100% match.s
+This static method is used to calculate a score out of 100 that represents how likely two FlexiblePlace objects refer to the same location. Locations of differing specificity, but with otherwise agreeing information, are a 100% match.
 ```python
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 compare_places = FlexiblePlace.compare_places
@@ -50,6 +50,6 @@ dc = FlexiblePlace("Washington, D.C.")
 combined_place = combine_flexible_places([walla_walla, washington, united_states, dc])
 print(combined_place) # Walla Walla, Washington, United States
 
-online_combined_place = combine_flexible_places([walla_walla, washington, united_states, dc], online = True)
+online_combined_place = combine_flexible_places_online([walla_walla, washington, united_states, dc])
 print(online_combined_place.place_description) # 396089
 ```

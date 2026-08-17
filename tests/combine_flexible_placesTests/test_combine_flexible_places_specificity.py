@@ -69,7 +69,7 @@ class TestCombineFlexiblePlacesSpecificity:
 
     def test_identifies_correct_city(self) -> None:
         """
-        Intelligently determines which city is correct without a plurarlity
+        Intelligently determines which city is correct without a plurality
         ("badcity, badstate, badcountry",
          "Walla Walla, Washington",
          "Washington, United States",

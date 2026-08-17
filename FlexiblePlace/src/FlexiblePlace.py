@@ -316,7 +316,7 @@ class FlexiblePlace:
         scores: list[float] = [target.compare(place) for place in places]
         max_score: float = max(scores, default=0)
         if max_score < 90:
-            max_score = 90
+            max_score = 101 # If the closest match is worse than a 90% match, then there will be no "best match." Method will just return `target`
         best_matches: list[FlexiblePlace] = [places[i] for i in range(len(scores)) if scores[i] == max_score and places[i].place_description]
         best_match: FlexiblePlace = max(best_matches, key=lambda place: len(place.location), default=target)
         return best_match
@@ -331,5 +331,5 @@ class FlexiblePlace:
         combined_place: list[str] = FlexiblePlace._generate_combined_place(places)
         closest_match: FlexiblePlace = FlexiblePlace._find_closest_match(combined_place, places)
         temp: FlexiblePlace = FlexiblePlace(combined_place)
-        place_description: str = await get_place_description(str(temp)) if not closest_match.place_description or closest_match.location < temp.location else closest_match.place_description
+        place_description: str = await get_place_description(str(temp)) if not closest_match.place_description or len(closest_match.location) < len(temp.location) else closest_match.place_description
         return FlexiblePlace(combined_place, place_description)
