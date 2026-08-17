@@ -103,7 +103,7 @@ class FlexiblePlace:
         """
         temp = FlexiblePlace(location, auto_fill=auto_fill)
         place_description = await get_place_description(str(temp)) if not description else description
-        return FlexiblePlace(str(temp), place_description)
+        return FlexiblePlace(str(temp), place_description, auto_fill=auto_fill)
     
     def get_location_components(self) -> list[str]:
         """Returns the list of location components for this FlexiblePlace object.
@@ -312,7 +312,7 @@ class FlexiblePlace:
             places (list[FlexiblePlace]): FlexiblePlace objects to compare.
         Returns:
             str: The place_description of the closest match. (Ties are broken by number of components)."""
-        target: FlexiblePlace = FlexiblePlace(combined_place)
+        target: FlexiblePlace = FlexiblePlace(combined_place, auto_fill = False)
         scores: list[float] = [target.compare(place) for place in places]
         max_score: float = max(scores, default=0)
         if max_score < 90:
