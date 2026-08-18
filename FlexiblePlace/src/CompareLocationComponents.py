@@ -3,8 +3,8 @@ from rapidfuzz import fuzz
 from functools import cache
 
 # This is where the magic happens when deciding if two LocationComponents are a close enough match to link
-# together. Most issues with compare FlexiblePlace objects and combining them together can be traced bac to 
-# how accurately the components line up. Thus, the comparison algorithms in this file will be the primary
+# together. Most issues with compare FlexiblePlace objects and combining them together can be traced back to 
+# how accurately the components line up. Thus, the comparison algorithms in this file will be the primary method
 # to costumization as to how precisely FlexiblePlace objects are compared and combined 
 
 @cache

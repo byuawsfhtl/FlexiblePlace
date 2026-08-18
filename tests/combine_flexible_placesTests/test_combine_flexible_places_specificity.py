@@ -1,15 +1,15 @@
-import pytest
-from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, combine_flexible_places
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
+combine_flexible_places = FlexiblePlace.combine_flexible_places
 
 class TestCombineFlexiblePlacesSpecificity:
-    """Specificity tests for FlexiblePlace.combine_flexible_places static method"""
+    """Specificity tests for FlexiblePlace.combine_flexible_places static method, to rigorously test combination algorithm"""
 
-    def test_more_specific_replaces_less_specific_new_york(self) -> None:
+    def test_merge_partial_into_completed_location(self) -> None:
         """
         More specific replaces less specific if same location and ignores outlier
         ("New York, New York, United States",
-         "New York, United States", and
+         "New York, United States",
          "reallylongcityname, reallylongstatename, UnitedStates"
          returns "New York, New York, United States").
         """
@@ -35,26 +35,12 @@ class TestCombineFlexiblePlacesSpecificity:
         result = combine_flexible_places(places)
         assert str(result) == "Lawrence, Essex, Massachusetts, United States"
 
-    def test_combining_location_with_county_to_make_more_specific_new_york(self) -> None:
+    def test_combine_two_partials_to_create_complete_location(self) -> None:
         """
-        Combining location with county versus not with county to create more specific location
-        ("Buffalo, New York, United States",
-         "Buffalo, Erie, New York"
-        returns "Buffalo, Erie, New York, United States").
-        """
-        places = [
-            FlexiblePlace("Buffalo, New York, United States"),
-            FlexiblePlace("Buffalo, Erie, New York")
-        ]
-        result = combine_flexible_places(places)
-        assert str(result) == "Buffalo, Erie, New York, United States"
-
-    def test_combining_location_with_county_to_make_more_specific_illinois(self) -> None:
-        """
-        Combining location with county to create more specific location and ignores outlier
+        Combines the info of two imprecise locations, to create a more precise location. Ignores outlier
         ("Springfield, Sangamon, Illinois",
          "Springfield, Illinois, United States",
-         "reallylongcityname, Sangamon, Illinois, United States"
+         "reallylongcityname, Sangamon, reallylongstatename, United States"
         returns "Springfield, Sangamon, Illinois, United States").
         """
         places = [
@@ -65,9 +51,9 @@ class TestCombineFlexiblePlacesSpecificity:
         result = combine_flexible_places(places)
         assert str(result) == "Springfield, Sangamon, Illinois, United States"
 
-    def test_combines_data_from_incomplete_but_matching_sources(self) -> None:
+    def test_combine_three_partials_to_create_completed_location(self) -> None:
         """
-        Combines data from incomplete, but matching, sources
+        Correctly combines the info of three imprecise locations
         ("Sugarloaf Township, Pennsylvania, United States",
          "Luzerne, Pennsylvania",
          "Sugarloaf Township, Luzerne, Pennsylvania"
@@ -81,94 +67,121 @@ class TestCombineFlexiblePlacesSpecificity:
         result = combine_flexible_places(places)
         assert str(result) == "Sugarloaf Township, Luzerne, Pennsylvania, United States"
 
-    def test_disambiguates_multiple_locations_paris_texas(self) -> None:
+    def test_identifies_correct_city(self) -> None:
         """
-        Matches coinsiding places and removes outlier
+        Intelligently determines which city is correct without a plurality
+        ("badcity, badstate, badcountry",
+         "Walla Walla, Washington",
+         "Washington, United States",
+         "College Place, Washington, badcountry",
+         "United States"
+         returns "Walla Walla, Washington, United States").
+        """
+        places = [
+            FlexiblePlace("badcity, badstate, badcountry"),
+            FlexiblePlace("Walla Walla, Washington", auto_fill = False),
+            FlexiblePlace("Washington, United States"),
+            FlexiblePlace("College Place, Washington, badcountry"),
+            FlexiblePlace("United States")
+        ]
+        result = combine_flexible_places(places)
+        assert str(result) == "Walla Walla, Washington, United States"
+
+    def test_identifies_correct_state(self) -> None:
+        """
+        Correctly removes California as an outlier
+        ("Orange, California",
+         "Orange, Florida, U.S.A.",
+         "Orlando, Orange, Florida"
+         returns "Orlando, Orange, Florida, U.S.A.").
+        """
+        places = [
+            FlexiblePlace("Orange, California", auto_fill = False),
+            FlexiblePlace("Orange, Florida, U.S.A."),
+            FlexiblePlace("Orlando, Orange, Florida", auto_fill = False)
+        ]
+        result = combine_flexible_places(places)
+        assert str(result) == "Orlando, Orange, Florida, U.S.A."
+
+    def test_identifies_correct_country(self) -> None:
+        """
+        Intelligently determines correct country without a plurality
         ("Paris, France",
          "Paris, Texas",
-         "Texas, United States"
-         returns "Paris, Texas, United States").
+         "Texas, USA"
+         returns "Paris, Texas, Usa").
         """
         places = [
             FlexiblePlace("Paris, France"),
-            FlexiblePlace("Paris, Texas"),
-            FlexiblePlace("Texas, United States")
+            FlexiblePlace("Paris, Texas", auto_fill = False),
+            FlexiblePlace("Texas, USA")
         ]
         result = combine_flexible_places(places)
-        assert str(result) == "Paris, Texas, United States"
+        assert str(result) == "Paris, Texas, Usa"
 
-    def test_disambiguates_multiple_locations_new_york(self) -> None:
+    def test_duplicate_city_and_state_name(self) -> None:
         """
-        Matches coinsiding places and removes outlier
-        ("New York, Iowa, United States",
+        Doesn't get confused by duplicate city and state names
+        ("New York, incorrectstate, United States",
          "New York, United States",
          "New York, New York, United States"
          returns "New York, New York, United States").
         """
         places = [
-            FlexiblePlace("New York, Iowa, United States"),
+            FlexiblePlace("New York, incorrectstate, United States"),
             FlexiblePlace("New York, United States"),
             FlexiblePlace("New York, New York, United States")
         ]
         result = combine_flexible_places(places)
         assert str(result) == "New York, New York, United States"
 
-
-    def test_disambiguates_multiple_locations_walla_walla(self) -> None:
+    def test_tie_break_by_string_length(self) -> None:
         """
-        Matches coinsiding places and removes outlier
-        ("Washington, Utah",
+        Chooses 'United States' as the country because it is the longer string
+        ("Washington, D.C.",
          "Walla Walla, Washington",
          "Washington, United States"
          returns "Walla Walla, Washington, United States").
         """
         places = [
-            FlexiblePlace("Washington, Utah", auto_fill=False),
+            FlexiblePlace("Washington, D.C."),
             FlexiblePlace("Walla Walla, Washington"),
             FlexiblePlace("Washington, United States")
         ]
         result = combine_flexible_places(places)
         assert str(result) == "Walla Walla, Washington, United States"
 
-    def test_disambiguates_multiple_locations_florida(self) -> None:
+    def test_shrinks_combined_place_if_needed(self) -> None:
         """
-        Matches coinsiding places and removes outlier
-        ("Orange, California",
-         "Orange, Florida, United States",
-         "Orlando, Orange, Florida"
-         returns "Orlando, Orange, Florida, United States").
-        """
-        places = [
-            FlexiblePlace("Orange, California"),
-            FlexiblePlace("Orange, Florida, United States"),
-            FlexiblePlace("Orlando, Orange, Florida")
-        ]
-        result = combine_flexible_places(places)
-        assert str(result) == "Orlando, Orange, Florida, United States"
-
-    def test_works_with_large_input_washington(self) -> None:
-        """
-        Disambiguates multiple locations
-        ("United States",
-         "Belgium",
-         "Washington, Utah",
-         "Walla Walla, Washington",
-         "Washington, United States"
-         returns "Walla Walla, Washington, United States").
+        Combined place can be less specific than a given location if no consensus is found
+        ("badcity, Washington, incorrectcountry",
+         "incorrectcity, Washington, badcountry",
+         "Washington, United States",
+         "Washington, United States",
+         returns "Washington, United States").
         """
         places = [
-            FlexiblePlace("United States"),
-            FlexiblePlace("Belgium"),
-            FlexiblePlace("Washington, Utah", auto_fill=False),
-            FlexiblePlace("Walla Walla, Washington"),
+            FlexiblePlace("badcity, Washington, incorrectcountry"),
+            FlexiblePlace("incorrectcity, Washington, badcountry"),
+            FlexiblePlace("Washington, United States"),
             FlexiblePlace("Washington, United States")
         ]
         result = combine_flexible_places(places)
+        assert str(result) == "Washington, United States"
+
+    def test_works_with_large_input(self) -> None:
+        """Can handle large input without trouble"""
+        places = [FlexiblePlace("Walla Walla, Washington, United States")]
+        for i in range(100):
+            places.append(FlexiblePlace("Walla Walla"))
+            places.append(FlexiblePlace("Washington"))
+            places.append(FlexiblePlace("United States"))
+        result = combine_flexible_places(places)
         assert str(result) == "Walla Walla, Washington, United States"
 
-    def test_works_with_a_large_input_massachusetts(self) -> None:
+    def test_works_with_complex_input(self) -> None:
         """
-        Works with a ton of inputs at once
+        Properly combines several locations of varying specificity and excludes outliers
         ("Massachusetts Bay Colony, British Colonial America",
          "British Colonial America",
          "Lincoln, Massachusetts Bay Colony",

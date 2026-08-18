@@ -1,5 +1,6 @@
-import pytest
-from FlexiblePlace.src.FlexiblePlace import FlexiblePlace, compare_places
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
+
+compare_places = FlexiblePlace.compare_places
 
 
 class TestCompareTwoPlacesPerfectMatch:
