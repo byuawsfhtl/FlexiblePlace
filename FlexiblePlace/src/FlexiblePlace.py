@@ -50,7 +50,7 @@ class FlexiblePlace:
         Returns:
             str: A formatted location string with title-cased components.
         """
-        return ", ".join(map(str.title, self.location[::-1]))
+        return ", ".join(map(str.title, self.get_location()))
     
     def __repr__(self) -> str:
         """FamilySearch-standardized string representation of the FlexiblePlace object.
@@ -105,7 +105,7 @@ class FlexiblePlace:
         place_description = await get_place_description(str(temp)) if not description else description
         return FlexiblePlace(str(temp), place_description, auto_fill=auto_fill)
     
-    def get_location_components(self) -> list[str]:
+    def get_location(self) -> list[str]:
         """Returns the list of location components for this FlexiblePlace object.
         
         Args:
@@ -113,7 +113,7 @@ class FlexiblePlace:
         Returns:
             list[str]: The internal location components list in reverse order (most specific to least specific).
         """
-        return self.location
+        return self.location[::-1]
     
     def compare(self, other: FlexiblePlace) -> float | int:
         """Compares this FlexiblePlace with another object and returns a similarity score.
@@ -144,6 +144,8 @@ class FlexiblePlace:
         if not place_a or not place_b:
             return 100.0
         aligned_places: list[list[str]] = Compare.align_components(place_a.location, place_b.location)
+        aligned_places[0] = aligned_places[0][::-1]
+        aligned_places[1] = aligned_places[1][::-1]
         scores_list: list[float] = Compare.compare_each_component(aligned_places)
         Compare.adjust_scores(scores_list)
         average_score = sum(scores_list) / len(scores_list)
@@ -223,7 +225,7 @@ class FlexiblePlace:
         Returns:
             list[str]: A list of location components representing the combined place
         """
-        location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
+        location_matrix: LocationMatrix = LocationMatrix([place.location for place in places])
         combined_place: list[str] = [""] * location_matrix.column_count
         while True:
             has_changed: bool = False

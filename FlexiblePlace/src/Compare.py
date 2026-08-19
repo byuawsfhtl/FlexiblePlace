@@ -59,7 +59,7 @@ class Compare:
 
         Returns:
             None."""
-        scores_list[:] = [Compare._forgive_small_differences(score, index) for index, score in enumerate(scores_list)]  
+        scores_list[:] = [Compare._forgive_small_differences(score, index) for index, score in enumerate(scores_list[::-1])]  
 
     @staticmethod
     def _forgive_small_differences(score: float, index: int) -> float:
@@ -76,6 +76,6 @@ class Compare:
         """
         component_penalty: float = 0.5 # How harshly to penalize differences in components (With 0.5, about 65% of a 
         # difference in street address will be forgiven as opposed to 30% with the state)
-        forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As index increases, more forgiveness is granted.
+        forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As specificity increases, more forgiveness is granted.
         redeemed_points: float = (100 - score) * forgiveness_factor # Redeems a certain percentage of lost points
         return score + redeemed_points

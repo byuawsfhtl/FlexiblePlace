@@ -14,11 +14,11 @@ class TestLocationMatrixBasicContstruction:
     def test_single_row_initialization(self) -> None:
         """A single place should create one row with correct column count."""
         fp = FlexiblePlace("Belgium")
-        lm = LocationMatrix([fp.get_location_components()])
+        lm = LocationMatrix([fp.get_location()])
         assert lm.row_count == 1
-        assert lm.column_count == len(fp.get_location_components())
+        assert lm.column_count == len(fp.get_location())
         # Verify matrix values correspond to the FlexiblePlace components
-        for col, comp in enumerate(fp.get_location_components()):
+        for col, comp in enumerate(fp.get_location()):
             assert lm.matrix[0][col].value == comp
 
     def test_resize_and_padding(self) -> None:
@@ -41,7 +41,7 @@ class TestLocationMatrixBasicContstruction:
             FlexiblePlace("Walla Walla, Washingon", auto_fill=False),
             FlexiblePlace("Walla Walla, Wasington, United Sates", auto_fill=False),
         ]
-        lm = LocationMatrix([p.get_location_components() for p in places])
+        lm = LocationMatrix([p.location for p in places])
         expected = (
             "| united sates  | wasington  | walla walla |\n"
             "| united states | washington |             |\n"
@@ -56,7 +56,7 @@ class TestLocationMatrixBasicContstruction:
             FlexiblePlace("Walla Walla, Washingon", auto_fill=False),
             FlexiblePlace("Walla Walla, Wasington, United Sates", auto_fill=False),
         ]
-        lm = LocationMatrix([p.get_location_components() for p in places])
+        lm = LocationMatrix([p.get_location() for p in places])
         expected = [
             ["walla walla", "wasington", "united sates"],
             ["", "washington", "united states"],
