@@ -1,8 +1,8 @@
 from FlexiblePlace.src.Compare import Compare
 
 class TestAlignComponents:
-    def test_get_locations(self) -> None:
-        """Tests that the get_locations method works"""
+    def test_align_locations(self) -> None:
+        """Tests that the align_locations method works"""
         place_a = ["washington", "united states"]
         place_b = ["walla walla", "washingon"]
         expected = [

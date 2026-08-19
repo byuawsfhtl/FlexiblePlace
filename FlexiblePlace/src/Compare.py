@@ -59,7 +59,7 @@ class Compare:
 
         Returns:
             None."""
-        scores_list[:] = [Compare._forgive_small_differences(score, index) for index, score in enumerate(scores_list[::-1])]  
+        scores_list[:] = [Compare._forgive_small_differences(score, index) for index, score in enumerate(scores_list[::-1])][::-1]  
 
     @staticmethod
     def _forgive_small_differences(score: float, index: int) -> float:
