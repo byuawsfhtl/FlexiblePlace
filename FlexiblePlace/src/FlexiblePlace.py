@@ -156,6 +156,14 @@ class FlexiblePlace:
         score = sum(scores_list) / len(scores_list)
         return score
 
+    # def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
+        aligned_places: list[list[str]] = Compare.align(place_a.location, place_a.location)
+        scores_list: list[float] = Compare.compare_each(aligned_places)
+        adjust_scores(scores_list)
+        average_score = sum(scores_list) / len(scores_list)
+        return average_score
+
+
     @staticmethod
     def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
         """Forgives small differences in the fuzzy score based on the index of the component being compared.
