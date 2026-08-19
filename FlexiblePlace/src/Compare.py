@@ -3,6 +3,12 @@ from functools import cache
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class Compare:
+    """Provides component-level string comparison and alignment utilities for location parsing.
+
+    Helper class containing methods to align location component lists using a matrix, calculate
+    fuzzy string similarity scores between individual geographic components, and apply forgiveness
+    heuristics based on component specificity.
+    """
     @staticmethod
     def align_components(location_a: list[str], location_b: list[str]) -> list[list[str]]:
         """Aligns two lists of location components using a LocationMatrix.
@@ -45,7 +51,7 @@ class Compare:
         return fuzz.ratio(component_a, component_b)
 
     @staticmethod
-    def adjust_scores(scores_list: list[float]):
+    def adjust_scores(scores_list: list[float]) -> None:
         """Modifies a list of similarity scores in-place by applying location index forgiveness.
 
         Args:
@@ -63,7 +69,7 @@ class Compare:
         component.
         
         Args:
-            fuzzy_score (float): The fuzzy score to forgive.
+            score (float): The fuzzy score to forgive.
             index (int): The index of the component being compared.
         Returns:
             float: The new score.
