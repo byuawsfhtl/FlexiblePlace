@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from rapidfuzz import fuzz
 from functools import cache
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.auto_fill_location import auto_fill_location
@@ -129,6 +128,19 @@ class FlexiblePlace:
     @cache
     @staticmethod
     def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
+        """Compares two FlexiblePlace objects and returns a similarity score out of 100.
+        
+        Assumes that places are given in a standardized order (e.g. City, County, State/Province, Country).
+        It is effectively a glorified string comparator (Texas, USA and Texas, United States will score very low).
+        Note: 
+         - All location components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
+         - More specific location components will be weighted lower than less specific ones (countries are weighted heavier than cities).
+
+        Args:
+            place_a (FlexiblePlace): The first FlexiblePlace object to compare.
+            place_b (FlexiblePlace): The second FlexiblePlace object to compare.
+        Returns:
+            float: The similarity score out of 100."""
         if not place_a or not place_b:
             return 100.0
         aligned_places: list[list[str]] = Compare.align_components(place_a.location, place_b.location)

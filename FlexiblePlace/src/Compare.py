@@ -5,11 +5,26 @@ from FlexiblePlace.src.LocationMatrix import LocationMatrix
 class Compare:
     @staticmethod
     def align_components(location_a: list[str], location_b: list[str]) -> list[list[str]]:
+        """Aligns two lists of location components using a LocationMatrix.
+
+        Args:
+            location_a (list[str]): First list of location component strings.
+            location_b (list[str]): Second list of location component strings.
+
+        Returns:
+            list[list[str]]: A list containing the two aligned location component lists."""
         location_matrix = LocationMatrix([location_a, location_b])
         return location_matrix.get_locations()
 
     @staticmethod
     def compare_each_component(locations: list[list[str]]) -> list[float]:
+        """Compares corresponding components of two aligned location lists.
+
+        Args:
+            locations (list[list[str]]): A list containing two equal-length location component lists.
+        
+        Returns:
+            list[float]: Fuzzy similarity scores (0.0 to 100.0) for each aligned component pair."""
         location_a: list[str] = locations[0]
         location_b: list[str] = locations[1]
         return [Compare._compare_components(component_a, component_b) for component_a, component_b in zip(location_a, location_b)]
@@ -17,12 +32,27 @@ class Compare:
     @cache
     @staticmethod
     def _compare_components(component_a: str, component_b: str) -> float:
+        """Calculates the fuzzy similarity ratio between two string components.
+
+        Args:
+            component_a (str): The first component string.
+            component_b (str): The second component string.
+        
+        Returns:
+            float: Similarity score from 0.0 to 100.0. Returns 100.0 if either component is empty."""
         if not component_a or not component_b:
             return 100.0
         return fuzz.ratio(component_a, component_b)
 
     @staticmethod
     def adjust_scores(scores_list: list[float]):
+        """Modifies a list of similarity scores in-place by applying location index forgiveness.
+
+        Args:
+            scores_list (list[float]): List of component fuzzy scores to adjust in-place.
+
+        Returns:
+            None."""
         scores_list[:] = [Compare._forgive_small_differences(score, index) for index, score in enumerate(scores_list)]  
 
     @staticmethod
