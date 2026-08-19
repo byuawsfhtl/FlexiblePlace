@@ -1,4 +1,3 @@
-import pytest
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
@@ -10,7 +9,7 @@ class TestLocationMatrixBasicContstruction:
         lm = LocationMatrix([])
         assert lm.row_count == 0
         assert lm.column_count == 0
-        assert str(lm) == ""
+        assert str(lm) == ""    
 
     def test_single_row_initialization(self) -> None:
         """A single place should create one row with correct column count."""
@@ -49,3 +48,18 @@ class TestLocationMatrixBasicContstruction:
             "|               | washingon  | walla walla |"
         )
         assert str(lm) == expected
+
+    def test_get_locations(self) -> None:
+        """Tests that the get_locations method works"""
+        places = [
+            FlexiblePlace("Washington, United States", auto_fill=False),
+            FlexiblePlace("Walla Walla, Washingon", auto_fill=False),
+            FlexiblePlace("Walla Walla, Wasington, United Sates", auto_fill=False),
+        ]
+        lm = LocationMatrix([p.get_location_components() for p in places])
+        expected = [
+            ["walla walla", "wasington", "united sates"],
+            ["", "washington", "united states"],
+            ["walla walla", "washingon", ""]
+        ]
+        assert lm.get_locations() == expected

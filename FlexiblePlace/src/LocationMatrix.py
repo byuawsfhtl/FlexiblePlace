@@ -94,7 +94,7 @@ class LocationMatrix:
         
         Returns: 
             list[list[str]]: List of all locations in matrix"""
-        return [[component.value for component in row] for row in self.matrix]
+        return [[component.value for component in row[::-1]] for row in self.matrix]
 
     def get_row(self, row: int) -> list[LocationComponent]:
         """Return an entire row of LocationComponent objects.
