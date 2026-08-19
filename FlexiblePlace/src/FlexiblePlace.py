@@ -161,7 +161,7 @@ class FlexiblePlace:
             return 100.0
         aligned_places: list[list[str]] = Compare.align(place_a.location, place_a.location)
         scores_list: list[float] = Compare.compare_each(aligned_places)
-        adjust_scores(scores_list)
+        Compare.adjust_scores(scores_list)
         average_score = sum(scores_list) / len(scores_list)
         return average_score
 
