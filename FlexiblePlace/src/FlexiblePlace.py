@@ -157,6 +157,8 @@ class FlexiblePlace:
         return score
 
     # def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
+        if not place_a or not place_b:
+            return 100.0
         aligned_places: list[list[str]] = Compare.align(place_a.location, place_a.location)
         scores_list: list[float] = Compare.compare_each(aligned_places)
         adjust_scores(scores_list)

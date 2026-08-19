@@ -89,6 +89,9 @@ class LocationMatrix:
             LocationComponent: The LocationComponent instance at the specified location."""
         return self.matrix[row][col]
     
+    def get_locations(self) -> list[list[str]]:
+        return [[component.value for component in row] for row in self.matrix]
+
     def get_row(self, row: int) -> list[LocationComponent]:
         """Return an entire row of LocationComponent objects.
         Args:
@@ -114,7 +117,6 @@ class LocationMatrix:
         row: int = component.row
         col: int = component.column
         self.matrix[row][col] = component
-
 
     def load_places(self, places: list[list[str]]) -> None:
         """Populates the LocationMatrix with location components from a list of place component lists.
