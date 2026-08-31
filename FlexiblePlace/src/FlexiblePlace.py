@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from rapidfuzz import fuzz
 from functools import cache
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.auto_fill_location import auto_fill_location
 from FlexiblePlace.src.get_place_description import get_place_description
+from FlexiblePlace.src.Compare import Compare
 
 class FlexiblePlace:
     """Represents a geographic location with multiple hierarchical components stored in reverse order.
@@ -50,7 +50,7 @@ class FlexiblePlace:
         Returns:
             str: A formatted location string with title-cased components.
         """
-        return ", ".join(map(str.title, self.location[::-1]))
+        return ", ".join(map(str.title, self.get_location()))
     
     def __repr__(self) -> str:
         """FamilySearch-standardized string representation of the FlexiblePlace object.
@@ -105,7 +105,7 @@ class FlexiblePlace:
         place_description = await get_place_description(str(temp)) if not description else description
         return FlexiblePlace(str(temp), place_description, auto_fill=auto_fill)
     
-    def get_location_components(self) -> list[str]:
+    def get_location(self) -> list[str]:
         """Returns the list of location components for this FlexiblePlace object.
         
         Args:
@@ -113,7 +113,7 @@ class FlexiblePlace:
         Returns:
             list[str]: The internal location components list in reverse order (most specific to least specific).
         """
-        return self.location
+        return self.location[::-1]
     
     def compare(self, other: FlexiblePlace) -> float | int:
         """Compares this FlexiblePlace with another object and returns a similarity score.
@@ -128,52 +128,28 @@ class FlexiblePlace:
     @cache
     @staticmethod
     def compare_places(place_a: FlexiblePlace, place_b: FlexiblePlace) -> float:
-        """Compares two FlexiblePlace objects and returns a similarity score out of 100. Assumes that places
-        are given in a standardized order (e.g. City, County, State/Province, Country).
+        """Compares two FlexiblePlace objects and returns a similarity score out of 100.
+        
+        Assumes that places are given in a standardized order (e.g. City, County, State/Province, Country).
         It is effectively a glorified string comparator (Texas, USA and Texas, United States will score very low).
         Note: 
-        - All location components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
-        - More specific location components will be weighted lower than less specific ones (countries are weighted heavier than cities).
+         - All location components will be compared (e.g Paris, Tx and Paris, Fl will score higher than Tx and Fl)
+         - More specific location components will be weighted lower than less specific ones (countries are weighted heavier than cities).
 
         Args:
             place_a (FlexiblePlace): The first FlexiblePlace object to compare.
             place_b (FlexiblePlace): The second FlexiblePlace object to compare.
         Returns:
             float: The similarity score out of 100."""
-        score: float = 100
         if not place_a or not place_b:
-            return score
-        scores_list: list[float] = []
-        location_matrix: LocationMatrix = LocationMatrix([place_a.get_location_components(), place_b.get_location_components()])
-        for i in range(location_matrix.column_count):
-            component_a: str = location_matrix.get(0,i).value
-            component_b: str = location_matrix.get(1,i).value
-            if not component_a or not component_b:
-                scores_list.append(100)
-                continue
-            component_score: float = fuzz.ratio(component_a, component_b)
-            scores_list.append(FlexiblePlace._forgive_small_differences(component_score, i))
-        score = sum(scores_list) / len(scores_list)
-        return score
-
-    @staticmethod
-    def _forgive_small_differences(fuzzy_score: float, index: int) -> float:
-        """Forgives small differences in the fuzzy score based on the index of the component being compared.
-        The higher the index, the less important the component is, and thus the more forgiving the score should be.
-        For example, a difference in the country component should be less forgiving than a difference in the city 
-        component.
-        
-        Args:
-            fuzzy_score (float): The fuzzy score to forgive.
-            index (int): The index of the component being compared.
-        Returns:
-            float: The new score.
-        """
-        component_penalty: float = 0.5 # How harshly to penalize differences in components (With 0.5, about 65% of a 
-        # difference in street address will be forgiven as opposed to 30% with the state)
-        forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As index increases, more forgiveness is granted.
-        redeemed_points: float = (100 - fuzzy_score) * forgiveness_factor # Redeems a certain percentage of lost points
-        return fuzzy_score + redeemed_points
+            return 100.0
+        aligned_places: list[list[str]] = Compare.align_components(place_a.location, place_b.location)
+        aligned_places[0] = aligned_places[0][::-1]
+        aligned_places[1] = aligned_places[1][::-1]
+        scores_list: list[float] = Compare.compare_each_component(aligned_places)
+        Compare.adjust_scores(scores_list)
+        average_score = sum(scores_list) / len(scores_list)
+        return average_score
 
     @staticmethod
     def combine_flexible_places(places: list[FlexiblePlace]) -> FlexiblePlace:
@@ -249,7 +225,7 @@ class FlexiblePlace:
         Returns:
             list[str]: A list of location components representing the combined place
         """
-        location_matrix: LocationMatrix = LocationMatrix([place.get_location_components() for place in places])
+        location_matrix: LocationMatrix = LocationMatrix([place.location for place in places])
         combined_place: list[str] = [""] * location_matrix.column_count
         while True:
             has_changed: bool = False
