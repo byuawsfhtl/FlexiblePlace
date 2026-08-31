@@ -3,15 +3,16 @@ from functools import cache
 from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class Compare:
-    """Provides component-level string comparison and alignment utilities for location parsing.
+    """Provides component-level string comparison and alignment utilities for location comparison.
 
-    Helper class containing methods to align location component lists using a matrix, calculate
-    fuzzy string similarity scores between individual geographic components, and apply forgiveness
-    heuristics based on component specificity.
+    Helper class containing methods to align location component lists, calculate component
+    similarity scores, and adjust comparison scores based on component specificity.
     """
     @staticmethod
     def align_components(location_a: list[str], location_b: list[str]) -> list[list[str]]:
-        """Aligns two lists of location components using a LocationMatrix.
+        """Aligns two lists of strings representing locations.
+
+        Relies heavily on the built-in component alignment functionality of the LocationMatrix class.
 
         Args:
             location_a (list[str]): First list of location component strings.
@@ -52,7 +53,7 @@ class Compare:
 
     @staticmethod
     def adjust_scores(scores_list: list[float]) -> None:
-        """Modifies a list of similarity scores in-place by applying location index forgiveness.
+        """Adjusts a list of similarity scores in-place based on component specificity.
 
         Args:
             scores_list (list[float]): List of component fuzzy scores to adjust in-place.
@@ -64,9 +65,10 @@ class Compare:
     @staticmethod
     def _forgive_small_differences(score: float, index: int) -> float:
         """Forgives small differences in the fuzzy score based on the index of the component being compared.
-        The higher the index, the less important the component is, and thus the more forgiving the score should be.
-        For example, a difference in the country component should be less forgiving than a difference in the city 
-        component.
+        
+        The higher the index (scores are ordered from least to most specificity), the less important the
+        component is, and thus the more forgiving the score should be. For example, a difference in the country
+        component should be less forgiving than a difference in the city component.
         
         Args:
             score (float): The fuzzy score to forgive.
