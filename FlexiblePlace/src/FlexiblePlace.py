@@ -242,6 +242,80 @@ class FlexiblePlace:
                     FlexiblePlace._eliminate_partial_rows(location_matrix)
         return combined_place[::-1]
 
+    # def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
+        """Generates a combined place from a list of FlexiblePlace objects.
+
+        This method intelligently resolves conflicts and fills gaps across multiple place definitions 
+        to create a comprehensive location representation. See merging algorithm below.
+        (Note: The algorithm does not move unto the next step until the current step fails to change
+        merged_location).
+            
+            1. Align components of the locations provided (LocationMatrix auto-aligns everything).
+                ```
+                "Washington, D.C."             ->  |             | Washington | D.C.          |
+                "Walla Walla, Washington"      ->  | Walla Walla | Washington |               |
+                "Washington, United States"    ->  |             | Washington | United States |
+                "bad data, bad data, bad data" ->  | bad data    | bad data   | bad data      |
+
+                merged_location -> | ___ | ___ | ___ |
+                ```
+            
+            2. Remove clear outliers (checks column by column, beginning with the least specific component).
+                ```
+                |             | Washington | D.C.          |  ->  |             | Washington | D.C.          |
+                | Walla Walla | Washington |               |  ->  | Walla Walla | Washington |               |
+                |             | Washington | United States |  ->  |             | Washington | United States |
+                | bad data    | bad data   | bad data      |  ->  
+
+                merged_location -> | Walla Walla | Washington | ___ |
+                ```
+            
+            3. Remove least precise inputs (meaning those with empty columns).
+                ```
+                |             | Washington | D.C.          |  ->  |             | Washington | D.C.          |
+                | Walla Walla | Washington |               |  ->  
+                |             | Washington | United States |  ->  |             | Washington | United States |
+
+                merged_location -> | Walla Walla | Washington | ___ |
+                ```
+            
+            4. Remove inputs with the smallest components ('smallest' meaning least characters).
+                ```
+                |             | Washington | D.C.          |  ->  
+                |             | Washington | United States |  ->  |             | Washington | United States |
+
+                merged_location -> | Walla Walla | Washington | United States |
+                ```
+
+            5. Remove the last input.
+                *At this point in the example, the algorithm would have terminated after step 4 because the merged_location
+                was completely filled. If the merged_location had been filled earlier in the algorithm, it would have stopped
+                earlier as well. In the case that this step is reached, the last row in the location matrix is removed, then
+                gets inspected to see if a new component can be determined from the remaining information.
+            
+            6. Return merged_location.
+                *In the event that merged_location is still unable to fill all necessary components, it is resized and returned as 
+                the result.
+        
+        Args:
+            places (list[FlexiblePlace]): A list of FlexiblePlace objects to combine.
+        Returns:
+            list[str]: A list of location components representing the combined place
+        """
+        aligned_places: list[list[str]] = Compare.align_components(places)
+        combined_place: list[str] = [""] * len(aligned_places[0])
+        while Combine.isNotFilled(combined_place):
+            has_changed: bool = False
+            for index in (i for i, comp in enumerate(combined_place) if not comp):
+                Combine.remove_outliers(aligned_places, index)
+                has_changed |= Combine.add_place_component(combined_place, aligned_places, index)
+            if not has_changed:
+                if not aligned_places:
+                    Combine.resize(combined_place)
+                    break
+                Combine.eliminate_partial_row(aligned_places)
+        return combined_place[::-1]
+
     @staticmethod
     def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
         """Attempt to determine and add a component for a given column index into the combined_place.
