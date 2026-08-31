@@ -2,7 +2,7 @@ from FlexiblePlace.src.LocationMatrix import LocationMatrix
 
 class Combine:
     @staticmethod
-    def align_components(location_a: list[str], location_b: list[str]) -> list[list[str]]:
+    def align_components(locations: list[list[str]]) -> list[list[str]]:
         """Aligns two lists of strings representing locations.
 
         Relies heavily on the built-in component alignment functionality of the LocationMatrix class.
@@ -13,7 +13,11 @@ class Combine:
 
         Returns:
             list[list[str]]: A list containing the two aligned location component lists."""
-        location_matrix = LocationMatrix([location_a, location_b])
+        location_matrix = LocationMatrix(locations)
         return location_matrix.get_locations()
+
+    @staticmethod
+    def isNotFilled(combined_location: list[str]) -> bool:
+        return "" in combined_location
 
     
