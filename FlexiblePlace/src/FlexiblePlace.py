@@ -302,19 +302,24 @@ class FlexiblePlace:
         Returns:
             list[str]: A list of location components representing the combined place
         """
-        aligned_places: list[list[str]] = Compare.align_components(places)
-        combined_place: list[str] = [""] * len(aligned_places[0])
-        while Combine.isNotFilled(combined_place):
-            has_changed: bool = False
-            for index in (i for i, comp in enumerate(combined_place) if not comp):
-                Combine.remove_outliers(aligned_places, index)
-                has_changed |= Combine.add_place_component(combined_place, aligned_places, index)
-            if not has_changed:
-                if not aligned_places:
-                    Combine.resize(combined_place)
+        aligned_places: Combiner = Combiner(places)
+        combined_place: list[str] = [""] * aligned_places.column_count
+        eliminate_row_strategies = [
+            aligned_places.remove_outliers,
+            aligned_places.remove_least_precise,
+            aligned_places.remove_smallest_component,
+            aligned_places.remove_last
+        ]
+        while Combiner.is_not_filled(combined_place):
+            for strategy in eliminate_row_strategies:
+                strategy()
+                has_changed = aligned_places.fill_in(combined_place)
+                if has_changed:
                     break
-                Combine.eliminate_partial_row(aligned_places)
+            if aligned_places.isEmpty():
+                Combiner.resize(combined_place)
         return combined_place[::-1]
+
 
     @staticmethod
     def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
