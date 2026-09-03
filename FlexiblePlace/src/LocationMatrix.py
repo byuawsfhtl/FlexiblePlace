@@ -320,6 +320,15 @@ class LocationMatrix:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
 
+    def get_links(self) -> list[list[set[int]]]:
+        return [[self._repackage_as_ints(component.links) if (component.links or not component.value) else {component.row} for component in row] for row in self.matrix]
+
+    def _repackage_as_ints(self, links: set[LocationComponent]) -> set[int]:
+        links_as_ints: set[int] = set()
+        for component in links:
+            links_as_ints.add(component.row)
+        return links_as_ints
+
     def remove_outliers(self, column: int) -> None:
         """Remove rows that are outliers for the specified column.
 

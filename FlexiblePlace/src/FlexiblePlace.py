@@ -5,6 +5,7 @@ from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.auto_fill_location import auto_fill_location
 from FlexiblePlace.src.get_place_description import get_place_description
 from FlexiblePlace.src.Compare import Compare
+from FlexiblePlace.src.Combiner import Combiner
 
 class FlexiblePlace:
     """Represents a geographic location with multiple hierarchical components stored in reverse order.
@@ -226,6 +227,7 @@ class FlexiblePlace:
             list[str]: A list of location components representing the combined place
         """
         location_matrix: LocationMatrix = LocationMatrix([place.location for place in places])
+        aligned_places: Combiner = Combiner([place.get_location() for place in places])
         combined_place: list[str] = [""] * location_matrix.column_count
         while True:
             has_changed: bool = False
