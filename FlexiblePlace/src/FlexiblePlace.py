@@ -302,7 +302,7 @@ class FlexiblePlace:
         Returns:
             list[str]: A list of location components representing the combined place
         """
-        aligned_places: Combiner = Combiner(places)
+        aligned_places: Combiner = Combiner([place.get_location() for place in places])
         combined_place: list[str] = [""] * aligned_places.column_count
         eliminate_row_strategies = [
             aligned_places.remove_outliers,
