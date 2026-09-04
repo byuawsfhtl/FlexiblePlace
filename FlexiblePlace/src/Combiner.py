@@ -19,16 +19,25 @@ class Combiner:
                 combiner_column.add_match_group(match_group)
 
     def remove_outliers(self) -> None:
-        for column in self.columns:
+        for column in self.columns[::-1]:
             max_match_count: int = max((len(match_group) for match_group in column.match_groups), default=0)
             for match_group in column.match_groups:
                 if len(match_group) < max_match_count:
-                    self._remove_rows(match_group)
+                    self._remove_rows(match_group.copy())
 
     def _remove_rows(self, match_group: set[int]) -> None:
         for column in self.columns:
-            column.remove_match_group(match_group.copy())
+            column.remove_match_group(match_group)
 
+    def fill_in(self, combined_place: list[str]) -> bool:
+        has_changed: bool = False
+        for index, column in enumerate(self.columns):
+            consensus: str = column.column_consensus()
+            if consensus and not combined_place[index]:
+                combined_place[index] = consensus
+                has_changed = True
+        return has_changed
+                
     @staticmethod
     def is_not_filled(combined_location: list[str]) -> bool:
         return "" in combined_location
