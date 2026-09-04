@@ -42,7 +42,7 @@ class Combiner:
     def remove_smallest_component(self) -> None:
         for column in self.columns[::-1]:
             smallest_component_row: int | None = column.smallest_component()
-            if smallest_component_row:
+            if smallest_component_row != None:
                 self._remove_rows({smallest_component_row})
 
     def remove_last(self) -> None:

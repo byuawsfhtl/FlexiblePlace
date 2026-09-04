@@ -32,15 +32,26 @@ class CombinerColumn:
     def smallest_component(self) -> int | None:
         smallest: str = ""
         smallest_index: int | None = None
+        if self._all_equal_length():
+            return smallest_index
         for match_group in self.match_groups:
             for component_index in match_group:
                 component = self.components[component_index]
-                if not smallest:
-                    smallest = component
-                if len(component) < len(smallest):
+                if not smallest or len(component) < len(smallest):
                     smallest = component
                     smallest_index = component_index 
         return smallest_index
+
+    def _all_equal_length(self):
+        first: str = ""
+        for match_group in self.match_groups:
+            for component_index in match_group:
+                component = self.components[component_index]
+                if not first:
+                    first = component
+                if not len(first) == len(component):
+                    return False 
+        return True
 
     def get_possible_rows(self):
         possible_rows: list[int] = []
