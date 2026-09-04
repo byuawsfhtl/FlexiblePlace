@@ -165,8 +165,8 @@ class FlexiblePlace:
         place_description: str = closest_match.place_description
         return FlexiblePlace(combined_place, place_description)
 
-    @staticmethod
-    def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
+    # @staticmethod
+    # def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
         """Generates a combined place from a list of FlexiblePlace objects.
 
         This method intelligently resolves conflicts and fills gaps across multiple place definitions 
@@ -244,7 +244,8 @@ class FlexiblePlace:
                     FlexiblePlace._eliminate_partial_rows(location_matrix)
         return combined_place[::-1]
 
-    # def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
+    @staticmethod
+    def _generate_combined_place(places: list[FlexiblePlace]) -> list[str]:
         """Generates a combined place from a list of FlexiblePlace objects.
 
         This method intelligently resolves conflicts and fills gaps across multiple place definitions 
@@ -305,7 +306,7 @@ class FlexiblePlace:
             list[str]: A list of location components representing the combined place
         """
         aligned_places: Combiner = Combiner([place.get_location() for place in places])
-        combined_place: list[str] = [""] * aligned_places.column_count
+        combined_place: list[str] = [""] * aligned_places.get_column_count()
         eliminate_row_strategies = [
             aligned_places.remove_outliers,
             aligned_places.remove_least_precise,
@@ -318,9 +319,9 @@ class FlexiblePlace:
                 has_changed = aligned_places.fill_in(combined_place)
                 if has_changed:
                     break
-            if aligned_places.isEmpty():
+            if aligned_places.is_empty():
                 Combiner.resize(combined_place)
-        return combined_place[::-1]
+        return combined_place
 
 
     @staticmethod

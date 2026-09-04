@@ -46,10 +46,16 @@ class Combiner:
                 self._remove_rows({smallest_component_row})
 
     def remove_last(self) -> None:
+        if self.is_empty():
+            return
         column: CombinerColumn = self.columns[0]
         possible_rows: list[int] = column.get_possible_rows()
         last_row: int = max(possible_rows)
         self._remove_rows({last_row})
+
+    def is_empty(self):
+        first_column: CombinerColumn = self.columns[0]
+        return not first_column.match_groups and not first_column.empty_indeces
 
     def fill_in(self, combined_place: list[str]) -> bool:
         has_changed: bool = False
@@ -59,10 +65,6 @@ class Combiner:
                 combined_place[index] = consensus
                 has_changed = True
         return has_changed
-
-    def is_empty(self):
-        first_column: CombinerColumn = self.columns[0]
-        return not first_column.match_groups and not first_column.empty_indeces
                 
     @staticmethod
     def is_not_filled(combined_location: list[str]) -> bool:
@@ -70,4 +72,4 @@ class Combiner:
 
     @staticmethod
     def resize(combined_location: list[str]) -> None:
-        [component for component in combined_location if component]
+        combined_location[:] = [component for component in combined_location if component]

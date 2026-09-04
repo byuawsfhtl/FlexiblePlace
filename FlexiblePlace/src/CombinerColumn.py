@@ -25,7 +25,7 @@ class CombinerColumn:
             self.match_groups.remove(match_group)
 
     def column_consensus(self) -> str:
-        if len(self.match_groups) > 1:
+        if len(self.match_groups) != 1:
             return ""
         return max((self.components[index] for index in self.match_groups[0]), key=len, default="")
 
