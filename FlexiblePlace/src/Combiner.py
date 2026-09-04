@@ -29,6 +29,13 @@ class Combiner:
         for column in self.columns:
             column.remove_match_group(match_group)
 
+    def remove_least_precise(self) -> None:
+        for column in self.columns[::-1]:
+            if column.match_groups and column.empty_indeces:
+                partial_row: int = max(column.empty_indeces)
+                self._remove_rows({partial_row})
+                break
+
     def fill_in(self, combined_place: list[str]) -> bool:
         has_changed: bool = False
         for index, column in enumerate(self.columns):
