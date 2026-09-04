@@ -28,3 +28,16 @@ class CombinerColumn:
         if len(self.match_groups) > 1:
             return ""
         return max((self.components[index] for index in self.match_groups[0]), key=len, default="")
+
+    def smallest_component(self) -> int | None:
+        smallest: str = ""
+        smallest_index: int | None = None
+        for match_group in self.match_groups:
+            for component_index in match_group:
+                component = self.components[component_index]
+                if not smallest:
+                    smallest = component
+                if len(component) < len(smallest):
+                    smallest = component
+                    smallest_index = component_index 
+        return smallest_index

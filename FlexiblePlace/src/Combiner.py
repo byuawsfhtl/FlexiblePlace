@@ -36,6 +36,12 @@ class Combiner:
                 self._remove_rows({partial_row})
                 break
 
+    def remove_smallest_component(self) -> None:
+        for column in self.columns[::-1]:
+            smallest_component_row: int | None = column.smallest_component()
+            if smallest_component_row:
+                self._remove_rows({smallest_component_row})
+
     def fill_in(self, combined_place: list[str]) -> bool:
         has_changed: bool = False
         for index, column in enumerate(self.columns):
