@@ -18,6 +18,9 @@ class Combiner:
                 combiner_column.add_component(component)
                 combiner_column.add_match_group(match_group)
 
+    def get_column_count(self):
+        return len(self.columns)
+
     def remove_outliers(self) -> None:
         for column in self.columns[::-1]:
             max_match_count: int = max((len(match_group) for match_group in column.match_groups), default=0)
@@ -56,7 +59,15 @@ class Combiner:
                 combined_place[index] = consensus
                 has_changed = True
         return has_changed
+
+    def is_empty(self):
+        first_column: CombinerColumn = self.columns[0]
+        return not first_column.match_groups and not first_column.empty_indeces
                 
     @staticmethod
     def is_not_filled(combined_location: list[str]) -> bool:
         return "" in combined_location
+
+    @staticmethod
+    def resize(combined_location: list[str]) -> None:
+        [component for component in combined_location if component]
