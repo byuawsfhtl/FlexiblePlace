@@ -154,7 +154,9 @@ class LocationMatrix:
             None."""
         for i, row in enumerate(self.matrix):
             while len(row) < new_size:
-                row.append(LocationComponent((i,len(row))))
+                for component in row:
+                    component.column += 1
+                row.insert(0,LocationComponent((i,0)))
         self.column_count: int = new_size
 
     def align(self) -> None:
@@ -249,7 +251,7 @@ class LocationMatrix:
             component_a.link(component_a)
             return
         distance: int = farthest_component.column - closest_component.column
-        self._move(closest_component, distance)
+        self._move(farthest_component, distance)
         component_a.link(component_b)
     
     def _order_components(self, component_a: LocationComponent, component_b: LocationComponent) -> tuple[LocationComponent, LocationComponent]:
@@ -292,9 +294,9 @@ class LocationMatrix:
         Returns:
             None."""
         for i in range(distance):
-            self._shift_right(component)
+            self._shift_left(component)
     
-    def _shift_right(self, component: LocationComponent) -> None:
+    def _shift_left(self, component: LocationComponent) -> None:
         """Shifts a LocationComponent one column to the right in the matrix, resizing the matrix if the component
         is at the end. Also recursively shifts all subsequent components in the row and updates linked components.
         
@@ -305,16 +307,16 @@ class LocationMatrix:
         current_column: int = component.column
         if not component:
             return
-        elif current_column == (self.column_count - 1):
+        elif current_column == 0:
             self._resize(self.column_count + 1)
-            self._shift_right(component)
+            self._shift_left(component)
         else:
             row: int = component.row
             column: int = component.column
             self.insert(LocationComponent((row,column)))
-            component.column += 1
-            column += 1
-            self._shift_right(self.get(row,column))
+            component.column -= 1
+            column -= 1
+            self._shift_left(self.get(row,column))
             self.insert(component)
             for linked_component in component.links:
                 distance: int = abs(component.column - linked_component.column)

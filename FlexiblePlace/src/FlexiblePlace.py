@@ -35,7 +35,7 @@ class FlexiblePlace:
             location_components = location.split(",")
         else:
             location_components = location
-        self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
+        self.location: list[str] = [location_component.strip().lower() for location_component in location_components]
         if auto_fill:
             auto_fill_location(self.location)
         self.place_description = place_description
@@ -114,7 +114,7 @@ class FlexiblePlace:
         Returns:
             list[str]: The internal location components list in reverse order (most specific to least specific).
         """
-        return self.location[::-1]
+        return self.location
     
     def compare(self, other: FlexiblePlace) -> float | int:
         """Compares this FlexiblePlace with another object and returns a similarity score.
@@ -145,8 +145,6 @@ class FlexiblePlace:
         if not place_a or not place_b:
             return 100.0
         aligned_places: list[list[str]] = Compare.align_components(place_a.location, place_b.location)
-        aligned_places[0] = aligned_places[0][::-1]
-        aligned_places[1] = aligned_places[1][::-1]
         scores_list: list[float] = Compare.compare_each_component(aligned_places)
         Compare.adjust_scores(scores_list)
         average_score = sum(scores_list) / len(scores_list)
