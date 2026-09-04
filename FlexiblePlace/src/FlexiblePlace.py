@@ -228,6 +228,7 @@ class FlexiblePlace:
         """
         location_matrix: LocationMatrix = LocationMatrix([place.location for place in places])
         aligned_places: Combiner = Combiner([place.get_location() for place in places])
+        aligned_places.remove_outliers()
         combined_place: list[str] = [""] * location_matrix.column_count
         while True:
             has_changed: bool = False
