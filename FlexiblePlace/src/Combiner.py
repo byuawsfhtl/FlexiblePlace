@@ -24,7 +24,7 @@ class Combiner:
     def remove_outliers(self) -> None:
         for column in self.columns[::-1]:
             max_match_count: int = max((len(match_group) for match_group in column.match_groups), default=0)
-            for match_group in column.match_groups:
+            for match_group in column.match_groups.copy():
                 if len(match_group) < max_match_count:
                     self._remove_rows(match_group.copy())
 
