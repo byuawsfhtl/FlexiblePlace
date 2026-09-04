@@ -41,3 +41,10 @@ class CombinerColumn:
                     smallest = component
                     smallest_index = component_index 
         return smallest_index
+
+    def get_possible_rows(self):
+        possible_rows: list[int] = []
+        for match_group in self.match_groups:
+            possible_rows.extend(match_group)
+        possible_rows.extend(self.empty_indeces)
+        return possible_rows

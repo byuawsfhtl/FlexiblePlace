@@ -42,6 +42,12 @@ class Combiner:
             if smallest_component_row:
                 self._remove_rows({smallest_component_row})
 
+    def remove_last(self) -> None:
+        column: CombinerColumn = self.columns[0]
+        possible_rows: list[int] = column.get_possible_rows()
+        last_row: int = max(possible_rows)
+        self._remove_rows({last_row})
+
     def fill_in(self, combined_place: list[str]) -> bool:
         has_changed: bool = False
         for index, column in enumerate(self.columns):
