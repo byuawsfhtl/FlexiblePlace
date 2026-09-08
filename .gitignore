@@ -22,6 +22,10 @@ results.json
 .vscode
 pytest.ini
 
+# Ignore venv files
+venv/
+.venv/
+
 # Ignore the LiveApiTester folder and all its contents
 FlexiblePlace/LiveApiTester/
 
