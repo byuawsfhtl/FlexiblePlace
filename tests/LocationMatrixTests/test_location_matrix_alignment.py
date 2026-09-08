@@ -1,5 +1,5 @@
 import pytest
-from FlexiblePlace.src.LocationMatrix import LocationMatrix
+from FlexiblePlace.src.location_matrix import LocationMatrix
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 
 

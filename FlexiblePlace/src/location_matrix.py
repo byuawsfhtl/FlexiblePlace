@@ -1,5 +1,5 @@
-from FlexiblePlace.src import CompareLocationComponents
-from FlexiblePlace.src.LocationComponent import LocationComponent
+from FlexiblePlace.src import compare_location_components
+from FlexiblePlace.src.location_component import LocationComponent
 
 class LocationMatrix:
     """A class that represents a matrix of locations, where each row corresponds to the string array of a 
@@ -216,7 +216,7 @@ class LocationMatrix:
         for i in range(row):
             for j in range(self.column_count):
                 component_b: LocationComponent = self.get(i,j)
-                score: float = CompareLocationComponents.basic_comparison_algorithm(component_a, component_b)
+                score: float = compare_location_components.basic_comparison_algorithm(component_a, component_b)
                 if score > best_score:
                     best_score = score
                     best_match = ((row,column), (i, j))

@@ -1,6 +1,6 @@
 from rapidfuzz import fuzz
 from functools import cache
-from FlexiblePlace.src.LocationMatrix import LocationMatrix
+from FlexiblePlace.src.location_matrix import LocationMatrix
 
 class Compare:
     """Provides component-level string comparison and alignment utilities for location comparison.
