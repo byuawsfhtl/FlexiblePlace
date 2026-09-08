@@ -2,7 +2,7 @@ import pytest
 
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 from unittest.mock import AsyncMock, patch
-from tests.resources.fs_api_mocker import fs_api_mocker
+from tests.testdata.fs_api_mocker import fs_api_mocker
 
 class TestGetPlaceDescription:
     """Tests for FlexiblePlace.place_description accuracy when initialized online."""

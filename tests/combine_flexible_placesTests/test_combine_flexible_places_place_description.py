@@ -2,7 +2,7 @@ import pytest
 
 from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 from unittest.mock import patch, AsyncMock
-from tests.resources.fs_api_mocker import fs_api_mocker
+from tests.testdata.fs_api_mocker import fs_api_mocker
 
 combine_flexible_places = FlexiblePlace.combine_flexible_places
 combine_flexible_places_online = FlexiblePlace.combine_flexible_places_online
