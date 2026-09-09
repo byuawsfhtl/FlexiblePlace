@@ -1,4 +1,5 @@
-from rapidfuzz import fuzz
+from rapidfuzz.fuzz import ratio as fuzz_ratio
+from math import floor as math_floor
 from functools import cache
 from FlexiblePlace.src.location_matrix import LocationMatrix
 
@@ -49,7 +50,8 @@ class Compare:
             float: Similarity score from 0.0 to 100.0. Returns 100.0 if either component is empty."""
         if not component_a or not component_b:
             return 100.0
-        return fuzz.ratio(component_a, component_b)
+        # If we don't use math floor, this could round unusually due to python rounding
+        return math_floor(fuzz_ratio(component_a, component_b) + 0.5)
 
     @staticmethod
     def adjust_scores(scores_list: list[float]) -> None:

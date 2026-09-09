@@ -22,6 +22,9 @@ results.json
 .vscode
 pytest.ini
 
+# Ignore local TypeScript node modules
+*/node_modules
+
 # Ignore venv files
 venv/
 .venv/
