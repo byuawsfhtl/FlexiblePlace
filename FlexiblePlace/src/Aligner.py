@@ -230,17 +230,17 @@ class Aligner:
         Once the components are linked, an attempt to move one of them will the other to move with it.
         Example:
             print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
-            # |% washington  %|             |             |
-            # |% washington  %| walla walla |             |
-            # | united states | washington  | walla walla |
+            # |             |             |% washington  %|
+            # |             | walla walla |% washington  %|
+            # | walla walla | washington  | united states |
             component_a: LocationComponent = aligner.get(2,1) # 'washington' in last row
             component_b: LocationComponent = aligner.get(1,0) # 'washington' in 2nd row
             aligner.link(component_a, component_b)
             print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
-            # |               |% washington %|             |
-            # |               |% washington %| walla walla |
-            # | united states |% washington %| walla walla |.
-
+            # |             |% washington  %|               |
+            # | walla walla |% washington  %|               |
+            # | walla walla |% washington  %| united states |
+            
         Args:
             component_a (LocationComponent): The first component to link.
             component_b (LocationComponent): The second component to link.

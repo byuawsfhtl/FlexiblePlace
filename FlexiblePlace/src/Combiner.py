@@ -7,6 +7,9 @@ class Combiner:
     def __init__(self, locations: list[list[str]]) -> None:
         """Initialize a Combiner from location component lists.
 
+        These location components are stored most specific to least specific 
+        (e.g. [["Walla Walla", "Washington", "United States"]])
+
         Args:
             locations (list[list[str]]): The location component lists to align and combine.
         """
@@ -57,10 +60,10 @@ class Combiner:
                     self._remove_rows(match_group.copy())
 
     def _remove_rows(self, match_group: set[int]) -> None:
-        """Remove a row from every component column.
+        """Remove a set of rows from every component column.
 
-        Generates the same effect of removing a row from an array of arrays, by instead
-        removing the references to each row in each column.
+        Uses the remove_match_group method of each column to remove a set of 
+        rows from each column.
 
         Args:
             match_group (set[int]): The row indices to remove.
@@ -69,7 +72,10 @@ class Combiner:
             column.remove_match_group(match_group)
 
     def remove_least_precise(self) -> None:
-        """Remove the highest-indexed partial row from the least precise column."""
+        """Remove the highest-indexed partial row from the least precise column.
+        
+        In the case that "New York, New York, '' " and " '', New York, United States" are in the Combiner, 
+        "New York, New York, '' " would be removed because it is the least precise of the two."""
         for column in self.columns[::-1]:
             if column.match_groups and column.empty_indeces:
                 partial_row: int = max(column.empty_indeces)
@@ -104,6 +110,12 @@ class Combiner:
 
     def fill_in(self, combined_place: list[str]) -> bool:
         """Fill empty location components with the consensus from each column.
+
+        The 'column consensus' refers to the longest string in the column, given that
+        each item in the column has been determined to be the same. For example if a column
+        column contained `["Washington", "Washington State", "Worshington"]` then the column
+        consensus would be `"Washington State"`. However, in a situation where there are outliers,
+        no consensus will be returned.
 
         Args:
             combined_place (list[str]): The location components to complete in place.

@@ -1,5 +1,5 @@
 class CombinerColumn:
-    """Store components and row match groups for one aligned location column."""
+    """Store components and row match groups (which reference similar components) for one aligned location column."""
 
     def __init__(self) -> None:
         """Initialize an empty combiner column."""
@@ -19,6 +19,9 @@ class CombinerColumn:
 
     def add_match_group(self, match_group: set[int]) -> None:
         """Add a non-empty match group unless it is already present.
+
+        A match group refers to all of the cells in the column that are related to
+        each other. These cells are referenced by their row number as an `int`.  
 
         Args:
             match_group (set[int]): The row indices represented by the match group.
@@ -45,6 +48,9 @@ class CombinerColumn:
     def column_consensus(self) -> str:
         """Return the longest component when exactly one match group remains.
 
+        When there are no outliers, meaning all remaining components are inferred to be related to
+        each other, then the longest string is picked as the consensus.
+
         Returns:
             str: The consensus component, or an empty string when no unique group exists.
         """
@@ -53,7 +59,7 @@ class CombinerColumn:
         return max((self.components[index] for index in self.match_groups[0]), key=len, default="")
 
     def smallest_component(self) -> int | None:
-        """Return the row index of the shortest component in the match groups.
+        """Return the row index of the shortest (meaning smallest string) component in the match groups.
 
         Returns:
             int | None: The shortest component's row index, or None when all are equal.
@@ -82,7 +88,7 @@ class CombinerColumn:
                 component = self.components[component_index]
                 if not first:
                     first = component
-                if not len(first) == len(component):
+                if len(first) != len(component):
                     return False 
         return True
 
