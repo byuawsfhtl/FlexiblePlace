@@ -2,8 +2,8 @@ from FlexiblePlace.src import CompareLocationComponents
 from FlexiblePlace.src.LocationComponent import LocationComponent
 
 class Aligner:
-    """A class that represents a matrix of locations, where each row corresponds to the string array of a 
-    FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
+    """A class that represents of a table of location components, where each row corresponds to the string array of a 
+    FlexiblePlace object and each cell corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
     with the correct component in other locations. Rows are ordered by length.
     
