@@ -1,7 +1,7 @@
 from FlexiblePlace.src import CompareLocationComponents
 from FlexiblePlace.src.LocationComponent import LocationComponent
 
-class LocationMatrix:
+class Aligner:
     """A class that represents a matrix of locations, where each row corresponds to the string array of a 
     FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
@@ -11,15 +11,15 @@ class LocationMatrix:
     locations = [FlexiblePlace("Washington, United States").get_location_components,
                  FlexiblePlace("Walla Walla, Washingon").get_location_components,
                  FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
-        location_matrix = LocationMatrix(locations)
-        print(location_matrix)
+        aligner = Aligner(locations)
+        print(aligner)
         # | united states | washington | walla walla |
         # | united states | washington |             |
         # |               | washington | walla walla |
     """
 
     def __init__(self, locations: list[list[str]]) -> None:
-        """Initializes a LocationMatrix from a list of location component lists.
+        """Initializes an Aligner from a list of location component lists.
         
         Creates a matrix structure where each row represents a location and automatically aligns
         components across rows based on similarity matching.
@@ -44,7 +44,7 @@ class LocationMatrix:
         return bool(self.matrix)
     
     def __str__(self) -> str:
-        """Returns a formatted string representation of the LocationMatrix.
+        """Returns a formatted string representation of the Aligner.
         
         Renders the matrix as a pipe-separated table with columns aligned based on the longest
         value in each column. Empty rows result in an empty string.
@@ -123,7 +123,7 @@ class LocationMatrix:
         self.matrix[row][col] = component
 
     def load_places(self, places: list[list[str]]) -> None:
-        """Populates the LocationMatrix with location components from a list of place component lists.
+        """Populates the Aligner with location components from a list of place component lists.
         Converts each string component into a LocationComponent object and adds it to the matrix. Automatically
         resizes the matrix to accommodate all components, ensuring all rows have the same number of columns.
         
@@ -144,7 +144,7 @@ class LocationMatrix:
         self.row_count: int = len(self.matrix)
 
     def _resize(self, new_size: int) -> None:
-        """Resizes the LocationMatrix to have the specified number of columns by padding rows with empty
+        """Resizes the Aligner to have the specified number of columns by padding rows with empty
         LocationComponent objects as needed. Updates the column_count to reflect the new size. (Note: cannot
         be used to make matrix smaller than current size).
         
@@ -160,7 +160,7 @@ class LocationMatrix:
         self.column_count: int = new_size
 
     def align(self) -> None:
-        """Aligns all rows in a LocationMatrix by finding best matches between components across rows and linking
+        """Aligns all rows in an Aligner by finding best matches between components across rows and linking
         them together. Processes each row sequentially, comparing each unlinked component with components in previous
         rows to find optimal alignments based on similarity scores.
         
@@ -229,14 +229,14 @@ class LocationMatrix:
         to match the column of the farther component, and creates a link between them if the move is legal.
         Once the components are linked, an attempt to move one of them will the other to move with it.
         Example:
-            print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
+            print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
             # |% washington  %|             |             |
             # |% washington  %| walla walla |             |
             # | united states | washington  | walla walla |
-            component_a: LocationComponent = location_matrix.get(2,1) # 'washington' in last row
-            component_b: LocationComponent = location_matrix.get(1,0) # 'washington' in 2nd row
-            location_matrix.link(component_a, component_b)
-            print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
+            component_a: LocationComponent = aligner.get(2,1) # 'washington' in last row
+            component_b: LocationComponent = aligner.get(1,0) # 'washington' in 2nd row
+            aligner.link(component_a, component_b)
+            print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
             # |               |% washington %|             |
             # |               |% washington %| walla walla |
             # | united states |% washington %| walla walla |.

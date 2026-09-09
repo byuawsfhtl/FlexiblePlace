@@ -1,12 +1,12 @@
-from FlexiblePlace.src.LocationMatrix import LocationMatrix
+from FlexiblePlace.src.Aligner import Aligner
 from FlexiblePlace.src.CombinerColumn import CombinerColumn
 
 class Combiner:
     def __init__(self, locations: list[list[str]]) -> None:
-        location_matrix: LocationMatrix = LocationMatrix(locations)
-        aligned_locations: list[list[str]] = location_matrix.get_locations()
-        component_matches: list[list[set[int]]] = location_matrix.get_links()
-        self.columns: list[CombinerColumn] = [CombinerColumn() for i in range(location_matrix.column_count)] 
+        aligner: Aligner = Aligner(locations)
+        aligned_locations: list[list[str]] = aligner.get_locations()
+        component_matches: list[list[set[int]]] = aligner.get_links()
+        self.columns: list[CombinerColumn] = [CombinerColumn() for _ in range(aligner.column_count)] 
         self._load_columns(aligned_locations, component_matches)
 
     def _load_columns(self, aligned_locations: list[list[str]], component_matches: list[list[set[int]]]) -> None:

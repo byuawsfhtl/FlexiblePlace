@@ -1,6 +1,6 @@
 from rapidfuzz import fuzz
 from functools import cache
-from FlexiblePlace.src.LocationMatrix import LocationMatrix
+from FlexiblePlace.src.Aligner import Aligner
 
 class Compare:
     """Provides component-level string comparison and alignment utilities for location comparison.
@@ -12,7 +12,7 @@ class Compare:
     def align_components(location_a: list[str], location_b: list[str]) -> list[list[str]]:
         """Aligns two lists of strings representing locations.
 
-        Relies heavily on the built-in component alignment functionality of the LocationMatrix class.
+        Relies heavily on the built-in component alignment functionality of the Aligner class.
 
         Args:
             location_a (list[str]): First list of location component strings.
@@ -20,8 +20,8 @@ class Compare:
 
         Returns:
             list[list[str]]: A list containing the two aligned location component lists."""
-        location_matrix = LocationMatrix([location_a, location_b])
-        return location_matrix.get_locations()
+        aligner = Aligner([location_a, location_b])
+        return aligner.get_locations()
 
     @staticmethod
     def compare_each_component(locations: list[list[str]]) -> list[float]:

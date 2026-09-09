@@ -1,5 +1,5 @@
 class LocationComponent:
-    """Represents a single location component within a LocationMatrix object.
+    """Represents a single location component within an Aligner object.
     Stores the location (row and column) and string value of the component."""
     def __init__(self, pair: tuple[int,int], value: str = "") -> None:
         """Initializes a LocationComponent with position and optional value.
