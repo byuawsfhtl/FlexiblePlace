@@ -13,9 +13,9 @@ class Aligner:
                  FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
         aligner = Aligner(locations)
         print(aligner)
-        # | united states | washington | walla walla |
-        # | united states | washington |             |
-        # |               | washington | walla walla |
+        # | walla walla | washington | united states |
+        # |             | washington | united states |
+        # | walla walla | washington |               |
     """
 
     def __init__(self, locations: list[list[str]]) -> None:

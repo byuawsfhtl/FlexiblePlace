@@ -3,18 +3,18 @@ from unittest.mock import patch
 import pytest
 
 class TestAlignComponents:
-    def test_creates_LocationMatrix_object(self) -> None:
-        """Tests that the align_locations uses the LocationMatrix to align locations.
+    def test_creates_Aligner_object(self) -> None:
+        """Tests that the align_locations uses the Aligner to align locations.
         
-        The align functionality is already rigorously tested in the LocationMatrix tests, so this test
-        only checks that the align_components method utilizes the LocationMatrix to align components"""
-        with patch("FlexiblePlace.src.Compare.LocationMatrix") as mock_location_matrix:
+        The align functionality is already rigorously tested in the Aligner tests, so this test
+        only checks that the align_components method utilizes the Aligner to align components"""
+        with patch("FlexiblePlace.src.Compare.Aligner") as mock_aligner:
             place_a = ["a", "b"]
             place_b = ["b", "c"]
             expected = [["a", "b", ""], ["", "b", "c"]]
-            mock_location_matrix.return_value.get_locations.return_value = expected
+            mock_aligner.return_value.get_locations.return_value = expected
             actual = Compare.align_components(place_a, place_b)
-            mock_location_matrix.assert_called_once_with([place_a, place_b])
+            mock_aligner.assert_called_once_with([place_a, place_b])
             assert expected == actual
 
 class TestCompareEachComponent:
