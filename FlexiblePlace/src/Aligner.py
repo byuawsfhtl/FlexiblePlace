@@ -323,9 +323,21 @@ class Aligner:
             self.insert(LocationComponent((row,component.column+1)))
 
     def get_links(self) -> list[list[set[int]]]:
+        """Return the row indices represented by each component's links.
+
+        Returns:
+            list[list[set[int]]]: A matrix containing linked row indices for each component.
+        """
         return [[self._repackage_as_ints(component.links) if (component.links or not component.value) else {component.row} for component in row] for row in self.matrix]
 
     def _repackage_as_ints(self, links: set[LocationComponent]) -> set[int]:
+        """Convert linked LocationComponents into their row indices.
+
+        Args:
+            links (set[LocationComponent]): The components whose row indices should be returned.
+        Returns:
+            set[int]: The row indices represented by the linked components.
+        """
         links_as_ints: set[int] = set()
         for component in links:
             links_as_ints.add(component.row)
