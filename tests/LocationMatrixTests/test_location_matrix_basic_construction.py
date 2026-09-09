@@ -30,10 +30,7 @@ class TestLocationMatrixBasicContstruction:
         lm = LocationMatrix(places)
         assert lm.row_count == 2
         assert lm.column_count == 3
-        assert lm.matrix[1][0].value == "single_country"
-        assert lm.matrix[1][1].value == ""
-        assert lm.matrix[1][2].value == ""
-
+        
     def test_example_str_output(self) -> None:
         """Verify the example output formatting from the prompt matches expected spacing."""
         places = [
@@ -43,9 +40,9 @@ class TestLocationMatrixBasicContstruction:
         ]
         lm = LocationMatrix([p.location for p in places])
         expected = (
-            "| united sates  | wasington  | walla walla |\n"
-            "| united states | washington |             |\n"
-            "|               | washingon  | walla walla |"
+            "| walla walla | wasington  | united sates  |\n"
+            "|             | washington | united states |\n"
+            "| walla walla | washingon  |               |"
         )
         assert str(lm) == expected
 

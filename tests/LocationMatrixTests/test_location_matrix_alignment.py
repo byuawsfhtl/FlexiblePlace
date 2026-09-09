@@ -34,8 +34,8 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([p1.location, p2.location])
         
         expected = (
-            "| united states | new jersey | passaic | paterson |\n"
-            "|               |            |         |          |"
+            "| paterson | passaic | new jersey | united states |\n"
+            "|          |         |            |               |"
         )
         assert str(lm) == expected
 
@@ -47,8 +47,8 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([p1.location, p2.location])
         
         expected = (
-            "| united states | new jersey | camden | camden |\n"
-            "| united states | new jersey | camden |        |"
+            "| camden | camden | new jersey | united states |\n"
+            "|        | camden | new jersey | united states |"
         )
         assert str(lm) == expected
 
@@ -60,8 +60,8 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([p1.location, p2.location])
         
         expected = (
-            "| united states | texas | harris | houston |\n"
-            "|               | texas |        | houston |"
+            "| houston | harris | texas | united states |\n"
+            "| houston |        | texas |               |"
         )
         assert str(lm) == expected
 
@@ -76,9 +76,9 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([fp.location for fp in fps])
         
         expected = (
-            "| united states         | new jersey          | camden               | camden             |\n"
-            "| reallylongcountryname | reallylongstatename | reallylongcountyname | reallylongcityname |\n"
-            "|                       | new jersey          | camden               |                    |"
+            "| camden             | camden               | new jersey          | united states         |\n"
+            "| reallylongcityname | reallylongcountyname | reallylongstatename | reallylongcountryname |\n"
+            "|                    | camden               | new jersey          |                       |"
         )
         assert str(lm) == expected
 
@@ -93,9 +93,9 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([fp.location for fp in fps])
         
         expected = (
-            "| united states | illinois | sangamon | reallylongcityname |\n"
-            "|               | illinois | sangamon | springfield        |\n"
-            "| united states | illinois |          | springfield        |"
+            "| reallylongcityname | sangamon | illinois | united states |\n"
+            "| springfield        | sangamon | illinois |               |\n"
+            "| springfield        |          | illinois | united states |"
         )
         assert str(lm) == expected
 
@@ -110,9 +110,9 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([fp.location for fp in fps])
         
         expected = (
-            "| france        |       | paris |\n"
-            "|               | texas | paris |\n"
-            "| united states | texas |       |"
+            "| paris |       | france        |\n"
+            "| paris | texas |               |\n"
+            "|       | texas | united states |"
         )
         assert str(lm) == expected
 
@@ -131,12 +131,12 @@ class TestLocationMatrixAlignment:
         lm = LocationMatrix([fp.location for fp in fps])
         
         expected = (
-            "| reallysuperlongcountryname | reallysuperlongstatename | reallysuperlongcountyname | reallysuperlongcityname |\n"
-            "|                            | massachusetts bay colony | lincoln                   | bucksport               |\n"
-            "| british colonial america   | massachusetts bay colony | lincoln                   |                         |\n"
-            "| british colonial america   | massachusetts bay colony |                           |                         |\n"
-            "|                            | massachusetts bay colony | lincoln                   |                         |\n"
-            "| british colonial america   |                          |                           |                         |\n"
-            "| belgium                    |                          |                           |                         |"
+            "| reallysuperlongcityname | reallysuperlongcountyname | reallysuperlongstatename | reallysuperlongcountryname |\n"
+            "| bucksport               | lincoln                   | massachusetts bay colony |                            |\n"
+            "|                         | lincoln                   | massachusetts bay colony | british colonial america   |\n"
+            "|                         |                           | massachusetts bay colony | british colonial america   |\n"
+            "|                         | lincoln                   | massachusetts bay colony |                            |\n"
+            "|                         |                           |                          | british colonial america   |\n"
+            "|                         |                           |                          | belgium                    |"
         )
         assert str(lm) == expected
