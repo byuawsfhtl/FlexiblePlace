@@ -313,14 +313,14 @@ class LocationMatrix:
         else:
             row: int = component.row
             column: int = component.column
-            self.insert(LocationComponent((row,column)))
-            component.column -= 1
             column -= 1
             self._shift_left(self.get(row,column))
+            component.column -= 1
             self.insert(component)
             for linked_component in component.links:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
+            self.insert(LocationComponent((row,component.column+1)))
 
     def get_links(self) -> list[list[set[int]]]:
         return [[self._repackage_as_ints(component.links) if (component.links or not component.value) else {component.row} for component in row] for row in self.matrix]

@@ -21,6 +21,10 @@ class Combiner:
     def get_column_count(self):
         return len(self.columns)
 
+    def get_row_count(self):
+        first_column: CombinerColumn = self.columns[0]
+        return len(first_column.empty_indeces) + sum(len(match_group) for match_group in first_column.match_groups)
+
     def remove_outliers(self) -> None:
         for column in self.columns[::-1]:
             max_match_count: int = max((len(match_group) for match_group in column.match_groups), default=0)

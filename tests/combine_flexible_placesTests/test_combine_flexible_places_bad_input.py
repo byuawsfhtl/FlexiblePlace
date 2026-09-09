@@ -103,13 +103,13 @@ class TestCombineFlexiblePlacesBadInput:
         """Badly ordered data still works
         ("A, B",
          "B, A",
-         returns "B, A, B")"""
+         returns "A, B, A")"""
         places = [
             FlexiblePlace("A, B"),
             FlexiblePlace("B, A")
         ]
         result = combine_flexible_places(places)
-        assert str(result) == "B, A, B"
+        assert str(result) == "A, B, A"
 
     def test_misspelled_data(self) -> None:
             """Misspelled data is still combined correctly

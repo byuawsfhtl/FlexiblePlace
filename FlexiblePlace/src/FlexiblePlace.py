@@ -313,9 +313,10 @@ class FlexiblePlace:
         ]
         while Combiner.is_not_filled(combined_place):
             for strategy in eliminate_row_strategies:
+                starting_row_count: int = aligned_places.get_row_count()
                 strategy()
                 has_changed = aligned_places.fill_in(combined_place)
-                if has_changed:
+                if has_changed or starting_row_count > aligned_places.get_row_count():
                     break
             if aligned_places.is_empty():
                 Combiner.resize(combined_place)
