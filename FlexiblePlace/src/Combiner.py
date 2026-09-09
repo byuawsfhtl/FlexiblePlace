@@ -82,6 +82,7 @@ class Combiner:
             smallest_component_row: int | None = column.smallest_component()
             if smallest_component_row != None:
                 self._remove_rows({smallest_component_row})
+                return
 
     def remove_last(self) -> None:
         """Remove the last possible row from the combiner."""
