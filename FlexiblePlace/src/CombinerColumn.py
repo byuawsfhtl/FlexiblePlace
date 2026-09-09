@@ -5,7 +5,7 @@ class CombinerColumn:
         """Initialize an empty combiner column."""
         self.components: list[str] = []
         self.match_groups: list[set[int]] = []
-        self.empty_indeces: set[int] = set()
+        self.empty_indices: set[int] = set()
 
     def add_component(self, component: str) -> None:
         """Add a component and track its row when the component is empty.
@@ -14,7 +14,7 @@ class CombinerColumn:
             component (str): The location component to add.
         """
         if not component:
-            self.empty_indeces.add(len(self.components))
+            self.empty_indices.add(len(self.components))
         self.components.append(component)
 
     def add_match_group(self, match_group: set[int]) -> None:
@@ -37,7 +37,7 @@ class CombinerColumn:
         """
         empty_match_groups: list[set[int]] = []
         for row_reference in match_group_to_remove:
-            self.empty_indeces.discard(row_reference)
+            self.empty_indices.discard(row_reference)
             for match_group in self.match_groups:
                 match_group.discard(row_reference)
                 if not match_group and match_group not in empty_match_groups:
@@ -101,5 +101,5 @@ class CombinerColumn:
         possible_rows: list[int] = []
         for match_group in self.match_groups:
             possible_rows.extend(match_group)
-        possible_rows.extend(self.empty_indeces)
+        possible_rows.extend(self.empty_indices)
         return possible_rows

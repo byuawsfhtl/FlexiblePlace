@@ -49,7 +49,7 @@ class Combiner:
             int: The number of unremoved rows represented by the first column.
         """
         first_column: CombinerColumn = self.columns[0]
-        return len(first_column.empty_indeces) + sum(len(match_group) for match_group in first_column.match_groups)
+        return len(first_column.empty_indices) + sum(len(match_group) for match_group in first_column.match_groups)
 
     def remove_outliers(self) -> None:
         """Remove rows with match groups smaller than the largest group in each column."""
@@ -77,8 +77,8 @@ class Combiner:
         In the case that "New York, New York, '' " and " '', New York, United States" are in the Combiner, 
         "New York, New York, '' " would be removed because it is the least precise of the two."""
         for column in self.columns[::-1]:
-            if column.match_groups and column.empty_indeces:
-                partial_row: int = max(column.empty_indeces)
+            if column.match_groups and column.empty_indices:
+                partial_row: int = max(column.empty_indices)
                 self._remove_rows({partial_row})
                 break
 
@@ -106,7 +106,7 @@ class Combiner:
             bool: True when no match groups or empty indices remain; otherwise False.
         """
         first_column: CombinerColumn = self.columns[0]
-        return not first_column.match_groups and not first_column.empty_indeces
+        return not first_column.match_groups and not first_column.empty_indices
 
     def fill_in(self, combined_place: list[str]) -> bool:
         """Fill empty location components with the consensus from each column.
@@ -115,7 +115,7 @@ class Combiner:
         each item in the column has been determined to be the same. For example if a column
         column contained `["Washington", "Washington State", "Worshington"]` then the column
         consensus would be `"Washington State"`. However, in a situation where there are outliers,
-        no consensus will be returned.
+        no consensus indices will be returned.
 
         Args:
             combined_place (list[str]): The location components to complete in place.

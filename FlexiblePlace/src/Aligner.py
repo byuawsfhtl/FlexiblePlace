@@ -2,7 +2,7 @@ from FlexiblePlace.src import CompareLocationComponents
 from FlexiblePlace.src.LocationComponent import LocationComponent
 
 class Aligner:
-    """A class that represents of a table of location components, where each row corresponds to the string array of a 
+    """A class that represents a table of location components, where each row corresponds to the string array of a 
     FlexiblePlace object and each cell corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
     with the correct component in other locations. Rows are ordered by length.
@@ -297,7 +297,7 @@ class Aligner:
             self._shift_left(component)
     
     def _shift_left(self, component: LocationComponent) -> None:
-        """Shifts a LocationComponent one column to the right in the matrix, resizing the matrix if the component
+        """Shifts a LocationComponent one column to the left in the matrix, resizing the matrix if the component
         is at the end. Also recursively shifts all subsequent components in the row and updates linked components.
         
         Args:
