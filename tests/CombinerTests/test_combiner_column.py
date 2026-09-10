@@ -10,7 +10,7 @@ class TestCombinerColumn:
 
 		assert column.components == []
 		assert column.match_groups == []
-		assert column.empty_indeces == set()
+		assert column.empty_indices == set()
 
 	def test_add_component_preserves_order_and_tracks_empty_rows(self) -> None:
 		"""Components retain row order and empty strings are recorded by row."""
@@ -22,7 +22,7 @@ class TestCombinerColumn:
 		column.add_component("")
 
 		assert column.components == ["city", "", "state", ""]
-		assert column.empty_indeces == {1, 3}
+		assert column.empty_indices == {1, 3}
 
 	def test_add_match_group_ignores_empty_and_duplicate_groups(self) -> None:
 		"""Only unique non-empty row groups are stored."""
@@ -67,13 +67,13 @@ class TestCombinerColumn:
 		"""Removing rows updates every group and removes emptied groups."""
 		column = CombinerColumn()
 		column.components = ["city", "city center", "country", "country region", ""]
-		column.empty_indeces = {4}
+		column.empty_indices = {4}
 		column.match_groups = [{0, 1}, {2, 3}]
 
 		column.remove_match_group({1, 3, 4})
 
 		assert column.match_groups == [{0}, {2}]
-		assert column.empty_indeces == set()
+		assert column.empty_indices == set()
 
 	def test_remove_multiple_rows_from_one_group_removes_group_once(self) -> None:
 		"""Removing all rows in one group is safe when multiple rows are passed."""
@@ -120,6 +120,6 @@ class TestCombinerColumn:
 		"""Possible rows include all grouped rows followed by empty-component rows."""
 		column = CombinerColumn()
 		column.match_groups = [{2, 0}, {3}]
-		column.empty_indeces = {1}
+		column.empty_indices = {1}
 
 		assert set(column.get_possible_rows()) == {0, 1, 2, 3}

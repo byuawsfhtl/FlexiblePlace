@@ -18,7 +18,7 @@ def make_column(
 	column = CombinerColumn()
 	column.components = components
 	column.match_groups = match_groups
-	column.empty_indeces = empty_indices or set()
+	column.empty_indices = empty_indices or set()
 	return column
 
 
@@ -61,13 +61,13 @@ class TestCombiner:
 		"""Column and row counts reflect the current combiner state."""
 		city_components = ["city", "city center", ""]
 		city_match_groups = [{0, 1}]
-		city_empty_indeces = {2}
+		city_empty_indices = {2}
 		state_components = ["state", "state region", ""]
 		state_match_groups = [{0, 1}]
-		state_empty_indeces = {2}
+		state_empty_indices = {2}
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		assert combiner.get_column_count() == 2
@@ -87,13 +87,13 @@ class TestCombiner:
 		"""
 		city_components = ["springfield", "springfield city", "springfield village"]
 		city_match_groups = [{0, 1}, {2}]
-		city_empty_indeces: set[int] = set()
+		city_empty_indices: set[int] = set()
 		state_components = ["illinois", "illinois state", "illinois region"]
 		state_match_groups = [{0, 1}, {2}]
-		state_empty_indeces: set[int] = set()
+		state_empty_indices: set[int] = set()
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		combiner.remove_outliers()
@@ -110,19 +110,19 @@ class TestCombiner:
 		"""
 		city_components = ["city", "city center", ""]
 		city_match_groups = [{0, 1}]
-		city_empty_indeces = {2}
+		city_empty_indices = {2}
 		state_components = ["state", "state region", ""]
 		state_match_groups = [{0, 1}]
-		state_empty_indeces = {2}
+		state_empty_indices = {2}
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		combiner._remove_rows({1})
 
 		assert all(1 not in group for column in combiner.columns for group in column.match_groups)
-		assert all(1 not in column.empty_indeces for column in combiner.columns)
+		assert all(1 not in column.empty_indices for column in combiner.columns)
 
 	def test_remove_least_precise_removes_highest_partial_row(self) -> None:
 		"""Remove the highest-indexed row with a missing component.
@@ -134,20 +134,20 @@ class TestCombiner:
 		"""
 		city_components = ["city", "city center", "", ""]
 		city_match_groups = [{0, 1}]
-		city_empty_indeces = {2, 3}
+		city_empty_indices = {2, 3}
 		state_components = ["state", "state region", "state county", ""]
 		state_match_groups = [{0, 1, 2}]
-		state_empty_indeces = {3}
+		state_empty_indices = {3}
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		combiner.remove_least_precise()
 
 		assert combiner.get_row_count() == 3
 		assert all(3 not in group for column in combiner.columns for group in column.match_groups)
-		assert all(3 not in column.empty_indeces for column in combiner.columns)
+		assert all(3 not in column.empty_indices for column in combiner.columns)
 
 	def test_remove_smallest_component_removes_shortest_grouped_row(self) -> None:
 		"""Remove the row containing the shortest grouped component.
@@ -160,13 +160,13 @@ class TestCombiner:
 		"""
 		city_components = ["springfield city", "springfield", "springfield village"]
 		city_match_groups = [{0, 1, 2}]
-		city_empty_indeces: set[int] = set()
+		city_empty_indices: set[int] = set()
 		state_components = ["illinois state", "illinois", "illinois county"]
 		state_match_groups = [{0, 1, 2}]
-		state_empty_indeces: set[int] = set()
+		state_empty_indices: set[int] = set()
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		combiner.remove_smallest_component()
@@ -184,13 +184,13 @@ class TestCombiner:
 		"""
 		city_components = ["city", "city center", ""]
 		city_match_groups = [{0, 1}]
-		city_empty_indeces = {2}
+		city_empty_indices = {2}
 		state_components = ["state", "state region", ""]
 		state_match_groups = [{0, 1}]
-		state_empty_indeces = {2}
+		state_empty_indices = {2}
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		combiner.remove_last()
@@ -198,7 +198,7 @@ class TestCombiner:
 		assert combiner.is_empty() is False
 		assert combiner.get_row_count() == 2
 		assert all(2 not in group for column in combiner.columns for group in column.match_groups)
-		assert all(2 not in column.empty_indeces for column in combiner.columns)
+		assert all(2 not in column.empty_indices for column in combiner.columns)
 
 	def test_remove_last_does_nothing_when_empty(self) -> None:
 		"""Do nothing when there are no rows to delete.
@@ -216,13 +216,13 @@ class TestCombiner:
 		"""The combiner becomes empty after all first-column rows are removed."""
 		city_components = ["city"]
 		city_match_groups = [{0}]
-		city_empty_indeces: set[int] = set()
+		city_empty_indices: set[int] = set()
 		state_components = ["state"]
 		state_match_groups = [{0}]
-		state_empty_indeces: set[int] = set()
+		state_empty_indices: set[int] = set()
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 
 		assert not combiner.is_empty()
@@ -233,13 +233,13 @@ class TestCombiner:
 		"""Filling mutates empty slots but does not overwrite values or ambiguity."""
 		city_components = ["springfield", "springfield city"]
 		city_match_groups = [{0, 1}]
-		city_empty_indeces: set[int] = set()
+		city_empty_indices: set[int] = set()
 		state_components = ["illinois", "illinois state", "indiana"]
 		state_match_groups = [{0, 1}, {2}]
-		state_empty_indeces: set[int] = set()
+		state_empty_indices: set[int] = set()
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 		combined_place = ["", "existing"]
 
@@ -250,13 +250,13 @@ class TestCombiner:
 		"""No consensus or already-filled positions produce no mutation."""
 		city_components = ["springfield"]
 		city_match_groups = [{0}]
-		city_empty_indeces: set[int] = set()
+		city_empty_indices: set[int] = set()
 		state_components = ["illinois", "indiana"]
 		state_match_groups = [{0}, {1}]
-		state_empty_indeces: set[int] = set()
+		state_empty_indices: set[int] = set()
 		combiner = make_combiner([
-			make_column(city_components, city_match_groups, city_empty_indeces),
-			make_column(state_components, state_match_groups, state_empty_indeces),
+			make_column(city_components, city_match_groups, city_empty_indices),
+			make_column(state_components, state_match_groups, state_empty_indices),
 		])
 		combined_place = ["springfield", ""]
 
