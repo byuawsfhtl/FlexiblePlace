@@ -1,4 +1,4 @@
-from FlexiblePlace.src import compare_location_components
+from FlexiblePlace.src.compare_location_components import basic_comparison_algorithm
 from FlexiblePlace.src.location_component import LocationComponent
 
 class LocationMatrix:
@@ -216,7 +216,7 @@ class LocationMatrix:
         for i in range(row):
             for j in range(self.column_count):
                 component_b: LocationComponent = self.get(i,j)
-                score: float = compare_location_components.basic_comparison_algorithm(component_a, component_b)
+                score: float = basic_comparison_algorithm(component_a, component_b)
                 if score > best_score:
                     best_score = score
                     best_match = ((row,column), (i, j))

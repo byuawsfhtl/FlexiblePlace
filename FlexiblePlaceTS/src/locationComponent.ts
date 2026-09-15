@@ -46,7 +46,7 @@ export class LocationComponent{
 
     /**
      * An override for the toString method the return the value contained in this component
-     * as well as it's coordinates
+     * as well as it's coordinates.
      * 
      * @returns A formatted string containing the value and (row, column) position
      * 
@@ -54,6 +54,27 @@ export class LocationComponent{
      */
     toString(): string {
         return `${this.value} (${this.row}, ${this.column})`;
+    }
+
+    /**
+     * This is used to compare this LocationComponent with another LocationComponent since
+     * TypeScript compares for equality based on location rather than value. As a result,
+     * it is not in the Python version.
+     * 
+     * @param otherLocationComponent - The LocationComponent to compare to this one for 
+     *                                 equality
+     * 
+     * @returns true if both LocationComponent instances have all the same values and false if 
+     *          they don't
+     */
+    equals(otherLocationComponent: LocationComponent): boolean {
+        if (this.value !== otherLocationComponent.value){
+            return false;
+        } else if (this.row !== otherLocationComponent.row){
+            return false;
+        } else if (this.column !== otherLocationComponent.column){
+            return false;
+        }
     }
 
     /**
