@@ -1,9 +1,9 @@
 from FlexiblePlace.src import CompareLocationComponents
 from FlexiblePlace.src.LocationComponent import LocationComponent
 
-class LocationMatrix:
-    """A class that represents a matrix of locations, where each row corresponds to the string array of a 
-    FlexiblePlace object and each column corresponds to a location component (e.g. city, county state/province, 
+class Aligner:
+    """A class that represents a table of location components, where each row corresponds to the string array of a 
+    FlexiblePlace object and each cell corresponds to a location component (e.g. city, county state/province, 
     country). This class is used to align locations for comparison, ensuring that each component is compared
     with the correct component in other locations. Rows are ordered by length.
     
@@ -11,15 +11,15 @@ class LocationMatrix:
     locations = [FlexiblePlace("Washington, United States").get_location_components,
                  FlexiblePlace("Walla Walla, Washingon").get_location_components,
                  FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
-        location_matrix = LocationMatrix(locations)
-        print(location_matrix)
-        # | united states | washington | walla walla |
-        # | united states | washington |             |
-        # |               | washington | walla walla |
+        aligner = Aligner(locations)
+        print(aligner)
+        # | walla walla | washington | united states |
+        # |             | washington | united states |
+        # | walla walla | washington |               |
     """
 
     def __init__(self, locations: list[list[str]]) -> None:
-        """Initializes a LocationMatrix from a list of location component lists.
+        """Initializes an Aligner from a list of location component lists.
         
         Creates a matrix structure where each row represents a location and automatically aligns
         components across rows based on similarity matching.
@@ -44,7 +44,7 @@ class LocationMatrix:
         return bool(self.matrix)
     
     def __str__(self) -> str:
-        """Returns a formatted string representation of the LocationMatrix.
+        """Returns a formatted string representation of the Aligner.
         
         Renders the matrix as a pipe-separated table with columns aligned based on the longest
         value in each column. Empty rows result in an empty string.
@@ -123,7 +123,7 @@ class LocationMatrix:
         self.matrix[row][col] = component
 
     def load_places(self, places: list[list[str]]) -> None:
-        """Populates the LocationMatrix with location components from a list of place component lists.
+        """Populates the Aligner with location components from a list of place component lists.
         Converts each string component into a LocationComponent object and adds it to the matrix. Automatically
         resizes the matrix to accommodate all components, ensuring all rows have the same number of columns.
         
@@ -144,7 +144,7 @@ class LocationMatrix:
         self.row_count: int = len(self.matrix)
 
     def _resize(self, new_size: int) -> None:
-        """Resizes the LocationMatrix to have the specified number of columns by padding rows with empty
+        """Resizes the Aligner to have the specified number of columns by padding rows with empty
         LocationComponent objects as needed. Updates the column_count to reflect the new size. (Note: cannot
         be used to make matrix smaller than current size).
         
@@ -154,11 +154,13 @@ class LocationMatrix:
             None."""
         for i, row in enumerate(self.matrix):
             while len(row) < new_size:
-                row.append(LocationComponent((i,len(row))))
+                for component in row:
+                    component.column += 1
+                row.insert(0,LocationComponent((i,0)))
         self.column_count: int = new_size
 
     def align(self) -> None:
-        """Aligns all rows in a LocationMatrix by finding best matches between components across rows and linking
+        """Aligns all rows in an Aligner by finding best matches between components across rows and linking
         them together. Processes each row sequentially, comparing each unlinked component with components in previous
         rows to find optimal alignments based on similarity scores.
         
@@ -227,18 +229,18 @@ class LocationMatrix:
         to match the column of the farther component, and creates a link between them if the move is legal.
         Once the components are linked, an attempt to move one of them will the other to move with it.
         Example:
-            print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
-            # |% washington  %|             |             |
-            # |% washington  %| walla walla |             |
-            # | united states | washington  | walla walla |
-            component_a: LocationComponent = location_matrix.get(2,1) # 'washington' in last row
-            component_b: LocationComponent = location_matrix.get(1,0) # 'washington' in 2nd row
-            location_matrix.link(component_a, component_b)
-            print(location_matrix) # Note: the link is marked below with a '%', but will not be in a real print
-            # |               |% washington %|             |
-            # |               |% washington %| walla walla |
-            # | united states |% washington %| walla walla |.
-
+            print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
+            # |             |             |% washington  %|
+            # |             | walla walla |% washington  %|
+            # | walla walla | washington  | united states |
+            component_a: LocationComponent = aligner.get(2,1) # 'washington' in last row
+            component_b: LocationComponent = aligner.get(1,0) # 'washington' in 2nd row
+            aligner.link(component_a, component_b)
+            print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
+            # |             |% washington  %|               |
+            # | walla walla |% washington  %|               |
+            # | walla walla |% washington  %| united states |
+            
         Args:
             component_a (LocationComponent): The first component to link.
             component_b (LocationComponent): The second component to link.
@@ -249,7 +251,7 @@ class LocationMatrix:
             component_a.link(component_a)
             return
         distance: int = farthest_component.column - closest_component.column
-        self._move(closest_component, distance)
+        self._move(farthest_component, distance)
         component_a.link(component_b)
     
     def _order_components(self, component_a: LocationComponent, component_b: LocationComponent) -> tuple[LocationComponent, LocationComponent]:
@@ -292,10 +294,10 @@ class LocationMatrix:
         Returns:
             None."""
         for i in range(distance):
-            self._shift_right(component)
+            self._shift_left(component)
     
-    def _shift_right(self, component: LocationComponent) -> None:
-        """Shifts a LocationComponent one column to the right in the matrix, resizing the matrix if the component
+    def _shift_left(self, component: LocationComponent) -> None:
+        """Shifts a LocationComponent one column to the left in the matrix, resizing the matrix if the component
         is at the end. Also recursively shifts all subsequent components in the row and updates linked components.
         
         Args:
@@ -305,108 +307,38 @@ class LocationMatrix:
         current_column: int = component.column
         if not component:
             return
-        elif current_column == (self.column_count - 1):
+        elif current_column == 0:
             self._resize(self.column_count + 1)
-            self._shift_right(component)
+            self._shift_left(component)
         else:
             row: int = component.row
             column: int = component.column
-            self.insert(LocationComponent((row,column)))
-            component.column += 1
-            column += 1
-            self._shift_right(self.get(row,column))
+            column -= 1
+            self._shift_left(self.get(row,column))
+            component.column -= 1
             self.insert(component)
             for linked_component in component.links:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
+            self.insert(LocationComponent((row,component.column+1)))
 
-    def remove_outliers(self, column: int) -> None:
-        """Remove rows that are outliers for the specified column.
+    def get_links(self) -> list[list[set[int]]]:
+        """Return the row indices represented by each component's links.
 
-        Determines the maximum number of links for any component in the specified column,
-        treats components with fewer links as outliers, and removes their rows from the matrix.
-        This helps to prune rows that do not share consensus with the plurality in that column.
+        Returns:
+            list[list[set[int]]]: A matrix containing linked row indices for each component.
+        """
+        return [[self._repackage_as_ints(component.links) if (component.links or not component.value) else {component.row} for component in row] for row in self.matrix]
+
+    def _repackage_as_ints(self, links: set[LocationComponent]) -> set[int]:
+        """Convert linked LocationComponents into their row indices.
 
         Args:
-            column (int): Zero-based column index to inspect for outliers.
+            links (set[LocationComponent]): The components whose row indices should be returned.
         Returns:
-            None"""
-        if not self:
-            return
-        components_in_column: list[LocationComponent] = self.get_column(column)
-        max_count: int = max(len(component.links) for component in components_in_column)
-        rows_to_remove: list[int] = [component.row for component in components_in_column if component and len(component.links) < max_count]
-        self._remove_rows(rows_to_remove)
-
-    def _remove_rows(self, rows: list[int]) -> None:
-        """Remove multiple rows by index from the matrix.
-        Args:
-            rows (list[int]): A list of zero-based row indices to remove.
-        Returns:
-            None."""
-        for row in sorted(rows, reverse=True):
-            self._remove_row(row)
-
-    def _remove_row(self, row: int) -> None:
-        """Remove a single row from the matrix.
-        Args:
-            row (int): Zero-based index of the row to remove.
-        Returns:
-            None."""
-        for component in self.matrix.pop(row):
-            component.links.discard(component)
-        self.row_count -= 1
-        for r in self.matrix[row:]:
-            for component in r:
-                component.row -= 1
-
-    def column_consensus(self, column: int) -> str:
-        """Return a consensus string for a given column if all non-empty components agree (or are linked).
-        Args:
-            column (int): Zero-based column index to compute consensus for.
-        Returns:
-            str: The consensus component string (the longest matching component's value) if consensus is found,
-                otherwise an empty string."""
-        components_in_column: list[LocationComponent] = [component for component in self.get_column(column) if component]
-        if not all(component is components_in_column[0] or component in components_in_column[0].links
-                   for component in components_in_column):
-            return ""
-        return max((component.value for component in components_in_column), key=len, default="")
-    
-    def remove_least_accurate_row(self) -> bool:
-        """Remove the first row that lacks a component where other rows have one (i.e., the least accurate row).
-        Args:
-            None
-        Returns:
-            bool: True if a row was removed, False if no candidate row was found."""
-        for column in range(self.column_count):
-            if not any(component for component in self.get_column(column)):
-                continue
-            for row in range(self.row_count):
-                if not self.get(row, column):
-                    self._remove_row(row)
-                    return True
-        return False
-    
-    def remove_row_with_smallest_component(self) -> bool:
-        """Remove a row that contains the uniquely smallest component (by string length) in any column.
-        Args:
-            None
-        Returns:
-            bool: True if a row was removed, False otherwise."""
-        for column in range(self.column_count):
-            column_components = self.get_column(column)
-            min_len = len(min(column_components, key=lambda component: len(component.value)).value)
-            min_indeces = [comp.row for comp in column_components if len(comp.value) == min_len]
-            if len(min_indeces) == 1:
-                self._remove_row(min_indeces[0])
-                return True
-        return False
-    
-    def remove_last_row(self) -> None:
-        """Remove the last row in the matrix.
-        Args:
-            None.
-        Returns:
-            None."""
-        self._remove_row(self.row_count - 1)
+            set[int]: The row indices represented by the linked components.
+        """
+        links_as_ints: set[int] = set()
+        for component in links:
+            links_as_ints.add(component.row)
+        return links_as_ints

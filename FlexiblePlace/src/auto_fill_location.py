@@ -9,5 +9,5 @@ def auto_fill_location(location: list[str]) -> None:
         location (list[str]): The location (ordered from least to most specific).
     Returns:
         None."""
-    if location and location[0] in us_states:
-        location.insert(0, "united states")
+    if location and location[-1] in us_states:
+        location.append("united states")

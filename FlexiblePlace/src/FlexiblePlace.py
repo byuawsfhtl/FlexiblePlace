@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from functools import cache
-from FlexiblePlace.src.LocationMatrix import LocationMatrix
 from FlexiblePlace.src.auto_fill_location import auto_fill_location
 from FlexiblePlace.src.get_place_description import get_place_description
 from FlexiblePlace.src.Compare import Compare
+from FlexiblePlace.src.Combiner import Combiner
 
 class FlexiblePlace:
     """Represents a geographic location with multiple hierarchical components stored in reverse order.
@@ -34,7 +34,7 @@ class FlexiblePlace:
             location_components = location.split(",")
         else:
             location_components = location
-        self.location: list[str] = [location_component.strip().lower() for location_component in location_components[::-1]]
+        self.location: list[str] = [location_component.strip().lower() for location_component in location_components]
         if auto_fill:
             auto_fill_location(self.location)
         self.place_description = place_description
@@ -113,7 +113,7 @@ class FlexiblePlace:
         Returns:
             list[str]: The internal location components list in reverse order (most specific to least specific).
         """
-        return self.location[::-1]
+        return self.location
     
     def compare(self, other: FlexiblePlace) -> float | int:
         """Compares this FlexiblePlace with another object and returns a similarity score.
@@ -144,8 +144,6 @@ class FlexiblePlace:
         if not place_a or not place_b:
             return 100.0
         aligned_places: list[list[str]] = Compare.align_components(place_a.location, place_b.location)
-        aligned_places[0] = aligned_places[0][::-1]
-        aligned_places[1] = aligned_places[1][::-1]
         scores_list: list[float] = Compare.compare_each_component(aligned_places)
         Compare.adjust_scores(scores_list)
         average_score = sum(scores_list) / len(scores_list)
@@ -225,60 +223,24 @@ class FlexiblePlace:
         Returns:
             list[str]: A list of location components representing the combined place
         """
-        location_matrix: LocationMatrix = LocationMatrix([place.location for place in places])
-        combined_place: list[str] = [""] * location_matrix.column_count
-        while True:
-            has_changed: bool = False
-            for index in (i for i, comp in enumerate(combined_place) if not comp):
-                location_matrix.remove_outliers(index)
-                has_changed |= FlexiblePlace._add_place_component(location_matrix, combined_place, index)
-            if not has_changed:
-                if FlexiblePlace._isFull(combined_place):
+        aligned_places: Combiner = Combiner([place.get_location() for place in places])
+        combined_place: list[str] = [""] * aligned_places.get_column_count()
+        eliminate_row_strategies = [
+            aligned_places.remove_outliers,
+            aligned_places.remove_least_precise,
+            aligned_places.remove_smallest_component,
+            aligned_places.remove_last
+        ]
+        while Combiner.is_not_filled(combined_place):
+            for strategy in eliminate_row_strategies:
+                starting_row_count: int = aligned_places.get_row_count()
+                strategy()
+                has_changed = aligned_places.fill_in(combined_place)
+                if has_changed or starting_row_count > aligned_places.get_row_count():
                     break
-                elif not location_matrix:
-                    combined_place = [component for component in combined_place if component]
-                    break
-                else:
-                    FlexiblePlace._eliminate_partial_rows(location_matrix)
-        return combined_place[::-1]
-
-    @staticmethod
-    def _add_place_component(location_matrix: LocationMatrix, combined_place: list[str], index: int) -> bool:
-        """Attempt to determine and add a component for a given column index into the combined_place.
-        Args:
-            location_matrix (LocationMatrix): The matrix containing aligned LocationComponent objects.
-            combined_place (list[str]): The target merged-place list to be filled in-place. Empty slots are represented by "".
-            index (int): The column index (component position) to attempt to resolve and add.
-        Returns:
-            bool: True if a component was added to combined_place at index (i.e., consensus existed),
-                False if no consensus could be determined and combined_place was not changed."""
-        if not location_matrix:
-            return False
-        component_to_keep = location_matrix.column_consensus(index)
-        if component_to_keep:
-            combined_place[index] = component_to_keep
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def _isFull(combined_place: list[str]) -> bool:
-        """Return whether the merged place has no empty components.
-        Args:
-            combined_place (list[str]): The merged-place list to check.
-        Returns:
-            bool: True if combined_place contains no empty strings (all components filled), False otherwise."""
-        return not "" in combined_place
-
-    @staticmethod
-    def _eliminate_partial_rows(lm: LocationMatrix) -> None:
-        """A row needs to be eliminated. This function picks which one by prioritizing the least empty cells.
-        Args: 
-            lm (LocationMatrix): LocationMatrix object to be pruned.
-        Returns:
-            None."""
-        if not lm.remove_least_accurate_row() and not lm.remove_row_with_smallest_component():
-            lm.remove_last_row()
+            if aligned_places.is_empty():
+                Combiner.resize(combined_place)
+        return combined_place
 
     @staticmethod
     def _find_closest_match(combined_place: list[str], places: list[FlexiblePlace]) -> FlexiblePlace:
