@@ -22,6 +22,14 @@ results.json
 .vscode
 pytest.ini
 
+# Build / packaging artifacts
+build/
+dist/
+*.egg-info/
+.venv/
+.pytest_cache/
+.coverage
+
 # Ignore the LiveApiTester folder and all its contents
 FlexiblePlace/LiveApiTester/
 
