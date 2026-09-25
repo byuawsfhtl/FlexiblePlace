@@ -35,7 +35,7 @@ class Compare:
         location_a: list[str] = locations[0]
         location_b: list[str] = locations[1]
         return [Compare._compare_components(component_a, component_b) for component_a, component_b in zip(location_a, location_b)]
-
+        
     @cache
     @staticmethod
     def _compare_components(component_a: str, component_b: str) -> float:
@@ -48,7 +48,7 @@ class Compare:
         Returns:
             float: Similarity score from 0.0 to 100.0. Returns 100.0 if either component is empty."""
         if not component_a or not component_b:
-            return 100.0
+            return -1
         return fuzz.ratio(component_a, component_b)
 
     @staticmethod
@@ -76,8 +76,18 @@ class Compare:
         Returns:
             float: The new score.
         """
+        if score == -1:
+            return -1
         component_penalty: float = 0.5 # How harshly to penalize differences in components (With 0.5, about 65% of a 
         # difference in street address will be forgiven as opposed to 30% with the state)
         forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As specificity increases, more forgiveness is granted.
         redeemed_points: float = (100 - score) * forgiveness_factor # Redeems a certain percentage of lost points
         return score + redeemed_points
+
+    @staticmethod
+    def get_average(scores_list: list[float]) -> float:
+        nonnegative_scores: list[float] = [score for score in scores_list if score >= 0]
+        score_count = len(nonnegative_scores)
+        if score_count == 0:
+            return 100.0
+        return sum(nonnegative_scores)/score_count

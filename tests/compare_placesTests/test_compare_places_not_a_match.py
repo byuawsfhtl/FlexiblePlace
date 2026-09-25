@@ -42,5 +42,5 @@ class TestCompareTwoPlacesNotAMatch:
         place1 = FlexiblePlace("Walla Walla, Washington, United States")
         place2 = FlexiblePlace("Belgium")
         result = compare_places(place1, place2)
-        assert result > 65
-        assert result < 75
+        assert result > 0
+        assert result < 10
