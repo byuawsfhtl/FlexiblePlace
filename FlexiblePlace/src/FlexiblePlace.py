@@ -146,7 +146,7 @@ class FlexiblePlace:
         aligned_places: list[list[str]] = Compare.align_components(place_a.location, place_b.location)
         scores_list: list[float] = Compare.compare_each_component(aligned_places)
         Compare.adjust_scores(scores_list)
-        average_score = sum(scores_list) / len(scores_list)
+        average_score = Compare.get_average(scores_list)
         return average_score
 
     @staticmethod
