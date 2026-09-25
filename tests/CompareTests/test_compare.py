@@ -78,3 +78,28 @@ class TestAdjustScores:
         Compare.adjust_scores(scores_list)
         for actual, expected in zip(scores_list, expected_list):
             assert pytest.approx(expected) == pytest.approx(actual)
+
+class TestGetAverage:
+    """Tests that missing component scores are ignored when calculating an average."""
+    def test_scores_are_averaged(self) -> None:
+        """Tests that the average is calculated from all provided scores."""
+        scores_list = [20.0, 40.0, 60.0]
+        assert Compare.get_average(scores_list) == pytest.approx(40.0)
+
+    def test_missing_scores_are_ignored(self) -> None:
+        """Tests that -1 scores do not affect the average."""
+        scores_list = [20.0, -1.0, 80.0]
+        assert Compare.get_average(scores_list) == pytest.approx(50.0)
+
+    def test_zero_scores_are_included(self) -> None:
+        """Tests that a valid score of 0 is included in the average."""
+        scores_list = [0.0, 80.0]
+        assert Compare.get_average(scores_list) == pytest.approx(40.0)
+
+    def test_empty_scores_returns_hundred(self) -> None:
+        """Tests that no scores defaults to a perfect average."""
+        assert Compare.get_average([]) == 100.0
+
+    def test_all_missing_scores_returns_hundred(self) -> None:
+        """Tests that an all-missing score list defaults to a perfect average."""
+        assert Compare.get_average([-1.0, -1.0]) == 100.0
