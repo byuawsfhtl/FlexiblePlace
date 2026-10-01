@@ -64,7 +64,7 @@ class Aligner:
             for row in range(len(self.matrix)):
                 # Guard against rows shorter than column_count (shouldn't happen after resizing)
                 if col < len(self.get_row(row)):
-                    val = self.get(row,col).value or ""
+                    val = self.get(row, col).value or ""
                     max_len = max(max_len, len(val))
             widths.append(max_len)
         # Build each row as a pipe-separated string with left-aligned padding

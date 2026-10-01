@@ -35,6 +35,68 @@ class Aligner {
     }
 
     /**
+     * This is a necessary function for consistency with the Python version. It's necessary so there's a
+     * function that can be called that will have similar functionality to Python's checks for truthiness 
+     * on a class. It makes it so that if the matrix in the aligner instance is empty, it returns talse. 
+     * Otherwise it returns true.
+     * 
+     * @returns false if the matrix is empty and true if it isn't
+     */
+    toBoolean(): boolean {
+        if (this.matrix !== undefined && this.matrix.length > 0) {
+            return true;
+        };
+
+        return false;
+    };
+
+    /**
+     * This is a necessary function for consistency with the Python version. It's necessary so there's a
+     * function that can be called that will have similar functionality to Python's ability to print out
+     * an object as a string. In accordance with the Python version, this returns a formatted string 
+     * representation of the Aligner and renders the matrix as a pipe-separated table with columns aligned 
+     * based on the longest value in each column. Note that empty rows result in an empty string.
+     * 
+     * @returns A formatted string representing the matrix as a table, or an empty string if the matrix is empty
+     */
+    toString(): string {
+        // If no rows, return an empty string
+        if (this.matrix === undefined || this.matrix.length < 1){
+            return "";
+        };
+        // Determine the width for each column based on the longest string in that column
+        var widths: Array<number> = [];
+        for (var columnIndex = 0; columnIndex < this.columnCount; columnIndex++){
+            var max_length = 0;
+            for (var rowIndex = 0; rowIndex < this.matrix.length; rowIndex++){
+                //Guard against rows shorter than column_count (shouldn't happen after resizing)
+                if (columnIndex < this.getRow(rowIndex).length){
+                    var value;
+                    try {
+                        value = this.get(rowIndex, columnIndex).value;
+                        if (value === undefined){
+                            throw new Error();
+                        }
+                    } catch {
+                        value = "";
+                    };
+                    max_length = Math.max(max_length, value.length);
+                };
+            };
+            widths.push(max_length);
+        // Note that the logic in the python version of this may not work well because
+        // it's trying to find each ow in the range of the matrix. This could be totally
+        // fine, but could also cause problems since that's a vulnerable thing and is poorly
+        // worded and documented which makes me uncomfortable with how it's currently looking
+        // even if it happens to be right
+        };
+        // Build each row as a pipe-separated string with left-aligned padding
+        var lines: Array<string> = [];
+
+
+    };
+
+    /**
      * Populates the Aligner with location components from a list of place component lists.
      * Converts each string component into a LocationComponent object and adds it to the matrix. Automatically
      * resizes the matrix to accommodate all components, ensuring all rows have the same number of columns.
@@ -190,51 +252,5 @@ class Aligner {
         };
         this.columnCount = newSize;
     };
-
-
-    /**
-     * This is a necessary function for consistency with the Python version. It's necessary so there's a
-     * function that can be called that will have similar functionality to Python's checks for truthiness 
-     * on a class. It makes it so that if the matrix in the aligner instance is empty, it returns talse. 
-     * Otherwise it returns true.
-     * 
-     * @returns false if the matrix is empty and true if it isn't
-     */
-    toBoolean(): boolean {
-        if (this.matrix !== undefined && this.matrix.length > 0) {
-            return true;
-        };
-
-        return false;
-    };
-
-    /**
-     * This is a necessary function for consistency with the Python version. It's necessary so there's a
-     * function that can be called that will have similar functionality to Python's ability to print out
-     * an object as a string. In accordance with the Python version, this returns a formatted string 
-     * representation of the Aligner and renders the matrix as a pipe-separated table with columns aligned 
-     * based on the longest value in each column. Note that empty rows result in an empty string.
-     * 
-     * @returns A formatted string representing the matrix as a table, or an empty string if the matrix is empty
-     */
-    toString(): string {
-        // If no rows, return an empty string
-        if (this.matrix === undefined || this.matrix.length < 1){
-            return "";
-        };
-        // Determine the width for each column based on the longest string in that column
-        var widths: Array<number> = [];
-        for (var columnIndex = 0; columnIndex < this.columnCount; columnIndex++){
-            var max_length = 0;
-            for (var rowIndex = 0; rowIndex < )
-                // Note that the logic in the python version of this may not work well because
-                // it's trying to find each ow in the range of the matrix. This could be totally
-                // fine, but could also cause problems since that's a vulnerable thing and is poorly
-                // worded and documented which makes me uncomfortable with how it's currently looking
-                // even if it happens to be right
-        }
-
-
-    }
 
 };
