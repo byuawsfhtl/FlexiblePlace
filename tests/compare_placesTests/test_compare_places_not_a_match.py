@@ -38,9 +38,9 @@ class TestCompareTwoPlacesNotAMatch:
         assert result < 70
 
     def test_different_specificity(self) -> None:
-        """Different locations of different specificity levels should return a score lower than 75"""
+        """Different locations of different specificity levels should return a score lower than 10"""
         place1 = FlexiblePlace("Walla Walla, Washington, United States")
         place2 = FlexiblePlace("Belgium")
         result = compare_places(place1, place2)
-        assert result > 65
-        assert result < 75
+        assert result > 0
+        assert result < 10

@@ -22,12 +22,22 @@ results.json
 .vscode
 pytest.ini
 
+<<<<<<< HEAD
 # Ignore local TypeScript node modules
 */node_modules
 
 # Ignore venv files
 venv/
 .venv/
+=======
+# Build / packaging artifacts
+build/
+dist/
+*.egg-info/
+.venv/
+.pytest_cache/
+.coverage
+>>>>>>> dev
 
 # Ignore the LiveApiTester folder and all its contents
 FlexiblePlace/LiveApiTester/

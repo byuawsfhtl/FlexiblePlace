@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include _version.py
+recursive-include FlexiblePlace *.py *.json *.txt
+
+# Explicitly exclude TypeScript directory
+global-exclude FlexiblePlaceTS/*
+prune FlexiblePlaceTS

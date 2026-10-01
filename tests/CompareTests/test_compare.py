@@ -3,18 +3,18 @@ from unittest.mock import patch
 import pytest
 
 class TestAlignComponents:
-    def test_creates_LocationMatrix_object(self) -> None:
-        """Tests that the align_locations uses the LocationMatrix to align locations.
+    def test_creates_Aligner_object(self) -> None:
+        """Tests that the align_locations uses the Aligner to align locations.
         
-        The align functionality is already rigorously tested in the LocationMatrix tests, so this test
-        only checks that the align_components method utilizes the LocationMatrix to align components"""
-        with patch("FlexiblePlace.src.Compare.LocationMatrix") as mock_location_matrix:
+        The align functionality is already rigorously tested in the Aligner tests, so this test
+        only checks that the align_components method utilizes the Aligner to align components"""
+        with patch("FlexiblePlace.src.Compare.Aligner") as mock_aligner:
             place_a = ["a", "b"]
             place_b = ["b", "c"]
             expected = [["a", "b", ""], ["", "b", "c"]]
-            mock_location_matrix.return_value.get_locations.return_value = expected
+            mock_aligner.return_value.get_locations.return_value = expected
             actual = Compare.align_components(place_a, place_b)
-            mock_location_matrix.assert_called_once_with([place_a, place_b])
+            mock_aligner.assert_called_once_with([place_a, place_b])
             assert expected == actual
 
 class TestCompareEachComponent:
@@ -78,3 +78,28 @@ class TestAdjustScores:
         Compare.adjust_scores(scores_list)
         for actual, expected in zip(scores_list, expected_list):
             assert pytest.approx(expected) == pytest.approx(actual)
+
+class TestGetAverage:
+    """Tests that missing component scores are ignored when calculating an average."""
+    def test_scores_are_averaged(self) -> None:
+        """Tests that the average is calculated from all provided scores."""
+        scores_list = [20.0, 40.0, 60.0]
+        assert Compare.get_average(scores_list) == pytest.approx(40.0)
+
+    def test_missing_scores_are_ignored(self) -> None:
+        """Tests that -1 scores do not affect the average."""
+        scores_list = [20.0, -1.0, 80.0]
+        assert Compare.get_average(scores_list) == pytest.approx(50.0)
+
+    def test_zero_scores_are_included(self) -> None:
+        """Tests that a valid score of 0 is included in the average."""
+        scores_list = [0.0, 80.0]
+        assert Compare.get_average(scores_list) == pytest.approx(40.0)
+
+    def test_empty_scores_returns_hundred(self) -> None:
+        """Tests that no scores defaults to a perfect average."""
+        assert Compare.get_average([]) == 100.0
+
+    def test_all_missing_scores_returns_hundred(self) -> None:
+        """Tests that an all-missing score list defaults to a perfect average."""
+        assert Compare.get_average([-1.0, -1.0]) == 100.0
