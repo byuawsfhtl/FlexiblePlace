@@ -99,6 +99,18 @@ class TestCombineFlexiblePlacesBadInput:
         assert str(result) == "Walla Walla, Washington, Utah, United States"
 
 
+    def test_complicated_align(self) -> None:
+        """Difficult to aligned data will create stange combination
+        ("Durham, Durham, England",
+         "Belmont, Durham, England, United Kingdom",
+        returns "Belmont, Durham, Durham, England, United Kindom")"""
+        places = [
+            FlexiblePlace("Durham, Durham, England"),
+            FlexiblePlace("Belmont, Durham, England, United Kingdom")
+        ]
+        result = combine_flexible_places(places)
+        assert str(result) == "Belmont, Durham, Durham, England, United Kingdom"
+
     def test_bad_order(self) -> None:
         """Badly ordered data still works
         ("A, B",
