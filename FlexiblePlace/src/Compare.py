@@ -85,8 +85,7 @@ class Compare:
         """
         if score == -1:
             return -1
-        component_penalty: float = 0.5 # How harshly to penalize differences in components (With 0.5, about 65% of a 
-        # difference in street address will be forgiven as opposed to 30% with the state)
+        component_penalty: float = 0.5 # How harshly to penalize differences in components (With 0.5, about 65% of a difference in street address will be forgiven as opposed to 30% with the state)
         forgiveness_factor: float = (1 - 2 ** -(index * component_penalty)) # As specificity increases, more forgiveness is granted.
         redeemed_points: float = (100 - score) * forgiveness_factor # Redeems a certain percentage of lost points
         return score + redeemed_points
@@ -95,7 +94,7 @@ class Compare:
     def get_average(scores_list: list[float]) -> float:
         """Calculates the average while ignoring scores for missing components.
 
-        A -1 score marks a missing component and is retained in aligned score
+        A `-1` score marks a missing component and is retained in aligned score
         lists to preserve component order and spacing. It is excluded from the
         average so a missing component does not penalize the comparison.
 
