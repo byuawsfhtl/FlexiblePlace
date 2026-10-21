@@ -9,9 +9,9 @@ import { LocationComponent } from "./locationComponent"
  * with the correct component in other locations. Rows are ordered by length.
  *  
  * Example:
- *      locations = [FlexiblePlace("Washington, United States").get_location_components,
- *                   FlexiblePlace("Walla Walla, Washingon").get_location_components,
- *                   FlexiblePlace("Walla Walla, Washingon, United States").get_location_components]
+ *      locations = [FlexiblePlace("Washington, United States").getLocationComponents,
+ *                   FlexiblePlace("Walla Walla, Washingon").getLocationComponents,
+ *                   FlexiblePlace("Walla Walla, Washingon, United States").getLocationComponents]
  *      aligner = Aligner(locations)
  *      print(aligner) 
  * | walla walla | washington | united states |
@@ -67,9 +67,9 @@ class Aligner {
         // Determine the width for each column based on the longest string in that column
         var widths: Array<number> = [];
         for (var columnIndex = 0; columnIndex < this.columnCount; columnIndex++){
-            var max_length = 0;
+            var maxLength = 0;
             for (var rowIndex = 0; rowIndex < this.matrix.length; rowIndex++){
-                //Guard against rows shorter than column_count (shouldn't happen after resizing)
+                //Guard against rows shorter than columnCount (shouldn't happen after resizing)
                 if (columnIndex < this.getRow(rowIndex).length){
                     var value;
                     try {
@@ -80,10 +80,10 @@ class Aligner {
                     } catch {
                         value = "";
                     };
-                    max_length = Math.max(max_length, value.length);
+                    maxLength = Math.max(maxLength, value.length);
                 };
             };
-            widths.push(max_length);
+            widths.push(maxLength);
         };
         // Build each row as a pipe-separated string with left-aligned padding
         var lines: Array<string> = [];
@@ -198,7 +198,7 @@ class Aligner {
 
     /**
      * Resizes the Aligner to have the specified number of columns by padding rows with empty
-     * LocationComponent objects as needed. Updates the column_count to reflect the new size. (Note: cannot
+     * LocationComponent objects as needed. Updates the columnCount to reflect the new size. (Note: cannot
      * be used to make matrix smaller than current size).
      * 
      * @param newSize -  The new number of columns for the matrix
@@ -230,15 +230,15 @@ class Aligner {
                     break;
                 }
 
-                let row_a: number = match[0][0]
-                let col_a: number = match[0][1]
-                let component_a: LocationComponent = this.get(row_a, col_a)
+                let rowA: number = match[0][0]
+                let colA: number = match[0][1]
+                let componentA: LocationComponent = this.get(rowA, colA)
                 
-                let row_b: number = match[1][0]
-                let col_b: number = match[1][1]
-                let component_b: LocationComponent = this.get(row_b, col_b)
+                let rowB: number = match[1][0]
+                let colB: number = match[1][1]
+                let componentB: LocationComponent = this.get(rowB, colB)
 
-                this.link(component_a, component_b)
+                this.link(componentA, componentB)
             }
         }
 
@@ -274,7 +274,7 @@ class Aligner {
 
     /**
      * Compares the current component with all components in previous rows. If it is a better match then 
-     * the previous best, best_match and best_score are updated.
+     * the previous best, bestMatch and bestScore are updated.
      * 
      * @param currentComponent - The component to find a match for
      * @param bestScore - The score of the best found match for the current component so far
@@ -312,38 +312,43 @@ class Aligner {
      *     # |             |             |% washington  %|
      *     # |             | walla walla |% washington  %|
      *     # | walla walla | washington  | united states |
-     *     component_a: LocationComponent = aligner.get(2,1) # 'washington' in last row
-     *     component_b: LocationComponent = aligner.get(1,0) # 'washington' in 2nd row
-     *     aligner.link(component_a, component_b)
+     *     componentA: LocationComponent = aligner.get(2,1) # 'washington' in last row
+     *     componentB: LocationComponent = aligner.get(1,0) # 'washington' in 2nd row
+     *     aligner.link(componentA, componentB)
      *     print(aligner) # Note: the link is marked below with a '%', but will not be in a real print
      *     # |             |% washington  %|               |
      *     # | walla walla |% washington  %|               |
      *     # | walla walla |% washington  %| united states |
      * 
-     * @param component_a - The first component to link.
-     * @param component_b - The second component to link.
+     * @param componentA - The first component to link.
+     * @param componentB - The second component to link.
      */
-    link(component_a: LocationComponent, component_b: LocationComponent){
-        const [closest_component, farthest_component] = this._order_components(component_a,component_b);
-        if(this._illegal_move(closest_component,farthest_component)){
-            component_a.link(component_a);
+    link(componentA: LocationComponent, componentB: LocationComponent){
+        const [closestComponent, farthestComponent] = this._orderComponents(componentA,componentB);
+        if(this._illegalMove(closestComponent,farthestComponent)){
+            componentA.link(componentA);
             return;
         }
-        const distance: number = farthest_component.column - closest_component.column;
-        this._move(farthest_component,distance);
-        component_a.link(component_b);
+        const distance: number = farthestComponent.column - closestComponent.column;
+        this._move(farthestComponent,distance);
+        componentA.link(componentB);
     }
 
     /**
      * Orders two LocationComponents by their column position, returning the component with the lower column
      * first and the component with the higher column second.
-     * @param component_a - the first component
-     * @param component_b - the second component.
+     * @param componentA - the first component
+     * @param componentB - the second component.
      * 
-     * @returns - A tuple of (closest_to_start, farthest_from_start)
+     * @returns - A tuple of (closestToStart, farthestFromStart)
      */
-    private _order_components(component_a: LocationComponent, component_b: LocationComponent): [LocationComponent, LocationComponent]{
-        throw(new Error("Not implemented"));
+    private _orderComponents(componentA: LocationComponent, componentB: LocationComponent): [LocationComponent, LocationComponent]{
+        if(componentA.column < componentB.column){
+            return [componentA,componentB];
+        }
+        else{
+            return [componentB,componentA];
+        }
     }
 
     
@@ -351,13 +356,24 @@ class Aligner {
      * Checks for an illegal move. A move is illegal if the components being linked together are empty, or if
      * other links in between the components that are being aligned make it impossible to align them.
      * 
-     * @param component_a - component closest to the beginning of the row and will be moved
-     * @param component_b - component farthest from the beginning of the row and will not move
+     * @param componentA - component closest to the beginning of the row and will be moved
+     * @param componentB - component farthest from the beginning of the row and will not move
      * 
      * @returns true if the move is illegal, otherwise false.
      */
-    private _illegal_move(component_a: LocationComponent, component_b: LocationComponent): boolean{
-        throw(new Error("Not implemented"));
+    private _illegalMove(componentA: LocationComponent, componentB: LocationComponent): boolean{
+        if(!componentA.booleanCheck() || !componentB.booleanCheck()){
+            return true;
+        }
+        for(let i = componentA.column; i <= componentB.column; i++){
+            const componentToCheck = this.get(componentA.row,i);
+            if (Array.from(componentToCheck.links).some(
+                component => component.row === componentB.row
+            )) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**Moves a LocationComponent to the right by the specified distance by repeatedly shifting it one column
@@ -367,7 +383,9 @@ class Aligner {
      * @param distance - The number of columns to move the component to the right.
      */
     private _move(component: LocationComponent, distance: number){
-        throw(new Error("Not implemented"));
+        for(let i = 0;i < distance;i++){
+            this._shiftLeft(component);
+        }
     }
 
     /**Shifts a LocationComponent one column to the left in the matrix, resizing the matrix if the component
@@ -375,8 +393,30 @@ class Aligner {
      * 
      * @param component The component to shift left.
      */
-    private _shift_left(component: LocationComponent){
-        throw(new Error("Not implemented"));
+    private _shiftLeft(component: LocationComponent){
+        const currentColumn: number = component.column;
+        if(!component.booleanCheck()){
+            return;
+        }
+        else if(currentColumn === 0){
+            this._resize(this.columnCount+1);
+            this._shiftLeft(component);
+        }
+        else{
+            let row: number = component.row;
+            let column: number = component.column;
+            column-=1;
+            this._shiftLeft(this.get(row,column));
+            component.column-=1;
+            this.insert(component);
+
+            component.links.forEach((linkedComponent)=>{
+                const distance: number = Math.abs(component.column - linkedComponent.column);
+                this._move(linkedComponent,distance);
+            })
+
+            this.insert(new LocationComponent([row,component.column+1]));
+        }
     }
 
     /**
@@ -384,8 +424,25 @@ class Aligner {
      * 
      * @returns - A matrix containing linked row indices for each component.
      */
-    get_links(): Array<Array<Set<number>>>{
-        throw(new Error("Not implemented"));
+    getLinks(): Array<Array<Set<number>>>{
+        let links: Array<Array<Set<number>>> = [];
+
+        this.matrix.forEach((row)=>{
+            let linksRow: Array<Set<number>> = [];
+            row.forEach((component)=>{
+                let curLinks: Set<number>;
+                if(component.links.size > 0 || !component.value){
+                    curLinks = this._repackageAsInts(component.links);
+                }
+                else{
+                    curLinks = new Set<number>([component.row]);
+                }
+                linksRow.push(curLinks);
+            });
+            links.push(linksRow);
+        });
+
+        return links;
     }
 
     /**
@@ -395,8 +452,12 @@ class Aligner {
      * 
      * @returns - The row indices represented by the linked components.
      */
-    private _repackage_as_ints(links: Set<LocationComponent>): Set<number>{
-        throw(new Error("Not implemented"));
+    private _repackageAsInts(links: Set<LocationComponent>): Set<number>{
+        let linksAsInts = new Set<number>();
+
+        links.forEach((component)=>linksAsInts.add(component.row));
+
+        return linksAsInts;
     }
 
 };
