@@ -19,7 +19,7 @@ import { LocationComponent } from "./locationComponent"
  * | walla walla | washington |               |
  * 
  */
-class Aligner {
+export class Aligner {
 
     rowCount: number;
     columnCount: number;
