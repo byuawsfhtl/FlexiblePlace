@@ -26,7 +26,7 @@ function basicComparisonAlgorithmUnmemoized(locationOne: LocationComponent, loca
         return 0.0;
     };
 
-    var fuzzyScore: number = fuzzball_ratio(componentOne, componentTwo); 
+    var fuzzyScore: number = Math.floor(fuzzball_ratio(componentOne, componentTwo));
     var deductionForSmallComponentLength: number = 2 ** -(componentTwo.length - 1); // More letters = smaller score deduction
     var misalignment: number = Math.abs(locationOne.column - locationTwo.column);
     var decutionForMisalignment: number = misalignment ** 3; // A street address compared with a country will have a high deduction

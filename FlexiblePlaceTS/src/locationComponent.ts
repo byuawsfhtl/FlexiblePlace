@@ -75,6 +75,7 @@ export class LocationComponent{
         } else if (this.column !== otherLocationComponent.column){
             return false;
         }
+        return true;
     }
 
     /**
@@ -82,6 +83,7 @@ export class LocationComponent{
         All linked components share the same set of links.
      * 
      * @param other -  The LocationComponent to link with
+     * @returns Nothing.
      */
     link(other: LocationComponent): void{
 

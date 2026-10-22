@@ -1,4 +1,3 @@
-import "./compareLocationComponents"
 import { basicComparisonAlgorithm } from "./compareLocationComponents";
 import { LocationComponent } from "./locationComponent"
 
@@ -25,12 +24,25 @@ export class Aligner {
     columnCount: number;
     matrix: Array<Array<LocationComponent>>;
 
+    /**
+     * Builds a padded matrix for the locations and aligns similar components.
+     *
+     * Locations are processed from longest component list to shortest, preserving
+     * input order among lists of equal length.
+     *
+     * @param locations - Location component lists to align.
+     */
     constructor(locations: Array<Array<string>>){
 
         this.rowCount = 0;
         this.columnCount = 0;
         this.matrix = [];
-        this.loadPlaces(locations.toSorted((a, b) => a.length - b.length));
+        const sortedLocations = locations
+            .map((location, index) => ({ location, index }))
+            .sort((a, b) => b.location.length - a.location.length || a.index - b.index)
+            .map(item => item.location);
+        this.loadPlaces(sortedLocations);
+        this.align();
 
     }
 
@@ -71,15 +83,7 @@ export class Aligner {
             for (var rowIndex = 0; rowIndex < this.matrix.length; rowIndex++){
                 //Guard against rows shorter than columnCount (shouldn't happen after resizing)
                 if (columnIndex < this.getRow(rowIndex).length){
-                    var value;
-                    try {
-                        value = this.get(rowIndex, columnIndex).value;
-                        if (value === undefined){
-                            throw new Error();
-                        }
-                    } catch {
-                        value = "";
-                    };
+                    const value = this.get(rowIndex, columnIndex).value || "";
                     maxLength = Math.max(maxLength, value.length);
                 };
             };
@@ -128,6 +132,7 @@ export class Aligner {
         this.matrix.forEach((row: Array<LocationComponent>)=>{
             let locationRow: Array<string> = [];
             row.forEach((location: LocationComponent)=>locationRow.push(location.value))
+            locations.push(locationRow);
         })
 
         return locations;
@@ -147,7 +152,7 @@ export class Aligner {
     /**
      * Return a column from the matrix as a list of LocationComponent objects.
      * 
-     * @param rowIndex - Zero-based column index.
+     * @param columnIndex - Zero-based column index.
      * 
      * @returns The column components in row order.
      */
