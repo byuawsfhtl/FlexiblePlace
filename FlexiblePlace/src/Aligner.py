@@ -317,10 +317,10 @@ class Aligner:
             self._shift_left(self.get(row,column))
             component.column -= 1
             self.insert(component)
+            self.insert(LocationComponent((row,component.column+1)))
             for linked_component in component.links:
                 distance: int = abs(component.column - linked_component.column)
                 self._move(linked_component, distance)
-            self.insert(LocationComponent((row,component.column+1)))
 
     def get_links(self) -> list[list[set[int]]]:
         """Return the row indices represented by each component's links.
