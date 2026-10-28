@@ -6,7 +6,8 @@ def auto_fill_location(location: list[str]) -> None:
     if it is missing.
     
     Args:
-        location (list[str]): The location (ordered from least to most specific)
-    """
+        location (list[str]): The location (ordered from least to most specific).
+    Returns:
+        None."""
     if location and location[-1] in us_states:
         location.append("united states")

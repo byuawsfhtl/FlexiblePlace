@@ -1,5 +1,5 @@
-from FlexiblePlace.src.compare_location_components import basic_comparison_algorithm
-from FlexiblePlace.src.location_component import LocationComponent
+from FlexiblePlace.src import CompareLocationComponents
+from FlexiblePlace.src.LocationComponent import LocationComponent
 
 class Aligner:
     """A class that represents a table of location components, where each row corresponds to the string array of a 
@@ -64,7 +64,7 @@ class Aligner:
             for row in range(len(self.matrix)):
                 # Guard against rows shorter than column_count (shouldn't happen after resizing)
                 if col < len(self.get_row(row)):
-                    val = self.get(row, col).value or ""
+                    val = self.get(row,col).value or ""
                     max_len = max(max_len, len(val))
             widths.append(max_len)
         # Build each row as a pipe-separated string with left-aligned padding
@@ -218,7 +218,7 @@ class Aligner:
         for i in range(row):
             for j in range(self.column_count):
                 component_b: LocationComponent = self.get(i,j)
-                score: float = basic_comparison_algorithm(component_a, component_b)
+                score: float = CompareLocationComponents.basic_comparison_algorithm(component_a, component_b)
                 if score > best_score:
                     best_score = score
                     best_match = ((row,column), (i, j))
