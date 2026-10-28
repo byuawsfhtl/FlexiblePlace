@@ -2,13 +2,13 @@
   "name": "flexible-place-ts",
   "version": "1.0.0",
   "description": "TypeScript implementation for FlexiblePlace",
-  "main": "dist/FlexibleDateTS.js",
-  "types": "dist/FlexibleDateTS.d.ts",
+  "main": "dist/FlexiblePlaceTS.js",
+  "types": "dist/FlexiblePlaceTS.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/FlexibleDateTS.d.ts",
-      "import": "./dist/esm/FlexibleDateTS.js",
-      "require": "./dist/FlexibleDateTS.js"
+      "types": "./dist/FlexiblePlaceTS.d.ts",
+      "import": "./dist/esm/FlexiblePlaceTS.js",
+      "require": "./dist/FlexiblePlaceTS.js"
     }
   },
   "files": [
