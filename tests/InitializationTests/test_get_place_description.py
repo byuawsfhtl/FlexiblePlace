@@ -1,8 +1,26 @@
 import pytest
 
-from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
 from unittest.mock import AsyncMock, patch
 from tests.testdata.fs_api_mocker import fs_api_mocker
+
+from pathlib import Path
+from pyscripttestutils import PyScriptTestRunner
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
+
+runner = PyScriptTestRunner(
+    Path(__file__).resolve().parents[2] / "FlexiblePlaceTS" / "dist" / "test_bridge.js",
+    deserializer=lambda d: FlexiblePlace(d["location"], d.get("placeDescription", ""), auto_fill=False),
+)
+
+runner.add_method(FlexiblePlace.__str__, "FlexiblePlace.toString", executor=lambda d: str(d))
+runner.add_method(FlexiblePlace.__repr__, "FlexiblePlace.__repr__", executor=lambda d: repr(d))
+runner.add_method(FlexiblePlace.__eq__, "FlexiblePlace.__eq__", executor=lambda d: d[0] == d[1])
+runner.add_method(FlexiblePlace.__bool__, "FlexiblePlace.__bool__", executor=lambda d: bool(d))
+runner.add_method(FlexiblePlace.get_location, "FlexiblePlace.get_location", executor=lambda d: d.get_location())
+runner.add_method(FlexiblePlace.compare, "FlexiblePlace.compare", executor=lambda d: d[0].compare(d[1]))
+runner.add_method(FlexiblePlace.compare_places, "FlexiblePlace.compare_places", executor=lambda d: FlexiblePlace.compare_places(d[0], d[1]))
+runner.add_method(FlexiblePlace.combine_flexible_places, "FlexiblePlace.combine_flexible_places", executor=lambda d: FlexiblePlace.combine_flexible_places(d[0]))
+
 
 class TestGetPlaceDescription:
     """Tests for FlexiblePlace.place_description accuracy when initialized online."""
