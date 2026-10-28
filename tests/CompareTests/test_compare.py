@@ -30,8 +30,8 @@ class TestCompareEachComponent:
         
     def test_compare_each_location(self) -> None:
         """Tests that the method correctly pairs up and compares the components"""
-        with patch("FlexiblePlace.src.Compare.fuzz") as mock_fuzz:
-            mock_fuzz.ratio = TestCompareEachComponent.mock_ratio
+        with patch("FlexiblePlace.src.Compare.fuzz_ratio") as mock_fuzz:
+            mock_fuzz.side_effect = lambda component_a, component_b: TestCompareEachComponent.mock_ratio(component_a,component_b)
             place_a = ["walla walla", "washington", "united states"]
             place_b = ["walla walla", "wrongstate", "usa"]
             expected = [100.0, 0.0, 30.0]

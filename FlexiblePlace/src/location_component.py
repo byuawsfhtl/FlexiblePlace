@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 class LocationComponent:
     """Represents a single location component within an Aligner object.
     Stores the location (row and column) and string value of the component."""
