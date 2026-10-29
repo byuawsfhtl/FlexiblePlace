@@ -25,7 +25,7 @@ jobs:
 
   build-python:
     name: Build Python distribution 📦
-    if: github.ref == 'refs/heads/dev' # Only publish when pushing to dev
+    if: github.ref == 'refs/heads/prd' # Only publish when pushing to prd
     needs: update-version
     runs-on: ubuntu-latest
 
@@ -50,7 +50,7 @@ jobs:
 
   publish-to-pypi:
     name: Publish Python 🐍 distribution 📦 to PyPI
-    if: github.ref == 'refs/heads/dev' # Only publish when pushing to dev
+    if: github.ref == 'refs/heads/prd' # Only publish when pushing to prd
     needs: build-python
     runs-on: ubuntu-latest
     environment:
