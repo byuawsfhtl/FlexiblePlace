@@ -2,9 +2,49 @@
   "name": "flexible-place-ts",
   "version": "1.0.0",
   "description": "TypeScript implementation for FlexiblePlace",
-  "main": "index.js",
+  "main": "dist/FlexiblePlaceTS.js",
+  "types": "dist/FlexiblePlaceTS.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/FlexiblePlaceTS.d.ts",
+      "import": "./dist/esm/FlexiblePlaceTS.js",
+      "require": "./dist/FlexiblePlaceTS.js"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
-    "test": "echo \"No Node tests\" && exit 0",
-    "test-bridge": "npm test"
+    "build": "tsc && tsc -p tsconfig.esm.json && node -e \"require('fs').writeFileSync('dist/esm/package.json', '{\\\"type\\\":\\\"module\\\"}')\"",
+    "test": "nyc --reporter=json --reporter=text jest",
+    "test-bridge": "npm run build && tsc -p tsconfig.test-bridge.json",
+    "coverage": "nyc report --reporter=json",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "place",
+    "flexible",
+    "fuzzy",
+    "comparison"
+  ],
+  "author": "Record Linking Lab",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/byuawsfhtl/FlexiblePlace.git"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "fuzzball": "^2.2.6",
+    "memoizee": "^0.4.17"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/memoizee": "^0.4.12",
+    "ts-node": "^10.9.2",
+    "nyc": "^17.1.0",
+    "typescript": "^5.9.3",
+    "pyscripttestutils": "^1.0.0"
   }
 }
+

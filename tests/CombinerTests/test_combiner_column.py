@@ -1,5 +1,28 @@
 from FlexiblePlace.src.CombinerColumn import CombinerColumn
 
+from pathlib import Path
+from pyscripttestutils import PyScriptTestRunner
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
+
+runner = PyScriptTestRunner(
+    Path(__file__).resolve().parents[2] / "FlexiblePlaceTS" / "dist" / "test_bridge.js",
+    deserializer=lambda d: FlexiblePlace(d["location"], d.get("placeDescription", ""), auto_fill=False),
+)
+
+runner.add_method(FlexiblePlace.__str__, "FlexiblePlace.toString", executor=lambda d: str(d))
+runner.add_method(FlexiblePlace.__repr__, "FlexiblePlace.__repr__", executor=lambda d: repr(d))
+runner.add_method(FlexiblePlace.__eq__, "FlexiblePlace.__eq__", executor=lambda d: d[0] == d[1])
+runner.add_method(FlexiblePlace.__bool__, "FlexiblePlace.__bool__", executor=lambda d: bool(d))
+runner.add_method(FlexiblePlace.get_location, "FlexiblePlace.get_location", executor=lambda d: d.get_location())
+runner.add_method(FlexiblePlace.compare, "FlexiblePlace.compare", executor=lambda d: d[0].compare(d[1]))
+runner.add_method(FlexiblePlace.compare_places, "FlexiblePlace.compare_places", executor=lambda d: FlexiblePlace.compare_places(d[0], d[1]))
+runner.add_method(FlexiblePlace.combine_flexible_places, "FlexiblePlace.combine_flexible_places", executor=lambda d: FlexiblePlace.combine_flexible_places(d[0]))
+runner.add_method(CombinerColumn.column_consensus, "CombinerColumn.column_consensus", executor=lambda d: d.column_consensus())
+runner.add_method(CombinerColumn.smallest_component, "CombinerColumn.smallest_component", executor=lambda d: d.smallest_component())
+runner.add_method(CombinerColumn._all_equal_length, "CombinerColumn._all_equal_length", executor=lambda d: d._all_equal_length())
+runner.add_method(CombinerColumn.get_possible_rows, "CombinerColumn.get_possible_rows", executor=lambda d: d.get_possible_rows())
+
+
 
 class TestCombinerColumn:
 	"""Tests for the state and selection behavior of CombinerColumn."""
