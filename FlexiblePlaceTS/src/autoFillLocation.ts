@@ -1,0 +1,14 @@
+const usStates: Set<string> = new Set(["alabama", "alaska", "arizona", "arkansas", "california", "colorado", "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho", "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", "maine", "maryland", "massachusetts", "michigan", "minnesota", "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire", "new jersey", "new mexico", "new york", "north carolina", "north dakota", "ohio", "oklahoma", "oregon", "pennsylvania", "rhode island", "south carolina", "south dakota", "tennessee", "texas", "utah", "vermont", "virginia", "washington", "west virginia", "wisconsin", "wyoming"])
+
+/**
+ * Given incomplete initial location information, additional information will be assumed. 
+ * At this point this function only checks for US states and adds 'United States' to the 
+ * string if it is missing.
+ *
+ * @param {Array<string>} location - The location (ordered from least to most specific)
+ */ 
+export function autoFillLocation(location: Array<string>): void{
+    if (location.length > 0 && usStates.has(location[location.length - 1])){
+        location.push("united states");
+    };
+};

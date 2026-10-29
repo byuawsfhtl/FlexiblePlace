@@ -1,0 +1,4 @@
+httpx==0.28.1
+rapidfuzz==3.14.5
+
+#  ----- Edit this line to trigger a redeploy -----

@@ -1,0 +1,128 @@
+from FlexiblePlace.src.Compare import Compare
+from unittest.mock import patch
+import pytest
+
+from pathlib import Path
+from pyscripttestutils import PyScriptTestRunner
+from FlexiblePlace.src.FlexiblePlace import FlexiblePlace
+
+runner = PyScriptTestRunner(
+    Path(__file__).resolve().parents[2] / "FlexiblePlaceTS" / "dist" / "test_bridge.js",
+    deserializer=lambda d: FlexiblePlace(d["location"], d.get("placeDescription", ""), auto_fill=False),
+)
+
+runner.add_method(FlexiblePlace.__str__, "FlexiblePlace.toString", executor=lambda d: str(d))
+runner.add_method(FlexiblePlace.__repr__, "FlexiblePlace.__repr__", executor=lambda d: repr(d))
+runner.add_method(FlexiblePlace.__eq__, "FlexiblePlace.__eq__", executor=lambda d: d[0] == d[1])
+runner.add_method(FlexiblePlace.__bool__, "FlexiblePlace.__bool__", executor=lambda d: bool(d))
+runner.add_method(FlexiblePlace.get_location, "FlexiblePlace.get_location", executor=lambda d: d.get_location())
+runner.add_method(FlexiblePlace.compare, "FlexiblePlace.compare", executor=lambda d: d[0].compare(d[1]))
+runner.add_method(FlexiblePlace.compare_places, "FlexiblePlace.compare_places", executor=lambda d: FlexiblePlace.compare_places(d[0], d[1]))
+runner.add_method(FlexiblePlace.combine_flexible_places, "FlexiblePlace.combine_flexible_places", executor=lambda d: FlexiblePlace.combine_flexible_places(d[0]))
+runner.add_method(Compare.align_components, "Compare.align_components", executor=lambda d: Compare.align_components(d[0], d[1]))
+runner.add_method(Compare.compare_each_component, "Compare.compare_each_component", executor=lambda d: Compare.compare_each_component(d[0]))
+runner.add_method(Compare.adjust_scores, "Compare.adjust_scores", executor=lambda d: d[0])
+runner.add_method(Compare.get_average, "Compare.get_average", executor=lambda d: Compare.get_average(d[0]))
+
+
+class TestAlignComponents:
+    def test_creates_Aligner_object(self) -> None:
+        """Tests that the align_locations uses the Aligner to align locations.
+        
+        The align functionality is already rigorously tested in the Aligner tests, so this test
+        only checks that the align_components method utilizes the Aligner to align components"""
+        with patch("FlexiblePlace.src.Compare.Aligner") as mock_aligner:
+            place_a = ["a", "b"]
+            place_b = ["b", "c"]
+            expected = [["a", "b", ""], ["", "b", "c"]]
+            mock_aligner.return_value.get_locations.return_value = expected
+            actual = Compare.align_components(place_a, place_b)
+            mock_aligner.assert_called_once_with([place_a, place_b])
+            assert expected == actual
+
+class TestCompareEachComponent:
+    @staticmethod
+    def mock_ratio(place_a, place_b) -> float:
+        """A mock of the fuzz.ratio method that hard codes outputs for specific inputs."""
+        if place_a == "walla walla" and place_b == "walla walla":
+            return 100.0
+        elif place_a == "united states" and place_b == "usa":
+            return 30.0
+        else:
+            return 0
+        
+    def test_compare_each_location(self) -> None:
+        """Tests that the method correctly pairs up and compares the components"""
+        with patch("FlexiblePlace.src.Compare.fuzz") as mock_fuzz:
+            mock_fuzz.ratio = TestCompareEachComponent.mock_ratio
+            place_a = ["walla walla", "washington", "united states"]
+            place_b = ["walla walla", "wrongstate", "usa"]
+            expected = [100.0, 0.0, 30.0]
+            assert Compare.compare_each_component([place_a, place_b]) == expected
+
+class TestAdjustScores:
+    """Tests that the scores are adjusted correctly, assuming that first score represents the most specific component (e.g. city)"""
+    def test_scores_all_zero(self) -> None:
+        """Tests that the scores adjust correctly when all are 0"""
+        scores_list = [0.0, 0.0, 0.0, 0.0]
+        expected_list = [64.64466, 50.0, 29.28932, 0.0]
+        Compare.adjust_scores(scores_list)
+        for actual, expected in zip(scores_list, expected_list):
+            assert pytest.approx(expected) == pytest.approx(actual)
+
+    def test_scores_all_ten(self) -> None:
+        """Tests that the scores adjust correctly when all are 10"""
+        scores_list = [10.0, 10.0, 10.0, 10.0]
+        expected_list = [68.18019, 55.0, 36.36039, 10.0]
+        Compare.adjust_scores(scores_list)
+        for actual, expected in zip(scores_list, expected_list):
+            assert pytest.approx(expected) == pytest.approx(actual)
+
+    def test_scores_all_fifty(self) -> None:
+        """Tests that the scores adjust correctly when all are 50"""
+        scores_list = [50.0, 50.0, 50.0, 50.0]
+        expected_list = [82.32233, 75.0, 64.64466, 50.0]
+        Compare.adjust_scores(scores_list)
+        for actual, expected in zip(scores_list, expected_list):
+            assert pytest.approx(expected) == pytest.approx(actual)
+
+    def test_scores_all_hundred(self) -> None:
+        """Tests that the scores adjust correctly when all are 100"""
+        scores_list = [100.0, 100.0, 100.0, 100.0]
+        expected_list = [100.0, 100.0, 100.0, 100.0]
+        Compare.adjust_scores(scores_list)
+        for actual, expected in zip(scores_list, expected_list):
+            assert pytest.approx(expected) == pytest.approx(actual)
+
+    def test_scores_mix(self) -> None:
+        """Tests that the scores adjust correctly when there are mixed scores"""
+        scores_list = [0.0, 30.0, 50.0, 65.0]
+        expected_list = [64.64466, 65.0, 64.64466, 65.0]
+        Compare.adjust_scores(scores_list)
+        for actual, expected in zip(scores_list, expected_list):
+            assert pytest.approx(expected) == pytest.approx(actual)
+
+class TestGetAverage:
+    """Tests that missing component scores are ignored when calculating an average."""
+    def test_scores_are_averaged(self) -> None:
+        """Tests that the average is calculated from all provided scores."""
+        scores_list = [20.0, 40.0, 60.0]
+        assert Compare.get_average(scores_list) == pytest.approx(40.0)
+
+    def test_missing_scores_are_ignored(self) -> None:
+        """Tests that -1 scores do not affect the average."""
+        scores_list = [20.0, -1.0, 80.0]
+        assert Compare.get_average(scores_list) == pytest.approx(50.0)
+
+    def test_zero_scores_are_included(self) -> None:
+        """Tests that a valid score of 0 is included in the average."""
+        scores_list = [0.0, 80.0]
+        assert Compare.get_average(scores_list) == pytest.approx(40.0)
+
+    def test_empty_scores_returns_hundred(self) -> None:
+        """Tests that no scores defaults to a perfect average."""
+        assert Compare.get_average([]) == 100.0
+
+    def test_all_missing_scores_returns_hundred(self) -> None:
+        """Tests that an all-missing score list defaults to a perfect average."""
+        assert Compare.get_average([-1.0, -1.0]) == 100.0
